@@ -21,40 +21,25 @@ object {
   var p
   var or
   var i: Number := 1
-  var j: Number := 1
-  var t: Number := 10
-  //method onMousePress(mousePoint) {
-  //  text.at(180@200) with ("I'm touched") on (canvas)
-  //}
-  
-  //method onMouseRelease(mousePoint) {
-  //  canvas.clear
-  //}
+  var flag: Number := 0
+
   
   method onMouseClick(mousePoint) {
-    print "{mousePoint.x}"
     i := 1
-    j := 1
     an.while{i < 100} pausing(1000) do {
-      x := randomIntFrom(1) to (xDim)
-      y := randomIntFrom(1) to (yDim)
+      x := randomIntFrom(15) to (xDim-30)
+      y := randomIntFrom(15) to (yDim-30)
       or := b.origin
-      b.moveTo(or.x@y)
-   
       
-      a.moveTo(a.origin.x@(yDim-y))
-      an.while{j < t } pausing(1000)do{ 
-        j := j + 1
+      if ( flag == 0 ) then {
+        b.moveTo(or.x@y)
+        a.moveTo(a.origin.x@(yDim-y))
+        flag := 1
+      } else {
+        a.moveTo((xDim-x)@a.origin.y)
+        b.moveTo(x@b.origin.y)
+        flag := 0
       }
-      
-      a.moveTo((xDim-x)@a.origin.y)
-      b.moveTo(x@y)
-      i := i + 1
-      j := 1
-      an.while{j < t } pausing(1000)do{ 
-        j := j + 1
-      }
-      j := 1
       
     }
   }
