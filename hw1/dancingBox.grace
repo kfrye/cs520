@@ -8,17 +8,20 @@ factory method named(name, floorWidth, floorHeight) {
   method dance {
     an.while{true} pausing(1000) do{ 
         step
-        
     }
   }
   
-  method randomMove {
-    def x = randomIntFrom(1) to (floorWidth - extent.x)
-    def y = randomIntFrom(1) to (floorHeight - extent.y)
-    moveTo(x@y)
+  method randomMove is confidential {
+    moveTo(getRandomPoint)
   }
   
-  method step {
+  method getRandomPoint is confidential {
+    def x = randomIntFrom(1) to (floorWidth - extent.x)
+    def y = randomIntFrom(1) to (floorHeight - extent.y)
+    return x@y
+  }
+  
+  method step is confidential {
     randomMove
   }
   
@@ -27,10 +30,9 @@ factory method named(name, floorWidth, floorHeight) {
         step
         partner.followStep(origin)
     }
-    
   }
   
-  method followStep(toPoint) {
+  method followStep (toPoint) {
     moveTo((floorWidth - toPoint.x)@toPoint.y)
   }
 }

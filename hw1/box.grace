@@ -1,7 +1,6 @@
 import "objectdraw" as od
 
-method named(name) {
-  object {
+factory method named(name) {
     var origin is readable := 0@0
     var heading is public := 0
     var extent is public := defaultExtent
@@ -41,8 +40,6 @@ method named(name) {
         moveTo(origin + increment)
     }
     
-    
-    
     method growBy(increment:Point) {
         extent := extent + increment
         myRect.setSize(extent.x, extent.y)
@@ -52,5 +49,4 @@ method named(name) {
         "a box named {name}"
     }
     
-  }
 }
