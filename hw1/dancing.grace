@@ -2,7 +2,7 @@ dialect "objectdraw"
 import "dancingBox" as box
 import "timer" as timer
 import "animation" as an
-
+ 
 object {
   def xDim = 400
   def yDim = 400
@@ -16,7 +16,11 @@ object {
   alice.moveTo((xDim - 30)@30)
   
   method onMouseClick(mousePoint) {
-    bob.danceWith(alice)
+    an.while {1 < 2} pausing (2850) do {
+      bob.danceWith(alice)
+    }
+    //bob.animatedMove
+  
   }
   startGraphics
 }
