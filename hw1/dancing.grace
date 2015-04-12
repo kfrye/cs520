@@ -10,17 +10,14 @@ object {
   
   def bob = box.named("Bob", xDim, yDim)
   def alice = box.named("Alice", xDim, yDim)
+ 
   bob.showOn(canvas)
   alice.showOn(canvas)
   bob.moveTo(30@30)
   alice.moveTo((xDim - 30)@30)
   
   method onMouseClick(mousePoint) {
-    an.while {1 < 2} pausing (2850) do {
-      bob.danceWith(alice)
-    }
-    //bob.animatedMove
-  
+    bob.danceWith(alice)
   }
   startGraphics
 }
