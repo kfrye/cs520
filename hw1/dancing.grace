@@ -15,8 +15,12 @@ object {
   alice.showOn(canvas)
   bob.moveTo(30@30)
   alice.moveTo((xDim - 30)@30)
+  text.at(10@10) with ("To start dancing click here") on (canvas)
+
   
   method onMouseClick(mousePoint) {
+    //bob.dance
+    //alice.dance
     bob.danceWith(alice)
   }
   startGraphics
