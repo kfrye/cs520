@@ -17,15 +17,37 @@ class binaryTree.new -> Book {
   }
 
   method insert(obj:Object) -> Done {
-    var tempNode:Node
     if (root.empty) then {
       root := bookNode.new(obj)
-    }
-    if (root <= obj) then {
-      if (root.left.empty) then {
-        root.left := bookNode.new(obj)
+    } else {
+      var tempNode:Node := root
+      while { tempNode.empty != true } do {
+        print ("Tree is not empty")
+        if (tempNode.value < obj) then {
+          if (tempNode.left.empty) then {
+            tempNode.setLeft(obj)
+            return
+          }
+          tempNode := tempNode.left
+        } 
+        else { 
+          if (tempNode.value > obj) then {
+            print ("Go right")
+            if (tempNode.right.empty) then {
+              tempNode.setRight(obj)
+              return
+            }
+            tempNode := tempNode.right
+          } 
+          else {
+            print ("Match")
+            tempNode.update(obj)
+            return
+          }
+        }
       }
-      
+      tempNode := bookNode.new(obj)
+
     }
   }
 
@@ -40,6 +62,19 @@ class binaryTree.new -> Book {
   method exists(obj) -> Boolean {
     
   }
+  method recPrint(aNode:Node) {
+    if (aNode.empty) then {
+      return
+    } else {
+      print (aNode)
+      recPrint(aNode.left)
+      recPrint(aNode.right)
+    }
+  }
+  
+  method printTree {
+    recPrint(root)
+  }
   
   method tempPrint {
     print (root)
@@ -48,37 +83,72 @@ class binaryTree.new -> Book {
 
 type Node = {
   empty -> Boolean
+  update -> Done
+  setLeft -> Done
+  setRight -> Done
   ==(other:Object) -> Boolean 
   != (other:Object) -> Boolean 
   >= (other:Object) -> Boolean 
   > (other:Object) -> Boolean 
   < (other:Object) -> Boolean 
   <= (other:Object) -> Boolean 
-  //:= (other:Object) -> Boolean 
+  //[]:= (other:Object) -> Boolean 
 }
 
 class bookNode.new(newVal:page) -> Node {
   
-  def noNode = object { 
-    
-    def asString is readable = "empty Book"
-    method empty{ true }
+  
+  var value':=newVal
+  var left' := emptyNode.new
+  var right' := emptyNode.new
+  
+  method value {
+    value'
+  }
+  method left {
+    left'
   }
   
-  var value:=newVal
-  var left := noNode
-  var right := noNode
+  method right {
+    right'
+  }
   
   method empty { false }
 
+  method setLeft (obj) {
+    left' := bookNode.new(obj)
+  }
   
+  method setRight (obj) {
+    right' := bookNode.new(obj)
+  }
   
-  method ==(other:Object) -> Boolean {}
-  method != (other:Object) -> Boolean {}
-  method >= (other:Object) -> Boolean {}
-  method > (other:Object) -> Boolean {}
-  method < (other:Object) -> Boolean {}
-  method <= (other:Object) -> Boolean {}
+  method update (val:page) {
+    value' := val
+  }
+  method == (other:Object) -> Boolean {
+    return other == value
+  }
+  method != (other:Object) -> Boolean {
+        return other != value
+
+  }
+  method >= (other:Object) -> Boolean {
+        return other >= value
+
+  }
+  method >  (other:Object) -> Boolean {
+      return other > value
+  
+  }
+  method <  (other:Object) -> Boolean {
+    return other < value
+    
+  }
+  method <= (other:Object) -> Boolean {
+        return other <= value
+
+  }
   //method := (other:Object) -> Boolean {}
   
   method asString {
@@ -89,6 +159,10 @@ class bookNode.new(newVal:page) -> Node {
 
 class emptyNode.new -> Node {
   method empty { true }
+  method setLeft -> Done {EnvironmentException.raise "The Node is empty"}
+  method setRight -> Done {EnvironmentException.raise "The Node is empty"}
+
+  method update -> Done {EnvironmentException.raise "The Node is empty"}
   method ==(other:Object) -> Boolean {EnvironmentException.raise "The Node is empty"}
   method != (other:Object) -> Boolean {EnvironmentException.raise "The Node is empty"}
   method >= (other:Object) -> Boolean {EnvironmentException.raise "The Node is empty"}
@@ -100,28 +174,60 @@ class emptyNode.new -> Node {
 }
 
 
-factory method page (key', value') {
+factory method page (key'', value'') {
 
-  var key := key'
-  var value := value'
-  
+  var key' := key''
+  var value' := value''
+  method key {
+    key'
+  }
+  method value {
+    value'
+  }
   method asString {
     "key: {key}, value: {value}"
   }
-  method []:=(k, v) -> Done { 
-     
-    key := k
-    value := v
-   }
+  method []:=(k, v) -> Done {
+    key' := k
+    value' := v
+  }
+  method == (other:page) -> Boolean {
+    return (other.key == self.key) 
+  }
+  method != (other:page) -> Boolean {
+    return (other.key != self.key)
+  }
+  method >= (other:page) -> Boolean {
+    return (other.key >= self.key)
+  }
+  method >  (other:page) -> Boolean {
+    return (other.key > self.key)
+  }
+  method <  (other:Object) -> Boolean {
+    return (other.key < self.key)  
+  }
+  method <= (other:Object) -> Boolean {
+    return (other.key <= self.key)
+  }
+  //method := (other:Object) -> Boolean {}
+  
 }
 
 
-var p:= page(10, "test")
-
+var p:= page(10, "test10")
+var p9:= page(9, "test9")
+var pt:= page(11, "test11")
 
 var treeTest := binaryTree.new
 treeTest.insert(p)
-treeTest.tempPrint
+p := pt
+treeTest.insert(pt)
+treeTest.insert(p9)
+treeTest.printTree
+print ("")
+var pr := page(9, "repeat")
+treeTest.insert(pr)
+treeTest.printTree
 //nodeTest.insert(p)
 //nodeTest.tempPrint
 
