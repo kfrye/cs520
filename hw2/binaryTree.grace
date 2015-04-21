@@ -11,9 +11,6 @@ type Book = {
 
 class binaryTree.new -> Book {
   var root:Node := bookNode.new(emptyPage)
-  method helloWorld {
-    print("hello world")
-  }
 
   method insert(obj:Object) -> Done {
     insertNode(root, obj)
@@ -83,28 +80,39 @@ type Node = {
 }
 
 class bookNode.new(newVal:Page) -> Node {
-  
-  
   var value':=newVal
-  var left'
-  var right'
-  var isEmpty := true
+  def noPage = object {
+    method empty { true }
+  }
+  var left' = noPage
+  var right' = noPage
   
   method value {
     value'
   }
   
   method left {
-    if(empty) then { EnvironmentException.raise "The Node is empty" }
-    else {left'}
+    if(left' == noPage) then { 
+      EnvironmentException.raise "The Node is empty" 
+    }
+    else {
+      left'
+    }
   }
   
   method right {
-    if(empty) then { EnvironmentException.raise "The Node is empty" }
-    else {right'}
+    if(right' == noPage) then { 
+      EnvironmentException.raise "The Node is empty" 
+    }
+    else {
+      right'
+    }
   }
   
-  method empty { isEmpty }
+  method empty { 
+    if(value'.empty) then {isEmpty := true}
+    else {isEmpty := false} 
+  }
 
   method setLeft (obj) {
     left' := bookNode.new(obj)
@@ -116,7 +124,6 @@ class bookNode.new(newVal:Page) -> Node {
   
   method update (val:Page) {
     value' := val
-    isEmpty := val.empty
     left' := bookNode.new(emptyPage)
     right' := bookNode.new(emptyPage)
   }
@@ -124,6 +131,7 @@ class bookNode.new(newVal:Page) -> Node {
   method == (other:Object) -> Boolean {
     return other == value
   }
+  
   method != (other:Object) -> Boolean {
         return other != value
 
@@ -233,4 +241,3 @@ treeTest.printTree
 //treeTest.printTree
 //nodeTest.insert(p)
 //nodeTest.tempPrint
-
