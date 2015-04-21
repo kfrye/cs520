@@ -10,44 +10,31 @@ type Book = {
 }
 
 class binaryTree.new -> Book {
-  var root:Node := emptyNode.new
-  
+  var root:Node := bookNode.new(emptyPage)
   method helloWorld {
     print("hello world")
   }
 
   method insert(obj:Object) -> Done {
-    if (root.empty) then {
-      root := bookNode.new(obj)
-    } else {
-      var tempNode:Node := root
-      while { tempNode.empty != true } do {
-        print ("Tree is not empty")
-        if (tempNode.value < obj) then {
-          if (tempNode.left.empty) then {
-            tempNode.setLeft(obj)
-            return
-          }
-          tempNode := tempNode.left
-        } 
-        else { 
-          if (tempNode.value > obj) then {
-            print ("Go right")
-            if (tempNode.right.empty) then {
-              tempNode.setRight(obj)
-              return
-            }
-            tempNode := tempNode.right
-          } 
-          else {
-            print ("Match")
-            tempNode.update(obj)
-            return
-          }
+    insertNode(root, obj)
+  }
+  
+  method insertNode(node:Node, obj:Object) -> Done {
+    if(node.empty) then {
+      node.update(obj)
+    }
+    else {
+      if(node.value < obj) then {
+        insertNode(node.left, obj)
+      }
+      else {
+        if(node.value > obj) then {
+          insertNode(node.right, obj)
+        }
+        else {
+          node.update(obj)
         }
       }
-      tempNode := bookNode.new(obj)
-
     }
   }
 
@@ -95,25 +82,29 @@ type Node = {
   //[]:= (other:Object) -> Boolean 
 }
 
-class bookNode.new(newVal:page) -> Node {
+class bookNode.new(newVal:Page) -> Node {
   
   
   var value':=newVal
-  var left' := emptyNode.new
-  var right' := emptyNode.new
+  var left'
+  var right'
+  var isEmpty := true
   
   method value {
     value'
   }
+  
   method left {
-    left'
+    if(empty) then { EnvironmentException.raise "The Node is empty" }
+    else {left'}
   }
   
   method right {
-    right'
+    if(empty) then { EnvironmentException.raise "The Node is empty" }
+    else {right'}
   }
   
-  method empty { false }
+  method empty { isEmpty }
 
   method setLeft (obj) {
     left' := bookNode.new(obj)
@@ -123,9 +114,13 @@ class bookNode.new(newVal:page) -> Node {
     right' := bookNode.new(obj)
   }
   
-  method update (val:page) {
+  method update (val:Page) {
     value' := val
+    isEmpty := val.empty
+    left' := bookNode.new(emptyPage)
+    right' := bookNode.new(emptyPage)
   }
+  
   method == (other:Object) -> Boolean {
     return other == value
   }
@@ -157,27 +152,24 @@ class bookNode.new(newVal:page) -> Node {
 
 }
 
-class emptyNode.new -> Node {
-  method empty { true }
-  method setLeft -> Done {EnvironmentException.raise "The Node is empty"}
-  method setRight -> Done {EnvironmentException.raise "The Node is empty"}
-
-  method update -> Done {EnvironmentException.raise "The Node is empty"}
-  method ==(other:Object) -> Boolean {EnvironmentException.raise "The Node is empty"}
-  method != (other:Object) -> Boolean {EnvironmentException.raise "The Node is empty"}
-  method >= (other:Object) -> Boolean {EnvironmentException.raise "The Node is empty"}
-  method > (other:Object) -> Boolean {EnvironmentException.raise "The Node is empty"}
-  method < (other:Object) -> Boolean {EnvironmentException.raise "The Node is empty"}
-  method <= (other:Object) -> Boolean {EnvironmentException.raise "The Node is empty"}
-
-
+type Page = {
+  empty -> Boolean
+  key -> Done 
+  value -> Done
+  == (other:page) -> Boolean 
+  != (other:page) -> Boolean 
+  >= (other:page) -> Boolean
+  >  (other:page) -> Boolean 
+  <  (other:Object) -> Boolean 
+  <= (other:Object) -> Boolean 
 }
 
-
-factory method page (key'', value'') {
+class page (key'', value'') -> Page {
 
   var key' := key''
   var value' := value''
+  
+  method empty -> Boolean { false }
   method key {
     key'
   }
@@ -187,10 +179,10 @@ factory method page (key'', value'') {
   method asString {
     "key: {key}, value: {value}"
   }
-  method []:=(k, v) -> Done {
-    key' := k
-    value' := v
-  }
+  //method []:=(k, v) -> Done {
+  //  key' := k
+ //   value' := v
+  //}
   method == (other:page) -> Boolean {
     return (other.key == self.key) 
   }
@@ -213,6 +205,18 @@ factory method page (key'', value'') {
   
 }
 
+class emptyPage -> Page {
+  method empty -> Boolean { true }
+  method key -> Done {EnvironmentException.raise "The Page is empty"}
+  method value -> Done {EnvironmentException.raise "The Page is empty"}
+  method == (other:page) -> Boolean {EnvironmentException.raise "The Page is empty"}
+  method != (other:page) -> Boolean {EnvironmentException.raise "The Page is empty"}
+  method >= (other:page) -> Boolean {EnvironmentException.raise "The Page is empty"}
+  method >  (other:page) -> Boolean {EnvironmentException.raise "The Page is empty"}
+  method <  (other:Object) -> Boolean {EnvironmentException.raise "The Page is empty"}
+  method <= (other:Object) -> Boolean {EnvironmentException.raise "The Page is empty"}
+}
+
 
 var p:= page(10, "test10")
 var p9:= page(9, "test9")
@@ -220,14 +224,13 @@ var pt:= page(11, "test11")
 
 var treeTest := binaryTree.new
 treeTest.insert(p)
-p := pt
 treeTest.insert(pt)
 treeTest.insert(p9)
 treeTest.printTree
-print ("")
-var pr := page(9, "repeat")
-treeTest.insert(pr)
-treeTest.printTree
+//print ("")
+//var pr := page(9, "repeat")
+//treeTest.insert(pr)
+//treeTest.printTree
 //nodeTest.insert(p)
 //nodeTest.tempPrint
 
