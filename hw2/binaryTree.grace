@@ -1,12 +1,8 @@
 type Book = {
   insert(obj) -> Done
-
   delete(obj) -> Done
-
   get(obj) -> Done
-
   exists(obj) -> Boolean
-  
 }
 
 class binaryTree.new -> Book {
@@ -116,33 +112,15 @@ type Page = {
 class page (key', value') -> Page {
   method empty -> Boolean { false }
   method notEmpty -> Boolean { !empty }
-  method key {
-    key'
-  }
-  method value {
-    value'
-  }
-  method asString {
-    "key: {key}, value: {value}"
-  }
-  method == (other:page) -> Boolean {
-    return (other.key == self.key) 
-  }
-  method != (other:page) -> Boolean {
-    return (other.key != self.key)
-  }
-  method >= (other:page) -> Boolean {
-    return (other.key >= self.key)
-  }
-  method >  (other:page) -> Boolean {
-    return (other.key > self.key)
-  }
-  method <  (other:Object) -> Boolean {
-    return (other.key < self.key)  
-  }
-  method <= (other:Object) -> Boolean {
-    return (other.key <= self.key)
-  }
+  method key { key' }
+  method value { value' }
+  method asString { "key: {key}, value: {value}" }
+  method == (other:page) -> Boolean { (other.key == self.key) }
+  method != (other:page) -> Boolean { (other.key != self.key) }
+  method >= (other:page) -> Boolean { (other.key >= self.key) }
+  method >  (other:page) -> Boolean { (other.key > self.key) }
+  method <  (other:Object) -> Boolean { (other.key < self.key) }
+  method <= (other:Object) -> Boolean { (other.key <= self.key) }
 }
 
 class emptyPage -> Page {
@@ -159,6 +137,7 @@ class emptyPage -> Page {
 }
 
 
+//test script
 var p:= page(10, "test10")
 var p9:= page(9, "test9")
 var pt:= page(11, "test11")
