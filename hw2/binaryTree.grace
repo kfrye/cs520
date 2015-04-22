@@ -68,100 +68,53 @@ class binaryTree.new -> Book {
 type Node = {
   empty -> Boolean
   update -> Done
-  setLeft -> Done
-  setRight -> Done
   ==(other:Object) -> Boolean 
   != (other:Object) -> Boolean 
   >= (other:Object) -> Boolean 
   > (other:Object) -> Boolean 
   < (other:Object) -> Boolean 
   <= (other:Object) -> Boolean 
-  //[]:= (other:Object) -> Boolean 
 }
 
 class bookNode.new(newVal:Page) -> Node {
   var value':=newVal
+  
+  // Set left/right to a temp object. This prevents never-ending recursive initialization
   def noPage = object {
     method empty { true }
   }
-  var left' = noPage
-  var right' = noPage
+  var left' := noPage
+  var right' := noPage
   
-  method value {
-    value'
+  method value { value' }
+  
+  method left { 
+    // If left is using a temp object, set it to a "real" empty object
+    if(left' == noPage) then { left' := bookNode.new(emptyPage) }
+    left' 
   }
-  
-  method left {
-    if(left' == noPage) then { 
-      EnvironmentException.raise "The Node is empty" 
-    }
-    else {
-      left'
-    }
+  method right { 
+    // If right is using a temp object, set it to a "real" empty object
+    if(right' == noPage) then { right' := bookNode.new(emptyPage) }
+    right' 
   }
-  
-  method right {
-    if(right' == noPage) then { 
-      EnvironmentException.raise "The Node is empty" 
-    }
-    else {
-      right'
-    }
-  }
-  
   method empty { 
-    if(value'.empty) then {isEmpty := true}
-    else {isEmpty := false} 
+    if(value'.empty) then { true }
+    else { false } 
   }
-
-  method setLeft (obj) {
-    left' := bookNode.new(obj)
-  }
-  
-  method setRight (obj) {
-    right' := bookNode.new(obj)
-  }
-  
-  method update (val:Page) {
-    value' := val
-    left' := bookNode.new(emptyPage)
-    right' := bookNode.new(emptyPage)
-  }
-  
-  method == (other:Object) -> Boolean {
-    return other == value
-  }
-  
-  method != (other:Object) -> Boolean {
-        return other != value
-
-  }
-  method >= (other:Object) -> Boolean {
-        return other >= value
-
-  }
-  method >  (other:Object) -> Boolean {
-      return other > value
-  
-  }
-  method <  (other:Object) -> Boolean {
-    return other < value
-    
-  }
-  method <= (other:Object) -> Boolean {
-        return other <= value
-
-  }
-  //method := (other:Object) -> Boolean {}
-  
-  method asString {
-    value.asString
-  }
-
+  method update (val:Page) { value' := val }
+  method == (other:Object) -> Boolean { other == value }
+  method != (other:Object) -> Boolean { other != value }
+  method >= (other:Object) -> Boolean { other >= value }
+  method >  (other:Object) -> Boolean { other > value }
+  method <  (other:Object) -> Boolean { other < value }
+  method <= (other:Object) -> Boolean { other <= value }
+  method asString { value.asString }
 }
 
 type Page = {
   empty -> Boolean
+  notEmpty -> Boolean
   key -> Done 
   value -> Done
   == (other:page) -> Boolean 
@@ -172,12 +125,9 @@ type Page = {
   <= (other:Object) -> Boolean 
 }
 
-class page (key'', value'') -> Page {
-
-  var key' := key''
-  var value' := value''
-  
+class page (key', value') -> Page {
   method empty -> Boolean { false }
+  method notEmpty -> Boolean { !empty }
   method key {
     key'
   }
@@ -187,10 +137,6 @@ class page (key'', value'') -> Page {
   method asString {
     "key: {key}, value: {value}"
   }
-  //method []:=(k, v) -> Done {
-  //  key' := k
- //   value' := v
-  //}
   method == (other:page) -> Boolean {
     return (other.key == self.key) 
   }
@@ -209,12 +155,11 @@ class page (key'', value'') -> Page {
   method <= (other:Object) -> Boolean {
     return (other.key <= self.key)
   }
-  //method := (other:Object) -> Boolean {}
-  
 }
 
 class emptyPage -> Page {
   method empty -> Boolean { true }
+  method notEmpty -> Boolean { false }
   method key -> Done {EnvironmentException.raise "The Page is empty"}
   method value -> Done {EnvironmentException.raise "The Page is empty"}
   method == (other:page) -> Boolean {EnvironmentException.raise "The Page is empty"}
@@ -235,9 +180,9 @@ treeTest.insert(p)
 treeTest.insert(pt)
 treeTest.insert(p9)
 treeTest.printTree
-//print ("")
-//var pr := page(9, "repeat")
-//treeTest.insert(pr)
-//treeTest.printTree
+print ("")
+var pr := page(9, "repeat")
+treeTest.insert(pr)
+treeTest.printTree
 //nodeTest.insert(p)
 //nodeTest.tempPrint
