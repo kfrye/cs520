@@ -68,12 +68,6 @@ class binaryTree.new -> Book {
 type Node = {
   empty -> Boolean
   update -> Done
-  ==(other:Object) -> Boolean 
-  != (other:Object) -> Boolean 
-  >= (other:Object) -> Boolean 
-  > (other:Object) -> Boolean 
-  < (other:Object) -> Boolean 
-  <= (other:Object) -> Boolean 
 }
 
 class bookNode.new(newVal:Page) -> Node {
@@ -103,12 +97,6 @@ class bookNode.new(newVal:Page) -> Node {
     else { false } 
   }
   method update (val:Page) { value' := val }
-  method == (other:Object) -> Boolean { other == value }
-  method != (other:Object) -> Boolean { other != value }
-  method >= (other:Object) -> Boolean { other >= value }
-  method >  (other:Object) -> Boolean { other > value }
-  method <  (other:Object) -> Boolean { other < value }
-  method <= (other:Object) -> Boolean { other <= value }
   method asString { value.asString }
 }
 
