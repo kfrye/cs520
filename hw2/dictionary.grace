@@ -1,12 +1,20 @@
-class dictionary.new -> Dictionary {
-    var book := binaryTree
+import "binaryTree" as bt
+import "page" as p
+
+class dictionary<K,T> -> Dictionary {
+    var book := bt.binaryTree.new
+    var count' := 0
     
-    method size -> Number { }
+    method count { count' }
+    method size -> Number { count }
     method isEmpty -> Boolean { }
     method containsKey(k:K) -> Boolean{ }
     method containsValue(v:T) -> Boolean{ }
     method at(key:K)ifAbsent(action:Block0<Unknown>) -> Unknown{ }
-    method at(key:K)put(value:T) -> Dictionary<K,T>{ }
+    method at(key:K)put(value:T) -> Dictionary<K,T>{ 
+      count' := book.insert(p.page(key,value))
+      return self
+    }
     method []:=(k:K, v:T) -> Done{ }
     method at(k:K) -> T{ }
     method [](k:K) -> T{ }
@@ -24,3 +32,8 @@ class dictionary.new -> Dictionary {
     method ==(other:Object) -> Boolean{ }
     method copy -> Dictionary<K,T>{ }
 }
+
+var dict := dictionary<Integer, String>
+dict.at(1)put("one")
+dict.at(2)put("two")
+print(dict.count)
