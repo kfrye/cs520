@@ -79,12 +79,18 @@ class bookNode.new(newVal:Page) -> Node {
   method value { value' }
   
   method left { 
-    // If left is using a temp object, set it to a "real" empty object
+    // If left is using a temp object, set it to a "real" node with
+    // an empty page.
+    // We have to do this in order to perform insertNode recursively
+    // Grace doesn't let us change function parameters from an
+    // "emptyNode" class to a bookNode class, so we need to use the same 
+    // class to handle both the "empty/null" and "real" cases
+    // Setting left/right to a real node with an emptyPage upon
+    // node construction leads to a neverending recursive call.
     if(left' == noPage) then { left' := bookNode.new(emptyPage) }
     left' 
   }
   method right { 
-    // If right is using a temp object, set it to a "real" empty object
     if(right' == noPage) then { right' := bookNode.new(emptyPage) }
     right' 
   }
