@@ -17,7 +17,7 @@ class binaryTree.new -> Book {
     return count
   }
   
-  method insertNode(node:Node, obj:Object) -> Dictionary {
+  method insertNode(node:Node, obj:Object) -> Node {
     if(node.empty) then {
       return bookNode.new(obj)
     }
@@ -99,18 +99,18 @@ class emptyNode -> Node {
 
 
 //test script
-var pg:= p.page(10, "test10")
-var p9:= p.page(9, "test9")
-var pt:= p.page(11, "test11")
+//var pg:= p.page(10, "test10")
+//var p9:= p.page(9, "test9")
+//var pt:= p.page(11, "test11")
 
-var treeTest := binaryTree.new
-treeTest.insert(pg)
-treeTest.insert(pt)
-treeTest.insert(p9)
-treeTest.printTree
+//var treeTest := binaryTree.new
+//treeTest.insert(pg)
+//treeTest.insert(pt)
+//treeTest.insert(p9)
+//treeTest.printTree
 //print ("")
-var pr := p.page(9, "repeat")
-treeTest.insert(pr)
-treeTest.printTree
+//var pr := p.page(9, "repeat")
+//treeTest.insert(pr)
+//treeTest.printTree
 //nodeTest.insert(p)
 //nodeTest.tempPrint

@@ -42,11 +42,16 @@ factory method dictionary<K,T> {
       method valuesDo(action:Block1<T,Done>) -> Done{ }
       method do(action:Block1<T,Done>) -> Done{ }
       method ==(other:Object) -> Boolean{ }
-      method copy -> Dictionary<K,T>{ }
+      method copy -> Dictionary<K,T>{ print("this works") }
     }
   }
 }
 
 def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3, 
     "four"::4, "five"::5)
+//def evens = dictionary.with("two"::2, "four"::4, "six"::6, "eight"::8)
+//def empty = dictionary.empty
 print(oneToFive.count)
+oneToFive.copy
+//print(evens.count)
+//print(empty.count)
