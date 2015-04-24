@@ -1,7 +1,22 @@
 import "binaryTree" as bt
 import "page" as p
 
-class dictionary<K,T> -> Dictionary {
+factory method dictionary<K,T> {
+    inherits collectionFactory.trait<T>
+    
+    method withAll(initialBindings:Collection<Binding<K,T>>) -> Dictionary<K,T> {
+      object {
+        inherits enumerable.trait
+        
+        for (initialBindings) do { b -> at(b.key)put(b.value) }
+        
+        method at(key:K)put(value:T) -> Dictionary<K,T>{ 
+          count' := book.insert(p.page(key,value))
+          self
+        }
+      }
+    }
+    
     var book := bt.binaryTree.new
     var count' := 0
     
@@ -11,10 +26,7 @@ class dictionary<K,T> -> Dictionary {
     method containsKey(k:K) -> Boolean{ }
     method containsValue(v:T) -> Boolean{ }
     method at(key:K)ifAbsent(action:Block0<Unknown>) -> Unknown{ }
-    method at(key:K)put(value:T) -> Dictionary<K,T>{ 
-      count' := book.insert(p.page(key,value))
-      return self
-    }
+    
     method []:=(k:K, v:T) -> Done{ }
     method at(k:K) -> T{ }
     method [](k:K) -> T{ }

@@ -1,34 +1,40 @@
+import "page" as p
+
 type Book = {
-  insert(obj) -> Done
+  insert(obj) -> Number
   delete(obj) -> Done
   get(obj) -> Done
   exists(obj) -> Boolean
 }
 
 class binaryTree.new -> Book {
-  var root:Node := bookNode.new(emptyPage)
-
-  method insert(obj:Object) -> Done {
-    insertNode(root, obj)
+  var root:Node := emptyNode
+  var count := 0
+  
+  method insert(obj:Object) -> Number {
+    root := insertNode(root, obj)
+    count := count + 1
+    return count
   }
   
-  method insertNode(node:Node, obj:Object) -> Done {
+  method insertNode(node:Node, obj:Object) -> Dictionary {
     if(node.empty) then {
-      node.update(obj)
+      return bookNode.new(obj)
+    }
+    
+    var tempNode
+    if(node.value < obj) then {
+      tempNode := insertNode(node.left, obj)
+      node.setLeft(tempNode)
+    }
+    elseif(node.value > obj) then {
+      tempNode := insertNode(node.right, obj)
+      node.setRight(tempNode)
     }
     else {
-      if(node.value < obj) then {
-        insertNode(node.left, obj)
-      }
-      else {
-        if(node.value > obj) then {
-          insertNode(node.right, obj)
-        }
-        else {
-          node.update(obj)
-        }
-      }
+      node.update(obj)
     }
+    return node
   }
 
   method delete(obj) -> Done {
@@ -59,102 +65,51 @@ class binaryTree.new -> Book {
   method tempPrint {
     print (root)
   }
+  method asString {"A binary tree"}
 }
 
 type Node = {
   empty -> Boolean
-  update -> Done
+  left -> Node
+  right -> Node
 }
 
-class bookNode.new(newVal:Page) -> Node {
+class bookNode.new(newVal:p.Page) -> Node {
   var value':=newVal
-  
-  // Set left/right to a temp object. This prevents never-ending recursive initialization
-  def noPage = object {
-    method empty { true }
-  }
-  var left' := noPage
-  var right' := noPage
+  var left' := emptyNode
+  var right' := emptyNode
   
   method value { value' }
-  
-  method left { 
-    // If left is using a temp object, set it to a "real" node with
-    // an empty page.
-    // We have to do this in order to perform insertNode recursively
-    // Grace doesn't let us change function parameters from an
-    // "emptyNode" class to a bookNode class, so we need to use the same 
-    // class to handle both the "empty/null" and "real" cases
-    // Setting left/right to a real node with an emptyPage upon
-    // node construction leads to a neverending recursive call.
-    if(left' == noPage) then { left' := bookNode.new(emptyPage) }
-    left' 
-  }
-  method right { 
-    if(right' == noPage) then { right' := bookNode.new(emptyPage) }
-    right' 
-  }
-  method empty { 
-    if(value'.empty) then { true }
-    else { false } 
-  }
-  method update (val:Page) { value' := val }
-  method asString { value.asString }
+  method left { left' }
+  method setLeft(leftNode:Node) { left' := leftNode }
+  method right { right' }
+  method setRight(rightNode:Node) { right' := rightNode }
+  method empty { value'.empty }
+  method update (val:p.Page) { value' := val }
+  method asString { "booknode with page: {value}"}
 }
 
-type Page = {
-  empty -> Boolean
-  notEmpty -> Boolean
-  key -> Done 
-  value -> Done
-  == (other:page) -> Boolean 
-  != (other:page) -> Boolean 
-  >= (other:page) -> Boolean
-  >  (other:page) -> Boolean 
-  <  (other:Object) -> Boolean 
-  <= (other:Object) -> Boolean 
+class emptyNode -> Node {
+  method empty { true }
+  method left { emptyNode }
+  method right { emptyNode }
+  method asString { "An empty node" }
 }
 
-class page (key', value') -> Page {
-  method empty -> Boolean { false }
-  method notEmpty -> Boolean { !empty }
-  method key { key' }
-  method value { value' }
-  method asString { "key: {key}, value: {value}" }
-  method == (other:page) -> Boolean { (other.key == self.key) }
-  method != (other:page) -> Boolean { (other.key != self.key) }
-  method >= (other:page) -> Boolean { (other.key >= self.key) }
-  method >  (other:page) -> Boolean { (other.key > self.key) }
-  method <  (other:Object) -> Boolean { (other.key < self.key) }
-  method <= (other:Object) -> Boolean { (other.key <= self.key) }
-}
-
-class emptyPage -> Page {
-  method empty -> Boolean { true }
-  method notEmpty -> Boolean { false }
-  method key -> Done {EnvironmentException.raise "The Page is empty"}
-  method value -> Done {EnvironmentException.raise "The Page is empty"}
-  method == (other:page) -> Boolean {EnvironmentException.raise "The Page is empty"}
-  method != (other:page) -> Boolean {EnvironmentException.raise "The Page is empty"}
-  method >= (other:page) -> Boolean {EnvironmentException.raise "The Page is empty"}
-  method >  (other:page) -> Boolean {EnvironmentException.raise "The Page is empty"}
-  method <  (other:Object) -> Boolean {EnvironmentException.raise "The Page is empty"}
-  method <= (other:Object) -> Boolean {EnvironmentException.raise "The Page is empty"}
-}
 
 
 //test script
-var p:= page(10, "test10")
-var p9:= page(9, "test9")
-var pt:= page(11, "test11")
+var pg:= p.page(10, "test10")
+var p9:= p.page(9, "test9")
+var pt:= p.page(11, "test11")
 
 var treeTest := binaryTree.new
-treeTest.insert(p)
+treeTest.insert(pg)
 treeTest.insert(pt)
 treeTest.insert(p9)
 treeTest.printTree
-print ("")
-var pr := page(9, "repeat")
+//print ("")
+var pr := p.page(9, "repeat")
 treeTest.insert(pr)
 treeTest.printTree
 //nodeTest.insert(p)
