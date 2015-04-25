@@ -24,7 +24,7 @@ factory method dictionary<K,T> {
       
       method isEmpty -> Boolean { }
       method containsKey(k:K) -> Boolean{ book.keyExists(k) }
-      method containsValue(v:T) -> Boolean{ }
+      method containsValue(v:T) -> Boolean{ book.valueExists(v) }
       method at(key:K)ifAbsent(action:Block0<Unknown>) -> Unknown{ }
   
       method []:=(k:K, v:T) -> Done{ }
@@ -53,6 +53,7 @@ def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3,
 //def empty = dictionary.empty
 print(oneToFive.count)
 print(oneToFive.containsKey("one"))
+print(oneToFive.containsValue(1))
 //oneToFive.copy
 //print(evens.count)
 //print(empty.count)

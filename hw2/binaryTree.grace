@@ -55,6 +55,19 @@ factory method binaryTree {
       method get(obj) -> Done {
         
       }
+      
+      method valueExists(obj) -> Boolean {
+        valueExistsNode(root, obj)
+      }
+      
+      method valueExistsNode(node:Node, obj) {
+        if(node.empty) then { false }
+        elseif(node.value == obj) then { true }
+        elseif(!valueExistsNode(node.left, obj)) then {
+          valueExistsNode(node.right, obj)
+        }
+        else {true}
+      }
     
       method keyExists(obj) -> Boolean {
         keyExistsNode(root, obj)
@@ -132,7 +145,7 @@ class bookNode.new(newVal:Page) -> Node {
   method empty { page.empty }
   method update (val:Page) { page' := val }
   method asString { "booknode with page: {value}"}
-  method copyValue { value.copy }
+  method copyValue { page.copy }
 }
 
 class emptyNode -> Node {
@@ -158,6 +171,7 @@ treeTest.insert(p9)
 //treeTest.printTree
 
 print(treeTest.keyExists(9))
+print(treeTest.valueExists("test9"))
 //var treeCopy := treeTest.copy
 //treeCopy.printTree
 //print(treeCopy.count)
