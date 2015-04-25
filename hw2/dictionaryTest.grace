@@ -39,13 +39,13 @@ def dictionaryTest = object {
             assert (copyDict) shouldBe (evens)
         }
         
-        //method testDictionarySizeAfterRemove {
-        //    oneToFive.removeKey "one"
-        //    deny(oneToFive.containsKey "one") description "\"one\" still present"
-        //    oneToFive.removeKey "two"
-        //    oneToFive.removeKey "three"
-        //    assert(oneToFive.size) shouldBe 2
-        //}
+        method testDictionarySizeAfterRemove {
+            oneToFive.removeKey "one"
+            deny(oneToFive.containsKey "one") description "\"one\" still present"
+            oneToFive.removeKey "two"
+            oneToFive.removeKey "three"
+            assert(oneToFive.size) shouldBe 2
+        }
     }
 }
 

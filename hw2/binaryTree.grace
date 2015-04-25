@@ -241,7 +241,48 @@ factory method binaryTree {
         print (root)
       }
       method asString {"A binary tree"}
+      
+      method removeKey (obj:Object) {
+        if (size > 0) then {
+          root := removeKeyRecursive(root, obj)
+          count' := count' - 1
+        }
+      }
+
+      method removeKeyRecursive (node:Node, obj:Object) {
+        if (node.empty) then { return emptyNode } 
+        elseif(obj == node.key) then { 
+          if (node.leaf) then { return emptyNode }
+          if (node.emptyLeft) then { return node.right }
+          if (node.emptyRight ) then { return node.left }
+          var tempNode := smallestNode(node.right)
+          
+          node.setPage(tempNode.page)
+          
+          node.setRight(removeKeyRecursive (node.right, tempNode.key))
+          return node
+
+        }
+        elseif(obj < node.key) then { 
+          node.setLeft(removeKeyRecursive(node.left, obj)) 
+          return node
+        }
+        else { 
+          node.setRight(removeKeyRecursive(node.right, obj)) 
+          return node
+        }
+      }
+      
+      method smallestNode (node:Node) {
+        if (node.emptyLeft) then {
+          return node
+        }
+        return (smallestNode(node.left))
+      }
+      
+      method size { count }
     }
+    
   }
   
 }
@@ -274,6 +315,10 @@ class bookNode.new(newVal:p.Page) -> Node {
   method update (val:p.Page) { page' := val }
   method asString { "booknode with page: {value}"}
   method copyValue { page.copy }
+  method leaf { return (left.empty && right.empty)}
+  method emptyLeft { return (left.empty) }
+  method emptyRight { return (right.empty) }
+  method setPage (obj) { page' := obj }
 }
 
 class emptyNode -> Node {
@@ -287,16 +332,21 @@ class emptyNode -> Node {
 }
 
 //test script
-//var p10:= p.page(10, "test10")
-//var p9:= p.page(9, "test9")
-//var p11:= p.page(11, "test11")
+var p10:= p.page(10, "test10")
+var p9:= p.page(9, "test9")
+var p11:= p.page(11, "test11")
 //var p8:= p.page(8, "test8")
 //var p12 := p.page(12, "test12")
-//var treeTest := binaryTree.new
-//treeTest.insert(p10)
+var treeTest := binaryTree.new
+treeTest.insert(p10)
 //treeTest.insert(p8)
-//treeTest.insert(p11)
-//treeTest.insert(p9)
+treeTest.insert(p11)
+treeTest.insert(p9)
+
+print (treeTest.listAll)
+
+treeTest.removeKey(10)
+print (treeTest.listAll)
 //treeTest.printTree
 //var treeCopy := binaryTree.new
 //treeCopy.insert(p10.copy)

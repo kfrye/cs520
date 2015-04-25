@@ -21,7 +21,7 @@ factory method dictionary<K,T> {
       
       method count { count' }
       
-      method size -> Number { count }
+      method size -> Number { book.size }
       
       method isEmpty -> Boolean { }
       method containsKey(k:K) -> Boolean{ book.keyExists(k) }
@@ -31,9 +31,15 @@ factory method dictionary<K,T> {
       method []:=(k:K, v:T) -> Done{ }
       method at(k:K) -> T{ }
       method [](k:K) -> T{ }
-      method removeAllKeys(keys:Collection<K>) -> Dictionary<K,T>{ book = bt.binaryTree.new }
-      method removeKey(*keys:K) -> Dictionary<K,T>{  }
-      method removeAllValues(removals:Collection<T>) -> Dictionary<K,T>{ }
+      method removeAllKeys(keys:Collection<K>) -> Dictionary<K,T>{ 
+        
+        for(keys) do { k ->
+          book.removeKey(k)
+        }
+      
+      }
+      method removeKey(*keys:K) -> Dictionary<K,T>{ removeAllKeys(keys) }
+      method removeAllValues(removals:Collection<T>) -> Dictionary<K,T>{  }
       method removeValue(*removals:T) -> Dictionary<K,T>{ }
       method keys -> Iterator<K>{
         object {
@@ -68,7 +74,6 @@ def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3,
     "four"::4, "five"::5)
 //def evens = dictionary.with("two"::2, "four"::4, "six"::6, "eight"::8)
 //def empty = dictionary.empty
-<<<<<<< HEAD
 //print(oneToFive.count)
 //print(oneToFive.containsKey("one"))
 //print(oneToFive.containsValue(1))
@@ -86,11 +91,13 @@ def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3,
 //  print(l.next)
 //}
 //print(oneToFive.keys.next)
-=======
 print(oneToFive.count)
 print(oneToFive.containsKey("one"))
 print(oneToFive.containsValue(1))
->>>>>>> 69fb4b20eaf6879384d435d114e4a246c4cdf441
+
+oneToFive.removeKey("one")
+
+print(oneToFive.size)
 //oneToFive.copy
 //print(evens.count)
 //print(empty.count)
