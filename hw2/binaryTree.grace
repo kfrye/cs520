@@ -1,9 +1,9 @@
-dialect "page"
+import "page" as p
 
 type Book = {
   insert(obj) -> Number
   delete(obj) -> Done
-  get(obj) -> Done
+  get(obj) -> Unknown
   valueExists(obj) -> Boolean
   keyExists(obj) -> Boolean
 }
@@ -20,6 +20,19 @@ factory method binaryTree {
   
   method new -> Book {
     object {
+      method listAll {
+        var pageList := list.empty
+        listNode(root, pageList)
+      }
+      
+      method listNode(node:Node, pageList) {
+        if(node.empty) then { return pageList }
+        listNode(node.left, pageList)
+        pageList.add(node.page)
+        listNode(node.right, pageList)
+        return pageList
+      }
+      
       method insert(obj:Object) -> Number {
         root := insertNode(root, obj)
         count' := count + 1
@@ -52,8 +65,15 @@ factory method binaryTree {
         
       }
     
-      method get(obj) -> Done {
-        
+      method get(obj) -> Unknown {
+        getNode(root, obj)
+      }
+      
+      method getNode(node:Node, obj) -> Unknown {
+        if(node.empty) then { Exception.raise "{obj} not found" }
+        elseif(obj == node.key) then { node.value }
+        elseif(obj < node.key) then { getNode(node.left, obj) }
+        else { getNode(node.right, obj) }
       }
       
       method valueExists(obj) -> Boolean {
@@ -127,10 +147,10 @@ type Node = {
   empty -> Boolean
   left -> Node
   right -> Node
-  copyValue -> Page
+  copyValue -> p.Page
 }
 
-class bookNode.new(newVal:Page) -> Node {
+class bookNode.new(newVal:p.Page) -> Node {
   var left' := emptyNode
   var right' := emptyNode
   var page' := newVal
@@ -143,7 +163,7 @@ class bookNode.new(newVal:Page) -> Node {
   method right { right' }
   method setRight(rightNode:Node) { right' := rightNode }
   method empty { page.empty }
-  method update (val:Page) { page' := val }
+  method update (val:p.Page) { page' := val }
   method asString { "booknode with page: {value}"}
   method copyValue { page.copy }
 }
@@ -153,15 +173,15 @@ class emptyNode -> Node {
   method left { emptyNode }
   method right { emptyNode }
   method asString { "An empty node" }
-  method copyValue { emptyPage }
+  method copyValue { p.emptyPage }
 }
 
 
 
 //test script
-var pg:= page(10, "test10")
-var p9:= page(9, "test9")
-var pt:= page(11, "test11")
+var pg:= p.page(10, "test10")
+var p9:= p.page(9, "test9")
+var pt:= p.page(11, "test11")
 
 var treeTest := binaryTree.new
 treeTest.insert(pg)
@@ -170,8 +190,12 @@ treeTest.insert(pt)
 treeTest.insert(p9)
 //treeTest.printTree
 
-print(treeTest.keyExists(9))
-print(treeTest.valueExists("test9"))
+//print(treeTest.keyExists(9))
+//print(treeTest.valueExists("test9"))
+//print(treeTest.get(11))
+print(treeTest.listAll)
+//def witness = list<Number>.with(1, 2, 3, 4, 5, 6)
+//print(witness)
 //var treeCopy := treeTest.copy
 //treeCopy.printTree
 //print(treeCopy.count)
