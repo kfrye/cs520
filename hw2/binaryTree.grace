@@ -4,7 +4,8 @@ type Book = {
   insert(obj) -> Number
   delete(obj) -> Done
   get(obj) -> Done
-  exists(obj) -> Boolean
+  valueExists(obj) -> Boolean
+  keyExists(obj) -> Boolean
 }
 
 factory method binaryTree {
@@ -33,11 +34,11 @@ factory method binaryTree {
         }
         
         var tempNode
-        if(node.value < obj) then {
+        if(node.page < obj) then {
           tempNode := insertNode(node.left, obj)
           node.setLeft(tempNode)
         }
-        elseif(node.value > obj) then {
+        elseif(node.page > obj) then {
           tempNode := insertNode(node.right, obj)
           node.setRight(tempNode)
         }
@@ -55,8 +56,15 @@ factory method binaryTree {
         
       }
     
-      method exists(obj) -> Boolean {
-        
+      method keyExists(obj) -> Boolean {
+        keyExistsNode(root, obj)
+      }
+      
+      method keyExistsNode(node:Node, obj) -> Boolean {
+        if(node.empty) then { false }
+        elseif(obj == node.key) then { true }
+        elseif(obj < node.key) then { keyExistsNode(node.left, obj) }
+        else { keyExistsNode(node.right, obj) }
       }
       
       method copy -> Book {
@@ -110,17 +118,19 @@ type Node = {
 }
 
 class bookNode.new(newVal:Page) -> Node {
-  var value':=newVal
   var left' := emptyNode
   var right' := emptyNode
+  var page' := newVal
   
-  method value { value' }
+  method page { page' }
+  method value { page.value }
+  method key { page.key }
   method left { left' }
   method setLeft(leftNode:Node) { left' := leftNode }
   method right { right' }
   method setRight(rightNode:Node) { right' := rightNode }
-  method empty { value'.empty }
-  method update (val:Page) { value' := val }
+  method empty { page.empty }
+  method update (val:Page) { page' := val }
   method asString { "booknode with page: {value}"}
   method copyValue { value.copy }
 }
@@ -145,11 +155,12 @@ treeTest.insert(pg)
 //treeTest.copy
 treeTest.insert(pt)
 treeTest.insert(p9)
-treeTest.printTree
+//treeTest.printTree
 
-var treeCopy := treeTest.copy
-treeCopy.printTree
-print(treeCopy.count)
+print(treeTest.keyExists(9))
+//var treeCopy := treeTest.copy
+//treeCopy.printTree
+//print(treeCopy.count)
 //treeTest.printTree
 //binaryTree.copy(emptyNode)
 //print ("")
