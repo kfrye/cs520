@@ -20,6 +20,83 @@ factory method binaryTree {
   
   method new -> Book {
     object {
+      inherits iterable.trait
+      
+      var currentNode' := root
+      var currentPos' := 0
+      var nextNode
+      var currNode
+      var prevNode
+      var firstNode
+      var lastNode
+      var triggerPrev
+      
+      method iterator {
+        setNextInTree
+        resetCurrent
+        self
+      }
+      
+      method current { currentNode' }
+      method currentPos { currentPos' }
+      method resetCurrent {
+        currentPos' := 0
+        currentNode' := getFirstNode(root)
+      }
+      
+      method getFirstNode(node:Node) -> Node {
+        if(node.left.empty) then { node }
+        else { getFirstNode(node.left) }
+      }
+      
+      method getLastNode(node:Node) -> Node {
+        if(node.right.empty) then { node }
+        else { getLastNode(node.right) }
+      }
+      
+      method setNextInTree {
+        firstNode := getFirstNode(root)
+        prevNode := firstNode
+        triggerPrev := false
+        setNextInTreeRecurse(root)
+      }
+      
+      method setNextInTreeRecurse(node:Node) {
+        if(node.empty) then { return }
+        setNextInTreeRecurse(node.left)
+        if(node == firstNode) then {
+          triggerPrev := true
+        }
+        elseif(triggerPrev == true) then {
+          prevNode.setNext(node)
+          prevNode := node
+        }
+        setNextInTreeRecurse(node.right)
+      }
+      
+      method traverseList(node:Node) {
+        if(node.empty) then { return }
+        traverseList(node.left)
+        
+        print(node.key)
+        traverseList(node.right)
+      }
+      
+      method hasNext { 
+        if(currentPos' < count) then { true }
+        else { false }
+      }
+      
+      method havemore { hasNext }
+      
+      method next { 
+        if(currentPos' != 0) then { currentNode' := currentNode'.next }
+        currentPos' := currentPos' + 1
+        return currentNode'
+      }
+      
+      method getRoot { root } // used for debugging only. Erase when done
+      
       method listAll {
         var pageList := list.empty
         listNode(root, pageList)
@@ -154,14 +231,19 @@ class bookNode.new(newVal:p.Page) -> Node {
   var left' := emptyNode
   var right' := emptyNode
   var page' := newVal
+  var next' := emptyNode
   
   method page { page' }
   method value { page.value }
   method key { page.key }
   method left { left' }
-  method setLeft(leftNode:Node) { left' := leftNode }
+  method setLeft(node:Node) { left' := node }
   method right { right' }
-  method setRight(rightNode:Node) { right' := rightNode }
+  method setRight(node:Node) { right' := node }
+  method next { next' }
+  method setNext(node:Node) { 
+    next' := node 
+  }
   method empty { page.empty }
   method update (val:p.Page) { page' := val }
   method asString { "booknode with page: {value}"}
@@ -174,26 +256,54 @@ class emptyNode -> Node {
   method right { emptyNode }
   method asString { "An empty node" }
   method copyValue { p.emptyPage }
+  method next { Exception.raise "There is no next node" }
 }
-
-
 
 //test script
 var pg:= p.page(10, "test10")
 var p9:= p.page(9, "test9")
 var pt:= p.page(11, "test11")
-
+var p8:= p.page(8, "test8")
+var p12 := p.page(12, "test12")
 var treeTest := binaryTree.new
 treeTest.insert(pg)
-//treeTest.copy
+treeTest.insert(p8)
 treeTest.insert(pt)
 treeTest.insert(p9)
+treeTest.insert(p12)
+//treeTest.setNextInTree
+
+//def fNode = treeTest.getFirstNode(treeTest.getRoot)
+//print(fNode.next)
+//treeTest.getFirstNode
+//print(treeTest.getLastNode(treeTest.getRoot))
+//treeTest.traverseList(treeTest.getRoot)
+//treeTest.resetCurrent
+var l := treeTest.iterator
+print(l.next)
+print(l.next)
+print(l.next)
+print(l.next)
+print(l.next)
+//print(l.next)
+//print(l.current)
+//print(treeTest.current)
+//print("Current pos: {treeTest.currentPos}")
+//print(treeTest.hasNext)
+//print(treeTest.next)
+//print("Current pos: {treeTest.currentPos}")
+//print(treeTest.hasNext)
+//print(treeTest.next)
+//print("Current pos: {treeTest.currentPos}")
+//print(treeTest.hasNext)
+//print(treeTest.getRoot)
+//print(treeTest.getRoot.left.next)
 //treeTest.printTree
 
 //print(treeTest.keyExists(9))
 //print(treeTest.valueExists("test9"))
 //print(treeTest.get(11))
-print(treeTest.listAll)
+//print(treeTest.listAll)
 //def witness = list<Number>.with(1, 2, 3, 4, 5, 6)
 //print(witness)
 //var treeCopy := treeTest.copy
