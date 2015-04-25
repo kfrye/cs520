@@ -24,11 +24,8 @@ factory method binaryTree {
       
       var currentNode' := root
       var currentPos' := 0
-      var nextNode
-      var currNode
       var prevNode
       var firstNode
-      var lastNode
       var triggerPrev
       
       method iterator {
@@ -55,8 +52,7 @@ factory method binaryTree {
       }
       
       method setNextInTree {
-        firstNode := getFirstNode(root)
-        prevNode := firstNode
+        prevNode := getFirstNode(root)
         triggerPrev := false
         setNextInTreeRecurse(root)
       }
@@ -64,7 +60,7 @@ factory method binaryTree {
       method setNextInTreeRecurse(node:Node) {
         if(node.empty) then { return }
         setNextInTreeRecurse(node.left)
-        if(node == firstNode) then {
+        if(node == prevNode) then {
           triggerPrev := true
         }
         elseif(triggerPrev == true) then {
@@ -72,6 +68,25 @@ factory method binaryTree {
           prevNode := node
         }
         setNextInTreeRecurse(node.right)
+      }
+      
+      method isEqual(other:Book) {
+        var otherList := other.iterator
+        
+        while{otherList.hasNext} do {
+          if(!pageExists(otherList.next.page)) then { 
+            return false 
+          }
+        }
+        true
+      }
+      
+      method keysAndValuesDo(action) {
+        def all = iterator
+        while{all.hasNext} do {
+          var node := all.next
+          action.apply(node.key, node.value)
+        }
       }
       
       method traverseList(node:Node) {
@@ -152,6 +167,17 @@ factory method binaryTree {
         elseif(obj < node.key) then { getNode(node.left, obj) }
         else { getNode(node.right, obj) }
       }
+      
+      method pageExists(obj:p.Page) -> Boolean {
+        pageExistsRecurse(root, obj)
+      }
+      
+      method pageExistsRecurse(node:Node, obj:p.Page) {
+        if(node.empty) then { false }
+        elseif(obj == node.page) then { true }
+        elseif(obj.key < node.key) then { pageExistsRecurse(node.left, obj) }
+        else { pageExistsRecurse(node.right, obj) }
+      } 
       
       method valueExists(obj) -> Boolean {
         valueExistsNode(root, obj)
@@ -257,20 +283,29 @@ class emptyNode -> Node {
   method asString { "An empty node" }
   method copyValue { p.emptyPage }
   method next { Exception.raise "There is no next node" }
+  method page { p.emptyPage }
 }
 
 //test script
-var pg:= p.page(10, "test10")
-var p9:= p.page(9, "test9")
-var pt:= p.page(11, "test11")
-var p8:= p.page(8, "test8")
-var p12 := p.page(12, "test12")
-var treeTest := binaryTree.new
-treeTest.insert(pg)
-treeTest.insert(p8)
-treeTest.insert(pt)
-treeTest.insert(p9)
-treeTest.insert(p12)
+//var p10:= p.page(10, "test10")
+//var p9:= p.page(9, "test9")
+//var p11:= p.page(11, "test11")
+//var p8:= p.page(8, "test8")
+//var p12 := p.page(12, "test12")
+//var treeTest := binaryTree.new
+//treeTest.insert(p10)
+//treeTest.insert(p8)
+//treeTest.insert(p11)
+//treeTest.insert(p9)
+//treeTest.printTree
+//var treeCopy := binaryTree.new
+//treeCopy.insert(p10.copy)
+//treeCopy.insert(p9.copy)
+//treeCopy.insert(p11.copy)
+//treeCopy.printTree
+
+//print(treeCopy.isEqual(treeTest))
+//treeTest.insert(p12)
 //treeTest.setNextInTree
 
 //def fNode = treeTest.getFirstNode(treeTest.getRoot)
@@ -279,12 +314,12 @@ treeTest.insert(p12)
 //print(treeTest.getLastNode(treeTest.getRoot))
 //treeTest.traverseList(treeTest.getRoot)
 //treeTest.resetCurrent
-var l := treeTest.iterator
-print(l.next)
-print(l.next)
-print(l.next)
-print(l.next)
-print(l.next)
+//var l := treeTest.iterator
+//print(l.next)
+//print(l.next)
+//print(l.next)
+//print(l.next)
+//print(l.next)
 //print(l.next)
 //print(l.current)
 //print(treeTest.current)

@@ -18,8 +18,12 @@ class page (key', value') -> Page {
   method value { value' }
   method copy -> Page { page(key, value) }
   method asString { "key: {key}, value: {value}" }
-  method == (other:page) -> Boolean { (other.key == self.key) }
-  method != (other:page) -> Boolean { (other.key != self.key) }
+  method == (other:page) -> Boolean { 
+    (other.key == self.key)  && (other.value == self.value)
+  }
+  method != (other:page) -> Boolean { 
+    (other.key != self.key) || (other.value != self.value)
+  }
   method >= (other:page) -> Boolean { (other.key >= self.key) }
   method >  (other:page) -> Boolean { (other.key > self.key) }
   method <  (other:Object) -> Boolean { (other.key < self.key) }

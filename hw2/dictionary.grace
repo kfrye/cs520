@@ -4,7 +4,7 @@ import "page" as p
 factory method dictionary<K,T> {
   inherits collectionFactory.trait<T>
   
-  var book := bt.binaryTree.new
+  var book' := bt.binaryTree.new
   var count' := 0
   
   method withAll(initialBindings:Collection<Binding<K,T>>) -> Dictionary<K,T> {
@@ -13,6 +13,7 @@ factory method dictionary<K,T> {
       
       for (initialBindings) do { b -> at(b.key)put(b.value) }
       
+      method book { book' }
       method at(key:K)put(value:T) -> Dictionary<K,T>{ 
         count' := book.insert(p.page(key,value))
         self
@@ -60,12 +61,12 @@ factory method dictionary<K,T> {
           method next { pageList.next.value }
         }
       }
-      method bindings -> Iterator<Binding<K,T>>{ }
-      method keysAndValuesDo(action:Block2<K,T,Done>) -> Done{ }
+      method bindings -> Iterator<Binding<K,T>>{ book.iterator }
+      method keysAndValuesDo(action:Block2<K,T,Done>) -> Done{ book.keysAndValuesDo(action) }
       method keysDo(action:Block1<K,Done>) -> Done{ }
       method valuesDo(action:Block1<T,Done>) -> Done{ }
       method do(action:Block1<T,Done>) -> Done{ }
-      method ==(other:Object) -> Boolean{ }
+      method ==(other:Object) -> Boolean{ book.isEqual(other.book) }
       method copy -> Dictionary<K,T>{ print("this works") }
     }
   }
@@ -79,7 +80,7 @@ def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3,
 //print(oneToFive.containsKey("one"))
 //print(oneToFive.containsValue(1))
 //print(oneToFive.at("four"))
-def l = oneToFive.values
+//def l = oneToFive.values
 //print(l.current)
 //print(l.next)
 //print(l.next)
@@ -88,9 +89,9 @@ def l = oneToFive.values
 //print(l.next)
 //print(l.hasNext)
 //print(l.next)
-while{l.hasNext} do {
-  print(l.next)
-}
+//while{l.hasNext} do {
+//  print(l.next)
+//}
 //print(oneToFive.keys.next)
 //oneToFive.copy
 //print(evens.count)
