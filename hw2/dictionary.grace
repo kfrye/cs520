@@ -25,17 +25,41 @@ factory method dictionary<K,T> {
       method isEmpty -> Boolean { }
       method containsKey(k:K) -> Boolean{ book.keyExists(k) }
       method containsValue(v:T) -> Boolean{ book.valueExists(v) }
-      method at(key:K)ifAbsent(action:Block0<Unknown>) -> Unknown{ }
+      
+      method at(key:K)ifAbsent(action:Block0<Unknown>) -> Unknown {
+        if(containsKey(key)) then { at(key) }
+        else { action.apply }
+      }
   
-      method []:=(k:K, v:T) -> Done{ }
-      method at(k:K) -> T{ }
-      method [](k:K) -> T{ }
+      method []:=(k:K, v:T) -> Done { 
+        at(k)put(v) 
+        done
+      }
+      
+      method at(k:K) -> T { book.get(k) }
+      method [](k:K) -> T{ book.get(k) }
       method removeAllKeys(keys:Collection<K>) -> Dictionary<K,T>{ }
       method removeKey(*keys:K) -> Dictionary<K,T>{ }
       method removeAllValues(removals:Collection<T>) -> Dictionary<K,T>{ }
       method removeValue(*removals:T) -> Dictionary<K,T>{ }
-      method keys -> Iterator<K>{ }
-      method values -> Iterator<T>{ }
+      method keys -> Iterator<K>{
+        object {
+          inherits iterable.trait
+          def pageList = book.iterator
+          method havemore { pageList.havemore }
+          method hasNext { pageList.havemore }
+          method next { pageList.next.key }
+        }
+      }
+      method values -> Iterator<T>{ 
+        object {
+          inherits iterable.trait
+          def pageList = book.iterator
+          method havemore { pageList.havemore }
+          method hasNext { pageList.havemore }
+          method next { pageList.next.value }
+        }
+      }
       method bindings -> Iterator<Binding<K,T>>{ }
       method keysAndValuesDo(action:Block2<K,T,Done>) -> Done{ }
       method keysDo(action:Block1<K,Done>) -> Done{ }
@@ -51,9 +75,23 @@ def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3,
     "four"::4, "five"::5)
 //def evens = dictionary.with("two"::2, "four"::4, "six"::6, "eight"::8)
 //def empty = dictionary.empty
-print(oneToFive.count)
-print(oneToFive.containsKey("one"))
-print(oneToFive.containsValue(1))
+//print(oneToFive.count)
+//print(oneToFive.containsKey("one"))
+//print(oneToFive.containsValue(1))
+//print(oneToFive.at("four"))
+def l = oneToFive.values
+//print(l.current)
+//print(l.next)
+//print(l.next)
+//print(l.next)
+//print(l.next)
+//print(l.next)
+//print(l.hasNext)
+//print(l.next)
+while{l.hasNext} do {
+  print(l.next)
+}
+//print(oneToFive.keys.next)
 //oneToFive.copy
 //print(evens.count)
 //print(empty.count)
