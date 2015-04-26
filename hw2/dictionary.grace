@@ -80,15 +80,10 @@ factory method dictionary<K,T> {
       method valuesDo(action:Block1<T,Done>) -> Done{ book.valuesDo(action) }
       method do(action:Block1<T,Done>) -> Done{ valuesDo(action) }
       method ==(other:Object) -> Boolean{ book.isEqual(other.book) }
-<<<<<<< HEAD
-      method copy -> Dictionary<K,T>{ 
-        def newDict = dictionary.empty
-=======
       method copy -> Dictionary<K,T>{ print("this works") }
       method asString {
         def returnString = book.asString
         "dict⟬"++ (returnString).substringFrom(1) to (returnString.size - 2) ++ "⟭"
->>>>>>> 500d5e71760de6894a7bca8d089048fb2457056d
         
       }
     }
