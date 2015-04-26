@@ -22,7 +22,7 @@ factory method binaryTree {
       var firstNode
       var triggerPrev
       
-      method iterator {
+      method iterator { 
         setNextInTree
         resetCurrent
         self
@@ -114,6 +114,9 @@ factory method binaryTree {
       method havemore { hasNext }
       
       method next { 
+        if (currentPos' >= count) then { 
+          Exhausted.raise "over {count}"
+        }
         if(currentPos' != 0) then { currentNode' := currentNode'.next }
         currentPos' := currentPos' + 1
         return currentNode'
