@@ -93,7 +93,7 @@ factory method binaryTree {
         if(node.empty) then { return }
         traverseList(node.left)
         
-        print(node.key)
+        //print(node.key)
         traverseList(node.right)
       }
       
@@ -139,11 +139,11 @@ factory method binaryTree {
         }
         
         var tempNode
-        if(node.page < obj) then {
+        if(obj < node.page) then {
           tempNode := insertNode(node.left, obj)
           node.setLeft(tempNode)
         }
-        elseif(node.page > obj) then {
+        elseif(obj > node.page) then {
           tempNode := insertNode(node.right, obj)
           node.setRight(tempNode)
         }
@@ -240,10 +240,22 @@ factory method binaryTree {
       method tempPrint {
         print (root)
       }
-      method asString {"A binary tree"}
+      method asString {
+        toString(root)
+        
+      }
+      
+      method toString(node:Node) {
+        if (node.empty) then {
+          return ""
+        }
+        
+        return (toString(node.left) ++ node.asString ++ toString(node.right))
+      }
       
       method removeKey (obj:Object) {
         if (size > 0) then {
+          //print ("removing by key {obj}")
           root := removeKeyRecursive(root, obj)
           count' := count' - 1
         }
@@ -251,7 +263,9 @@ factory method binaryTree {
 
       method removeKeyRecursive (node:Node, obj:Object) {
         if (node.empty) then { return emptyNode } 
-        elseif(obj == node.key) then { 
+        //print ("considering key {node.key}")
+        if(obj == node.key) then { 
+          //print ("key found")
           if (node.leaf) then { return emptyNode }
           if (node.emptyLeft) then { return node.right }
           if (node.emptyRight ) then { return node.left }
@@ -264,15 +278,36 @@ factory method binaryTree {
 
         }
         elseif(obj < node.key) then { 
+          //print ("search left")
           node.setLeft(removeKeyRecursive(node.left, obj)) 
           return node
         }
         else { 
+          //print("search right")
           node.setRight(removeKeyRecursive(node.right, obj)) 
           return node
         }
+        EnvironmentException.raise "Recursive error"
       }
       
+      method removeValue (obj:Object) {
+        //print("find and remove {obj}")
+        findAndRemove(root, obj)
+      }
+      method findAndRemove (node, value:Object) {
+        if (node.empty) then {
+          return
+        }
+        
+        findAndRemove(node.left, value)
+        if (node.value == value) then {
+          removeKey(node.key)
+          //print ("value found and removed")
+          //print (self.asString)
+          return
+        }
+        findAndRemove(node.right, value)
+      }
       method smallestNode (node:Node) {
         if (node.emptyLeft) then {
           return node
@@ -313,12 +348,13 @@ class bookNode.new(newVal:p.Page) -> Node {
   }
   method empty { page.empty }
   method update (val:p.Page) { page' := val }
-  method asString { "booknode with page: {value}"}
+  method asString { page.asString }
   method copyValue { page.copy }
   method leaf { return (left.empty && right.empty)}
   method emptyLeft { return (left.empty) }
   method emptyRight { return (right.empty) }
   method setPage (obj) { page' := obj }
+  method data (obj) {setPage(obj)}
 }
 
 class emptyNode -> Node {
@@ -343,10 +379,10 @@ treeTest.insert(p10)
 treeTest.insert(p11)
 treeTest.insert(p9)
 
-print (treeTest.listAll)
+//print (treeTest)
 
 treeTest.removeKey(10)
-print (treeTest.listAll)
+//print (treeTest)
 //treeTest.printTree
 //var treeCopy := binaryTree.new
 //treeCopy.insert(p10.copy)
