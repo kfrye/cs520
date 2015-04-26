@@ -111,11 +111,9 @@ def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3,
 //  print(l.next)
 //}
 //print(oneToFive.keys.next)
-<<<<<<< HEAD
 //oneToFive.copy
 //print(evens.count)
 //print(empty.count)
-=======
 //print(oneToFive.count)
 //print(oneToFive.containsKey("one"))
 //print(oneToFive.containsValue(1))
@@ -132,4 +130,3 @@ def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3,
 //evens.removeValue(4)
 //print (evens.containsKey("six"))
 //print(evens)
->>>>>>> 500d5e71760de6894a7bca8d089048fb2457056d
