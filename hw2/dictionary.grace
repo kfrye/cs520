@@ -26,13 +26,21 @@ factory method dictionary<K,T> {
       method isEmpty -> Boolean { }
       method containsKey(k:K) -> Boolean{ book.keyExists(k) }
       method containsValue(v:T) -> Boolean{ book.valueExists(v) }
-      method at(key:K)ifAbsent(action:Block0<Unknown>) -> Unknown{ }
+      
+      method at(key:K)ifAbsent(action:Block0<Unknown>) -> Unknown {
+        if(containsKey(key)) then { at(key) }
+        else { action.apply }
+      }
   
-      method []:=(k:K, v:T) -> Done{ }
-      method at(k:K) -> T{ }
-      method [](k:K) -> T{ }
-      method removeAllKeys(keys:Collection<K>) -> Dictionary<K,T>{ book = bt.binaryTree.new }
-      method removeKey(*keys:K) -> Dictionary<K,T>{  }
+      method []:=(k:K, v:T) -> Done { 
+        at(k)put(v) 
+        done
+      }
+      
+      method at(k:K) -> T { book.get(k) }
+      method [](k:K) -> T{ book.get(k) }
+      method removeAllKeys(keys:Collection<K>) -> Dictionary<K,T>{ }
+      method removeKey(*keys:K) -> Dictionary<K,T>{ }
       method removeAllValues(removals:Collection<T>) -> Dictionary<K,T>{ }
       method removeValue(*removals:T) -> Dictionary<K,T>{ }
       method keys -> Iterator<K>{
@@ -55,11 +63,14 @@ factory method dictionary<K,T> {
       }
       method bindings -> Iterator<Binding<K,T>>{ book.iterator }
       method keysAndValuesDo(action:Block2<K,T,Done>) -> Done{ book.keysAndValuesDo(action) }
-      method keysDo(action:Block1<K,Done>) -> Done{ }
-      method valuesDo(action:Block1<T,Done>) -> Done{ }
-      method do(action:Block1<T,Done>) -> Done{ }
+      method keysDo(action:Block1<K,Done>) -> Done{ book.keysDo(action) }
+      method valuesDo(action:Block1<T,Done>) -> Done{ book.valuesDo(action) }
+      method do(action:Block1<T,Done>) -> Done{ valuesDo(action) }
       method ==(other:Object) -> Boolean{ book.isEqual(other.book) }
-      method copy -> Dictionary<K,T>{ print("this works") }
+      method copy -> Dictionary<K,T>{ 
+        def newDict = dictionary.empty
+        
+      }
     }
   }
 }
@@ -68,7 +79,6 @@ def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3,
     "four"::4, "five"::5)
 //def evens = dictionary.with("two"::2, "four"::4, "six"::6, "eight"::8)
 //def empty = dictionary.empty
-<<<<<<< HEAD
 //print(oneToFive.count)
 //print(oneToFive.containsKey("one"))
 //print(oneToFive.containsValue(1))
@@ -86,11 +96,6 @@ def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3,
 //  print(l.next)
 //}
 //print(oneToFive.keys.next)
-=======
-print(oneToFive.count)
-print(oneToFive.containsKey("one"))
-print(oneToFive.containsValue(1))
->>>>>>> 69fb4b20eaf6879384d435d114e4a246c4cdf441
 //oneToFive.copy
 //print(evens.count)
 //print(empty.count)

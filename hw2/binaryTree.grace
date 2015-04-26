@@ -25,7 +25,6 @@ factory method binaryTree {
       var currentNode' := root
       var currentPos' := 0
       var prevNode
-      var firstNode
       var triggerPrev
       
       method iterator {
@@ -86,6 +85,22 @@ factory method binaryTree {
         while{all.hasNext} do {
           var node := all.next
           action.apply(node.key, node.value)
+        }
+      }
+      
+      method keysDo(action) {
+        def all = iterator
+        while{all.hasNext} do {
+          var node := all.next
+          action.apply(node.key)
+        }
+      }
+      
+      method valuesDo(action) {
+        def all = iterator
+        while{all.hasNext} do {
+          var node := all.next
+          action.apply(node.value)
         }
       }
       
@@ -204,7 +219,10 @@ factory method binaryTree {
       }
       
       method copy -> Book {
-        binaryTree.copy(root)
+        def all = iterator
+        def bookCopy = binaryTree.new
+        while{all.hasNext} do { bookCopy.insert(all.next.page.copy) }
+        bookCopy
       }
       
       method copyRoot(oldRoot:Node) -> Done {

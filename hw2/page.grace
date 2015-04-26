@@ -9,32 +9,25 @@ type Page = {
   >  (other:page) -> Boolean 
   <  (other:Object) -> Boolean 
   <= (other:Object) -> Boolean 
-  []:=(other:page) -> Done
 }
 
-class page (key':Object, value':Object) -> Page {
+class page (key', value') -> Page {
   method empty -> Boolean { false }
   method notEmpty -> Boolean { !empty }
-  method key { 
-    return key' 
-  }
+  method key { key' }
   method value { value' }
   method copy -> Page { page(key, value) }
   method asString { "key: {key}, value: {value}" }
-  method == (other:page) ->   Boolean { 
-    (self.key == other.key)  && (self.value == other.value)
+  method == (other:page) -> Boolean { 
+    (other.key == self.key)  && (other.value == self.value)
   }
   method != (other:page) -> Boolean { 
-    (self.key != other.key) || (self.value != other.value)
+    (other.key != self.key) || (other.value != self.value)
   }
-  method >= (other:page) ->   Boolean { (self.key >= other.key) }
-  method >  (other:page) ->   Boolean { (self.key >  other.key) }
-  method <  (other:Object) -> Boolean { (self.key <  other.key) }
-  method <= (other:Object) -> Boolean { (self.key <= other.key) }
-  method []:=(other:page) -> Done { 
-    self.key := other.key
-    self.value := other.value 
-  }
+  method >= (other:page) -> Boolean { (other.key >= self.key) }
+  method >  (other:page) -> Boolean { (other.key > self.key) }
+  method <  (other:Object) -> Boolean { (other.key < self.key) }
+  method <= (other:Object) -> Boolean { (other.key <= self.key) }
 }
 
 class emptyPage -> Page {
@@ -48,5 +41,4 @@ class emptyPage -> Page {
   method >  (other:page) -> Boolean {EnvironmentException.raise "The Page is empty"}
   method <  (other:Object) -> Boolean {EnvironmentException.raise "The Page is empty"}
   method <= (other:Object) -> Boolean {EnvironmentException.raise "The Page is empty"}
-  method []:=(other:page) -> Done { EnvironmentException.raise "The Page is empty" }
 }
