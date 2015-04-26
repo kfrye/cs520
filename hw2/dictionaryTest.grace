@@ -109,6 +109,11 @@ def dictionaryTest = object {
             assert (evens.values.onto(sP.set)) shouldBe (sP.set.with(4, 6, 8))
         }
         
+        method testDictionaryEqualityFive {
+            assert(oneToFive == dictionary.with("one"::1, "two"::2, "three"::3,
+                "four"::4, "five"::5))
+        }
+        
         method testDictionaryRemoveValue4 {
             assert (evens.size == 4) description "evens doesn't contain 4 elements"
             evens.removeValue(4)
