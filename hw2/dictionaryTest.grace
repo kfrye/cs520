@@ -15,30 +15,6 @@ def dictionaryTest = object {
             assert(evens.size) shouldBe 4
         }
         
-        method testDictionaryKeysAndValuesDo {
-            def accum = dictionary.empty
-            var n := 1
-            oneToFive.keysAndValuesDo { k, v ->
-                accum.at(k)put(v)
-                assert (accum.size) shouldBe (n)
-                n := n + 1
-            }
-            assert(accum) shouldBe (oneToFive)
-        }
-        
-        method testDictionaryEmptyBindingsIterator {
-            deny (empty.bindings.havemore) description "the empty iterator has elements"
-        }
-        
-        method testDictionaryEvensBindingsIterator {
-            def ei = evens.bindings
-            assert (evens.size == 4) description "evens doesn't contain 4 elements!"
-            assert (ei.havemore) description "the evens iterator has no elements"
-            def copyDict = dictionary.with(ei.next, ei.next, ei.next, ei.next)
-            deny (ei.havemore) description "the evens iterator has more than 4 elements"
-            assert (copyDict) shouldBe (evens)
-        }
-        
         method testDictionarySizeAfterRemove {
             oneToFive.removeKey "one"
             deny(oneToFive.containsKey "one") description "\"one\" still present"
@@ -64,6 +40,75 @@ def dictionaryTest = object {
                 description "\"{dStr}\" should be \"dict⟬one::1, two::2⟭\""
         }
         
+        method testAsStringEmpty {
+            assert(empty.asString) shouldBe "dict⟬⟭"
+        }
+
+        method testDictionaryEmptyDo {
+            empty.do {each -> failBecause "emptySet.do did with {each}"}
+        }
+        
+        method testDictionaryEqualityEmpty {
+            assert(empty == dictionary.empty)
+            deny(empty != dictionary.empty)
+        }
+        
+        method testDictionaryInequalityEmpty {
+            deny(empty == dictionary.with("one"::1)) 
+                description "empty dictionary equals non-empty dictionary with \"one\"::1"
+            assert(empty != dictionary.with("two"::2))
+                description "empty dictionary equals non-empty dictionary with \"two\"::2"
+            deny(empty == 3)
+            deny(empty == evens)
+        }
+        
+        method testDictionaryInequalityFive {
+            evens.at "ten" put 10
+            assert(evens.size == oneToFive.size) description "evens.size should be 5"
+            deny(oneToFive == evens)
+            assert(oneToFive != evens)
+        }
+        
+        method testDictionaryEqualityFive {
+            assert(oneToFive == dictionary.with("one"::1, "two"::2, "three"::3,
+                "four"::4, "five"::5))
+        }
+        
+        method testDictionaryKeysAndValuesDo {
+            def accum = dictionary.empty
+            var n := 1
+            oneToFive.keysAndValuesDo { k, v ->
+                accum.at(k)put(v)
+                assert (accum.size) shouldBe (n)
+                n := n + 1
+            }
+            assert(accum) shouldBe (oneToFive)
+        }
+        
+        method testDictionaryEmptyBindingsIterator {
+            deny (empty.bindings.havemore) description "the empty iterator has elements"
+        }
+        
+        method testDictionaryEvensBindingsIterator {
+            def ei = evens.bindings
+            assert (evens.size == 4) description "evens doesn't contain 4 elements!"
+            assert (ei.havemore) description "the evens iterator has no elements"
+            def copyDict = dictionary.with(ei.next, ei.next, ei.next, ei.next)
+            deny (ei.havemore) description "the evens iterator has more than 4 elements"
+            assert (copyDict) shouldBe (evens)
+        }
+        
+        method testDictionaryAdd {
+            assert (empty.at "nine" put(9)) 
+                shouldBe (dictionary.with("nine"::9))
+            //assert (evens.at "ten" put(10).values.onto(set)) shouldBe (set.with(2, 4, 6, 8, 10))
+        }
+        
+        method testDictionaryRemoveKeyTwo {
+            //assert (evens.removeKey "two".values.onto(set)) shouldBe (set.with(4, 6, 8))
+            //assert (evens.values.onto(set)) shouldBe (set.with(4, 6, 8))
+        }
+
         method testDictionaryRemoveValue4 {
             assert (evens.size == 4) description "evens doesn't contain 4 elements"
             evens.removeValue(4)
@@ -81,6 +126,127 @@ def dictionaryTest = object {
         method testDictionaryRemoveMultiple {
             evens.removeValue(4, 6, 8)
             assert (evens) shouldBe (dictionary.at"two"put(2))
+        }
+        
+        method testDictionaryRemove5 {
+            //assert {evens.removeKey(5)} shouldRaise (NoSuchObject)
+        }
+        
+        method testDictionaryRemoveKeyFive {
+            //assert {evens.removeKey("Five")} shouldRaise (NoSuchObject)
+        }
+        
+        method testDictionaryChaining {        
+            oneToFive.at "eleven" put(11).at "twelve" put(12).at "thirteen" put(13)
+            //assert (oneToFive.values.onto(set)) shouldBe (set.with(1, 2, 3, 4, 5, 11, 12, 13))
+        }
+        
+        method testDictionaryPushAndExpand {
+            evens.removeKey "two"
+            evens.removeKey "four"
+            evens.removeKey "six"
+            evens.at "ten" put(10)
+            evens.at "twelve" put(12)
+            evens.at "fourteen" put(14)
+            evens.at "sixteen" put(16)
+            evens.at "eighteen" put(18)
+            evens.at "twenty" put(20)
+            //assert (evens.values.onto(set)) 
+            //    shouldBe (set.with(8, 10, 12, 14, 16, 18, 20))
+        }
+        
+        method testDictionaryFold {
+            assert(oneToFive.fold{a, each -> a + each}startingWith(5))shouldBe(20)
+            assert(evens.fold{a, each -> a + each}startingWith(0))shouldBe(20)        
+            assert(empty.fold{a, each -> a + each}startingWith(17))shouldBe(17)
+        }
+        
+        method testDictionaryDoSeparatedBy {
+            var s := ""
+            evens.removeValue(2, 4)
+            evens.do { each -> s := s ++ each.asString } separatedBy { s := s ++ ", " }
+            assert ((s == "6, 8") || (s == "8, 6")) 
+                description "{s} should be \"8, 6\" or \"6, 8\""
+        }
+        
+        method testDictionaryDoSeparatedByEmpty {
+            var s := "nothing"
+            empty.do { failBecause "do did when list is empty" }
+                separatedBy { s := "kilroy" }
+            assert (s) shouldBe ("nothing")
+        }
+        
+        method testDictionaryDoSeparatedBySingleton {
+            var s := "nothing"
+            //set.with(1).do { each -> assert(each)shouldBe(1) } 
+            //    separatedBy { s := "kilroy" }
+            assert (s) shouldBe ("nothing")
+        }
+
+        method testDictionaryAsStringNonEmpty {
+            evens.removeValue(6, 8)
+            assert ((evens.asString == "dict⟬two::2, four::4⟭") ||
+                        (evens.asString == "dict⟬four::4, two::2⟭"))
+                        description "evens.asString = {evens.asString}"
+        }
+        
+        method testDictionaryAsStringEmpty {
+            assert (empty.asString) shouldBe ("dict⟬⟭")
+        }
+
+        method testDictionaryMapEmpty {
+            //assert (empty.map{x -> x * x}.onto(set)) shouldBe (set.empty)
+        }
+        
+        method testDictionaryMapEvens {
+            //assert(evens.map{x -> x + 1}.onto(set)) shouldBe (set.with(3, 5, 7, 9))
+        }
+
+        method testDictionaryMapEvensInto {
+            //assert(evens.map{x -> x + 10}.into(set.withAll(evens)))
+            //    shouldBe (set.with(2, 4, 6, 8, 12, 14, 16, 18))
+        }
+
+        method testDictionaryFilterNone {
+            deny(oneToFive.filter{x -> false}.havemore)
+        }
+        
+        method testDictionaryFilterEmpty {
+            deny(empty.filter{x -> (x % 2) == 1}.havemore)
+        }
+
+        method testDictionaryFilterOdd {
+            //assert(oneToFive.filter{x -> (x % 2) == 1}.onto(set))
+            //    shouldBe (set.with(1, 3, 5))
+        }
+        
+        method testDictionaryMapAndFilter {
+            //assert(oneToFive.map{x -> x + 10}.filter{x -> (x % 2) == 1}.onto(set))
+            //    shouldBe (set.with(11, 13, 15))
+        }
+        method testDictionaryBindings {
+            //assert(oneToFive.bindings.onto(set)) shouldBe (
+            //    set.with("one"::1, "two"::2, "three"::3, "four"::4, "five"::5))
+        }
+        method testDictionaryKeys {
+            //assert(oneToFive.keys.onto(set)) shouldBe (
+            //    set.with("one", "two", "three", "four", "five") )
+        }
+        method testDictionaryValues {
+            //assert(oneToFive.values.onto(set)) shouldBe (
+            //    set.with(1, 2, 3, 4, 5) )
+        }
+        
+        method testDictionaryCopy {
+            def evensCopy = evens.copy
+            evens.removeKey("two")
+            evens.removeValue(4)
+            assert (evens.size) shouldBe 2
+            assert (evensCopy) shouldBe (dictionary.with("two"::2, "four"::4, "six"::6, "eight"::8))
+        }
+        
+        method testDictionaryAsDictionary {
+            assert(evens.asDictionary) shouldBe (evens)
         }
     }
 }

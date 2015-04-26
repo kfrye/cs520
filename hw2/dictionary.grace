@@ -79,8 +79,24 @@ factory method dictionary<K,T> {
       method keysDo(action:Block1<K,Done>) -> Done{ book.keysDo(action) }
       method valuesDo(action:Block1<T,Done>) -> Done{ book.valuesDo(action) }
       method do(action:Block1<T,Done>) -> Done{ valuesDo(action) }
-      method ==(other:Object) -> Boolean{ book.isEqual(other.book) }
-      method copy -> Dictionary<K,T>{ print("this works") }
+      
+      method ==(other:Object) -> Boolean{ 
+        match (other)
+          case {o:Dictionary ->
+            book.isEqual(other.book) 
+          } 
+          case {_ ->
+            false
+          }
+      }
+      // Stolen from collectionsPrelude
+      method copy -> Dictionary<K,T>{ 
+        def newDict = dictionary.empty
+        book.keysAndValuesDo{ k, v ->
+          newDict.at(k)put(v)
+        }
+        newDict
+      }
       method asString {
         def returnString = book.asString
         "dict⟬"++ (returnString).substringFrom(1) to (returnString.size - 2) ++ "⟭"
@@ -90,15 +106,16 @@ factory method dictionary<K,T> {
   }
 }
 
-def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3, 
-    "four"::4, "five"::5)
+//def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3, 
+//    "four"::4, "five"::5)
+//def oneToFiveCopy = oneToFive.copy 
 //def evens = dictionary.with("two"::2, "four"::4, "six"::6, "eight"::8)
 //def empty = dictionary.empty
 //print(oneToFive.count)
 //print(oneToFive.containsKey("one"))
 //print(oneToFive.containsValue(1))
 //print(oneToFive.at("four"))
-//def l = oneToFive.values
+//var l := oneToFiveCopy.values
 //print(l.current)
 //print(l.next)
 //print(l.next)
@@ -110,12 +127,7 @@ def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3,
 //while{l.hasNext} do {
 //  print(l.next)
 //}
-//print(oneToFive.keys.next)
-<<<<<<< HEAD
-//oneToFive.copy
-//print(evens.count)
-//print(empty.count)
-=======
+
 //print(oneToFive.count)
 //print(oneToFive.containsKey("one"))
 //print(oneToFive.containsValue(1))
@@ -132,4 +144,3 @@ def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3,
 //evens.removeValue(4)
 //print (evens.containsKey("six"))
 //print(evens)
->>>>>>> 500d5e71760de6894a7bca8d089048fb2457056d

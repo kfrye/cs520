@@ -12,12 +12,6 @@ factory method binaryTree {
   var root:Node := emptyNode
   var count' := 0
   
-  method copy(oldRoot:Node) -> Book {
-    var newTree := binaryTree.new
-    newTree.copyRoot(oldRoot)
-    return newTree
-  }
-  
   method new -> Book {
     object {
       inherits iterable.trait
@@ -71,7 +65,6 @@ factory method binaryTree {
       
       method isEqual(other:Book) {
         var otherList := other.iterator
-        
         while{otherList.hasNext} do {
           if(!pageExists(otherList.next.page)) then { 
             return false 
@@ -108,7 +101,7 @@ factory method binaryTree {
         if(node.empty) then { return }
         traverseList(node.left)
         
-        //print(node.key)
+        print(node.key)
         traverseList(node.right)
       }
       
@@ -218,34 +211,12 @@ factory method binaryTree {
         else { keyExistsNode(node.right, obj) }
       }
       
-      method copy -> Book {
-        def all = iterator
-        def bookCopy = binaryTree.new
-        while{all.hasNext} do { bookCopy.insert(all.next.page.copy) }
-        bookCopy
-      }
-      
-      method copyRoot(oldRoot:Node) -> Done {
-        root := bookNode.new(oldRoot.copyValue)
-        copyNode(root, oldRoot)
-      }
-      
-      method copyNode(newNode:Node, oldNode:Node) -> Node {
-        if(oldNode.empty) then { return newNode }
-        count' := count + 1
-        def newLeft = bookNode.new(oldNode.left.copyValue)
-        newNode.setLeft(copyNode(newLeft, oldNode.left))
-        def newRight = bookNode.new(oldNode.right.copyValue)
-        newNode.setRight(copyNode(newRight, oldNode.right))
-        return newNode
-      }
-      
       method recPrint(aNode:Node) {
         if (aNode.empty) then {
           return
         } else {
-          print (aNode)
           recPrint(aNode.left)
+          print (aNode)
           recPrint(aNode.right)
         }
       }
@@ -391,26 +362,29 @@ class emptyNode -> Node {
 }
 
 //test script
-var p10:= p.page(10, "test10")
-var p9:= p.page(9, "test9")
-var p11:= p.page(11, "test11")
+//var p10:= p.page(10, "test10")
+//var p9:= p.page(9, "test9")
+//var p11:= p.page(11, "test11")
 //var p8:= p.page(8, "test8")
 //var p12 := p.page(12, "test12")
-var treeTest := binaryTree.new
-treeTest.insert(p10)
+//var treeTest := binaryTree.new
+//treeTest.insert(p10)
 //treeTest.insert(p8)
-treeTest.insert(p11)
-treeTest.insert(p9)
-
+//treeTest.insert(p11)
+//treeTest.insert(p9)
+//treeTest.insert(p12)
 //print (treeTest)
 
-treeTest.removeKey(10)
+//treeTest.removeKey(10)
 //print (treeTest)
 //treeTest.printTree
+//treeTest.traverseList(treeTest.getRoot)
 //var treeCopy := binaryTree.new
 //treeCopy.insert(p10.copy)
 //treeCopy.insert(p9.copy)
 //treeCopy.insert(p11.copy)
+//treeCopy.insert(p12.copy)
+//treeCopy.insert(p8.copy)
 //treeCopy.printTree
 
 //print(treeCopy.isEqual(treeTest))
