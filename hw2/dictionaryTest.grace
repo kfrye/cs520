@@ -64,6 +64,52 @@ def dictionaryTest = object {
                 description "\"{dStr}\" should be \"dict⟬one::1, two::2⟭\""
         }
         
+        method testAsStringEmpty {
+            assert(empty.asString) shouldBe "dict⟬⟭"
+        }
+        
+        method testDictionaryEmptyDo {
+            empty.do {each -> failBecause "emptySet.do did with {each}"}
+        }
+        
+        method testDictionaryEqualityEmpty {
+            assert(empty == dictionary.empty)
+            deny(empty != dictionary.empty)
+        }
+        
+        method testDictionaryInequalityEmpty {
+            deny(empty == dictionary.with("one"::1)) 
+                description "empty dictionary equals non-empty dictionary with \"one\"::1"
+            assert(empty != dictionary.with("two"::2))
+                description "empty dictionary equals non-empty dictionary with \"two\"::2"
+            deny(empty == 3)
+            deny(empty == evens)
+        }
+        
+        method testDictionaryInequalityFive {
+            evens.at "ten" put 10
+            assert(evens.size == oneToFive.size) description "evens.size should be 5"
+            deny(oneToFive == evens)
+            assert(oneToFive != evens)
+        }
+        
+        method testDictionaryEqualityFive {
+            assert(oneToFive == dictionary.with("one"::1, "two"::2, "three"::3,
+                "four"::4, "five"::5))
+        }
+        
+        
+        method testDictionaryAdd {
+            assert (empty.at "nine" put(9)) 
+                shouldBe (dictionary.with("nine"::9))
+            //assert (evens.at "ten" put(10).values.onto(set)) shouldBe (set.with(2, 4, 6, 8, 10))
+        }
+        
+        method testDictionaryRemoveKeyTwo {
+            //assert (evens.removeKey "two".values.onto(set)) shouldBe (set.with(4, 6, 8))
+            //assert (evens.values.onto(set)) shouldBe (set.with(4, 6, 8))
+        }
+        
         method testDictionaryRemoveValue4 {
             assert (evens.size == 4) description "evens doesn't contain 4 elements"
             evens.removeValue(4)
@@ -81,6 +127,33 @@ def dictionaryTest = object {
         method testDictionaryRemoveMultiple {
             evens.removeValue(4, 6, 8)
             assert (evens) shouldBe (dictionary.at"two"put(2))
+        }
+        
+        method testDictionaryRemove5 {
+            //assert {evens.removeKey(5)} shouldRaise (NoSuchObject)
+        }
+        
+        method testDictionaryRemoveKeyFive {
+            //assert {evens.removeKey("Five")} shouldRaise (NoSuchObject)
+        }
+        
+        method testDictionaryChaining {        
+            oneToFive.at "eleven" put(11).at "twelve" put(12).at "thirteen" put(13)
+            //assert (oneToFive.values.onto(set)) shouldBe (set.with(1, 2, 3, 4, 5, 11, 12, 13))
+        }
+        
+        method testDictionaryPushAndExpand {
+            evens.removeKey "two"
+            evens.removeKey "four"
+            evens.removeKey "six"
+            evens.at "ten" put(10)
+            evens.at "twelve" put(12)
+            evens.at "fourteen" put(14)
+            evens.at "sixteen" put(16)
+            evens.at "eighteen" put(18)
+            evens.at "twenty" put(20)
+            //assert (evens.values.onto(set)) 
+            //    shouldBe (set.with(8, 10, 12, 14, 16, 18, 20))
         }
     }
 }

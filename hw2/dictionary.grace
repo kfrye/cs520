@@ -29,7 +29,7 @@ factory method dictionary<K,T> {
       method isEmpty -> Boolean { }
       method containsKey(k:K) -> Boolean{ book.keyExists(k) }
       method containsValue(v:T) -> Boolean{ book.valueExists(v) }
-      
+  
       method at(key:K)ifAbsent(action:Block0<Unknown>) -> Unknown {
         if(containsKey(key)) then { at(key) }
         else { action.apply }
@@ -79,7 +79,17 @@ factory method dictionary<K,T> {
       method keysDo(action:Block1<K,Done>) -> Done{ book.keysDo(action) }
       method valuesDo(action:Block1<T,Done>) -> Done{ book.valuesDo(action) }
       method do(action:Block1<T,Done>) -> Done{ valuesDo(action) }
-      method ==(other:Object) -> Boolean{ book.isEqual(other.book) }
+      method ==(other:Object) -> Boolean{ 
+        match (other)
+                    case {o:Dictionary ->
+                        if (self.size != o.size) then {return false}
+                        
+                        return book.isEqual(other.book)
+                    } 
+                    case {_ ->
+                        return false
+                    }
+      }
       method copy -> Dictionary<K,T>{ print("this works") }
       method asString {
         def returnString = book.asString

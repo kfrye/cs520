@@ -25,6 +25,7 @@ factory method binaryTree {
       var currentNode' := root
       var currentPos' := 0
       var prevNode
+      var firstNode
       var triggerPrev
       
       method iterator {
@@ -103,7 +104,7 @@ factory method binaryTree {
           action.apply(node.value)
         }
       }
-      
+
       method traverseList(node:Node) {
         if(node.empty) then { return }
         traverseList(node.left)
