@@ -174,7 +174,7 @@ factory method binaryTree {
       }
       
       method getNode(node:Node, obj) -> Unknown {
-        if(node.empty) then { Exception.raise "{obj} not found" }
+        if(node.empty) then { NoSuchObject.raise "{obj} not found" }
         elseif(obj == node.key) then { node.value }
         elseif(obj < node.key) then { getNode(node.left, obj) }
         else { getNode(node.right, obj) }
@@ -253,11 +253,11 @@ factory method binaryTree {
           //print ("removing by key {obj}")
           root := removeKeyRecursive(root, obj)
           count' := count' - 1
-        }
+        } else { NoSuchObject.raise }
       }
 
       method removeKeyRecursive (node:Node, obj:Object) {
-        if (node.empty) then { return emptyNode } 
+        if (node.empty) then { NoSuchObject.raise } 
         //print ("considering key {node.key}")
         if(obj == node.key) then { 
           //print ("key found")
