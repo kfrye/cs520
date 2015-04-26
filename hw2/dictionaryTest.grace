@@ -1,4 +1,5 @@
 import "gUnit" as gU
+import "StandardPrelude" as sP
 dialect "dictionary" 
 
 def dictionaryTest = object {
@@ -20,17 +21,16 @@ def dictionaryTest = object {
             var n := 1
             oneToFive.keysAndValuesDo { k, v ->
                 accum.at(k)put(v)
-                assert (accum.size) shouldBe (n)
-                n := n + 1
-            }
+                assert (accum.size) shouldBe (n) 
+                n := n + 1 
+            }   
             assert(accum) shouldBe (oneToFive)
-        }
+        }  
         
-        method testDictionaryEmptyBindingsIterator {
+        method testDictionaryEmptyBindingsIterator {                                                                                                                                           
             deny (empty.bindings.havemore) description "the empty iterator has elements"
         }
-        
-        method testDictionaryEvensBindingsIterator {
+        method testDictionaryEvensBindingsIterator {                                                                                                                                           
             def ei = evens.bindings
             assert (evens.size == 4) description "evens doesn't contain 4 elements!"
             assert (ei.havemore) description "the evens iterator has no elements"
@@ -38,25 +38,24 @@ def dictionaryTest = object {
             deny (ei.havemore) description "the evens iterator has more than 4 elements"
             assert (copyDict) shouldBe (evens)
         }
-        
-        method testDictionarySizeAfterRemove {
+        method testDictionarySizeAfterRemove {                                                                                                                                                 
             oneToFive.removeKey "one"
             deny(oneToFive.containsKey "one") description "\"one\" still present"
             oneToFive.removeKey "two"
             oneToFive.removeKey "three"
             assert(oneToFive.size) shouldBe 2
         }
-        
-        method testDictionaryContentsAfterMultipleRemove {
+        method testDictionaryContentsAfterMultipleRemove {                                                                                                                                     
             oneToFive.removeKey("one", "two", "three")
             assert(oneToFive.size) shouldBe 2
             deny(oneToFive.containsKey "one") description "\"one\" still present"
             deny(oneToFive.containsKey "two") description "\"two\" still present"
             deny(oneToFive.containsKey "three") description "\"three\" still present"
+            print (oneToFive.size)
+            print (oneToFive)
             assert(oneToFive.containsKey "four")
             assert(oneToFive.containsKey "five")
         }
-        
         method testAsString {
             def dict2 = dictionary.with("one"::1, "two"::2)
             def dStr = dict2.asString
@@ -102,12 +101,12 @@ def dictionaryTest = object {
         method testDictionaryAdd {
             assert (empty.at "nine" put(9)) 
                 shouldBe (dictionary.with("nine"::9))
-            //assert (evens.at "ten" put(10).values.onto(set)) shouldBe (set.with(2, 4, 6, 8, 10))
+            assert (evens.at "ten" put(10).values.onto(sP.set)) shouldBe (sP.set.with(2, 4, 6, 8, 10))
         }
         
         method testDictionaryRemoveKeyTwo {
-            //assert (evens.removeKey "two".values.onto(set)) shouldBe (set.with(4, 6, 8))
-            //assert (evens.values.onto(set)) shouldBe (set.with(4, 6, 8))
+            assert (evens.removeKey "two".values.onto(sP.set)) shouldBe (sP.set.with(4, 6, 8))
+            assert (evens.values.onto(sP.set)) shouldBe (sP.set.with(4, 6, 8))
         }
         
         method testDictionaryRemoveValue4 {
@@ -119,9 +118,9 @@ def dictionaryTest = object {
             assert (evens.containsKey "six") description "Can't find key \"six\""
             assert (evens.containsKey "eight") description "Can't find key \"eight\""
             deny (evens.containsKey "four") description "Found key \"four\""
-            //assert (evens.removeValue(4).values.onto(set)) shouldBe (set.with(2, 6, 8))
-            //assert (evens.values.onto(set)) shouldBe (set.with(2, 6, 8))
-            //assert (evens.keys.onto(set)) shouldBe (set.with("two", "six", "eight"))
+            assert (evens.removeValue(4).values.onto(sP.set)) shouldBe (sP.set.with(2, 6, 8))
+            assert (evens.values.onto(sP.set)) shouldBe (sP.set.with(2, 6, 8))
+            assert (evens.keys.onto(sP.set)) shouldBe (sP.set.with("two", "six", "eight"))
         }
         
         method testDictionaryRemoveMultiple {
@@ -130,16 +129,16 @@ def dictionaryTest = object {
         }
         
         method testDictionaryRemove5 {
-            //assert {evens.removeKey(5)} shouldRaise (NoSuchObject)
+            assert {evens.removeKey(5)} shouldRaise (sP.NoSuchObject)
         }
         
         method testDictionaryRemoveKeyFive {
-            //assert {evens.removeKey("Five")} shouldRaise (NoSuchObject)
+            assert {evens.removeKey("Five")} shouldRaise (sP.NoSuchObject)
         }
         
         method testDictionaryChaining {        
             oneToFive.at "eleven" put(11).at "twelve" put(12).at "thirteen" put(13)
-            //assert (oneToFive.values.onto(set)) shouldBe (set.with(1, 2, 3, 4, 5, 11, 12, 13))
+            assert (oneToFive.values.onto(sP.set)) shouldBe (sP.set.with(1, 2, 3, 4, 5, 11, 12, 13))
         }
         
         method testDictionaryPushAndExpand {
@@ -152,9 +151,13 @@ def dictionaryTest = object {
             evens.at "sixteen" put(16)
             evens.at "eighteen" put(18)
             evens.at "twenty" put(20)
-            //assert (evens.values.onto(set)) 
-            //    shouldBe (set.with(8, 10, 12, 14, 16, 18, 20))
+            assert (evens.values.onto(sP.set)) 
+                shouldBe (sP.set.with(8, 10, 12, 14, 16, 18, 20))
         }
+
+
+
+
     }
 }
 

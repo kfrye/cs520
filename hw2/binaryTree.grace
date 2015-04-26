@@ -273,7 +273,9 @@ factory method binaryTree {
       }
       
       method removeKey (obj:Object) {
-        if (size > 0) then {
+        
+        //if (size > 0) then {
+        if (!root.empty) then {
           //print ("removing by key {obj}")
           root := removeKeyRecursive(root, obj)
           count' := count' - 1
@@ -377,7 +379,7 @@ class bookNode.new(newVal:p.Page) -> Node {
   method leaf { return (left.empty && right.empty)}
   method emptyLeft { return (left.empty) }
   method emptyRight { return (right.empty) }
-  method setPage (obj) { page' := obj }
+  method setPage (obj) { page' := p.page(obj.key, obj.value) }
   method data (obj) {setPage(obj)}
 }
 
@@ -403,10 +405,13 @@ treeTest.insert(p10)
 treeTest.insert(p11)
 treeTest.insert(p9)
 
-//print (treeTest)
-
+print (treeTest)
+var nodeTest := bookNode.new(p10)
+print (nodeTest)
+nodeTest.setPage(p11)
+print (nodeTest)
 treeTest.removeKey(10)
-//print (treeTest)
+print (treeTest)
 //treeTest.printTree
 //var treeCopy := binaryTree.new
 //treeCopy.insert(p10.copy)

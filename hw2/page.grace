@@ -24,10 +24,10 @@ class page (key', value') -> Page {
   method != (other:page) -> Boolean { 
     (other.key != self.key) || (other.value != self.value)
   }
-  method >= (other:page) -> Boolean { (other.key >= self.key) }
-  method >  (other:page) -> Boolean { (other.key > self.key) }
-  method <  (other:Object) -> Boolean { (other.key < self.key) }
-  method <= (other:Object) -> Boolean { (other.key <= self.key) }
+  method >= (other:page) -> Boolean { (self.key >= other.key) }
+  method >  (other:page) -> Boolean { ( self.key > other.key) }
+  method <  (other:Object) -> Boolean { (self.key < other.key) }
+  method <= (other:Object) -> Boolean { (self.key <= other.key) }
 }
 
 class emptyPage -> Page {
