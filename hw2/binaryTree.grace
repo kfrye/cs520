@@ -22,7 +22,7 @@ factory method binaryTree {
       var firstNode
       var triggerPrev
       
-      method iterator {
+      method iterator { 
         setNextInTree
         resetCurrent
         self
@@ -114,6 +114,9 @@ factory method binaryTree {
       method havemore { hasNext }
       
       method next { 
+        if (currentPos' >= count) then { 
+          Exhausted.raise "over {count}"
+        }
         if(currentPos' != 0) then { currentNode' := currentNode'.next }
         currentPos' := currentPos' + 1
         return currentNode'
@@ -373,16 +376,16 @@ class emptyNode -> Node {
 //var treeTest := binaryTree.new
 //treeTest.insert(p10)
 //treeTest.insert(p8)
-treeTest.insert(p11)
-treeTest.insert(p9)
+//treeTest.insert(p11)
+//treeTest.insert(p9)
 
-print (treeTest)
-var nodeTest := bookNode.new(p10)
-print (nodeTest)
-nodeTest.setPage(p11)
-print (nodeTest)
-treeTest.removeKey(10)
-print (treeTest)
+//print (treeTest)
+//var nodeTest := bookNode.new(p10)
+//print (nodeTest)
+//nodeTest.setPage(p11)
+//print (nodeTest)
+//treeTest.removeKey(10)
+//print (treeTest)
 //treeTest.printTree
 //treeTest.traverseList(treeTest.getRoot)
 //var treeCopy := binaryTree.new

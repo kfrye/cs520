@@ -74,6 +74,7 @@ factory method dictionary<K,T> {
           method next { pageList.next.value }
         }
       }
+      method iterator { values }
       method bindings -> Iterator<Binding<K,T>>{ book.iterator }
       method keysAndValuesDo(action:Block2<K,T,Done>) -> Done{ book.keysAndValuesDo(action) }
       method keysDo(action:Block1<K,Done>) -> Done{ book.keysDo(action) }
@@ -141,7 +142,7 @@ factory method dictionary<K,T> {
 //print(evens.count)
 //print(empty.count)
 //def evens = dictionary.with("two"::2, "four"::4, "six"::6, "eight"::8)
-//print (evens)
+//print (evens) 
 //print (evens.containsKey("six"))
 //evens.removeValue(4)
 //print (evens.containsKey("six"))
