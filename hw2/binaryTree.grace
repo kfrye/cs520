@@ -11,7 +11,7 @@ type Book = {
 factory method binaryTree {
   var root:Node := emptyNode
   var count' := 0
-  
+   
   method new -> Book {
     object {
       inherits iterable.trait
@@ -26,7 +26,7 @@ factory method binaryTree {
         setNextInTree
         resetCurrent
         self
-      }
+      } 
       
       method current { currentNode' }
       method currentPos { currentPos' }
@@ -337,6 +337,7 @@ class bookNode.new(newVal:p.Page) -> Node {
   
   method page { page' }
   method value { page.value }
+  method hash { page.hash }
   method key { page.key }
   method left { left' }
   method setLeft(node:Node) { left' := node }

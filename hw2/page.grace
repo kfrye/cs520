@@ -9,13 +9,14 @@ type Page = {
   >  (other:page) -> Boolean 
   <  (other:Object) -> Boolean 
   <= (other:Object) -> Boolean 
-}
+} 
 
 class page (key', value') -> Page {
   method empty -> Boolean { false }
   method notEmpty -> Boolean { !empty }
   method key { key' }
   method value { value' }
+  method hash { (key.hash * 1021) + value.hash }
   method copy -> Page { page(key, value) }
   method asString { "{key}::{value}" }
   method == (other:page) -> Boolean { 

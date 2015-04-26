@@ -13,7 +13,7 @@ factory method dictionary<K,T> {
   method withAll(initialBindings:Collection<Binding<K,T>>) -> Dictionary<K,T> {
     object {
       inherits enumerable.trait
-      
+       
       for (initialBindings) do { b -> at(b.key)put(b.value) }
       
       method book { book' }
@@ -91,6 +91,10 @@ factory method dictionary<K,T> {
              return false
           }
       }
+      
+      method asDictionary {
+        self
+      }
 
       // Stolen from collectionsPrelude
       method copy -> Dictionary<K,T>{ 
@@ -110,8 +114,9 @@ factory method dictionary<K,T> {
   }
 }
 
-//def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3, 
-//    "four"::4, "five"::5)
+def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3, 
+    "four"::4, "five"::5)
+print(oneToFive.bindings.onto(set))
 //def oneToFiveCopy = oneToFive.copy 
 //def evens = dictionary.with("two"::2, "four"::4, "six"::6, "eight"::8)
 //def empty = dictionary.empty

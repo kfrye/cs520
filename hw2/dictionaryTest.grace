@@ -14,7 +14,7 @@ def dictionaryTest = object {
             assert(oneToFive.size) shouldBe 5
             assert(empty.size) shouldBe 0
             assert(evens.size) shouldBe 4
-        }
+        } 
         
         method testDictionarySizeAfterRemove {
             oneToFive.removeKey "one"
@@ -107,11 +107,6 @@ def dictionaryTest = object {
         method testDictionaryRemoveKeyTwo {
             assert (evens.removeKey "two".values.onto(sP.set)) shouldBe (sP.set.with(4, 6, 8))
             assert (evens.values.onto(sP.set)) shouldBe (sP.set.with(4, 6, 8))
-        }
-        
-        method testDictionaryEqualityFive {
-            assert(oneToFive == dictionary.with("one"::1, "two"::2, "three"::3,
-                "four"::4, "five"::5))
         }
         
         method testDictionaryRemoveValue4 {
