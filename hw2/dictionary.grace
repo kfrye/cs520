@@ -29,7 +29,7 @@ factory method dictionary<K,T> {
       method isEmpty -> Boolean { }
       method containsKey(k:K) -> Boolean{ book.keyExists(k) }
       method containsValue(v:T) -> Boolean{ book.valueExists(v) }
-      
+  
       method at(key:K)ifAbsent(action:Block0<Unknown>) -> Unknown {
         if(containsKey(key)) then { at(key) }
         else { action.apply }
@@ -83,12 +83,14 @@ factory method dictionary<K,T> {
       method ==(other:Object) -> Boolean{ 
         match (other)
           case {o:Dictionary ->
-            book.isEqual(other.book) 
+             if (self.size != o.size) then {return false}
+             return book.isEqual(other.book)
           } 
           case {_ ->
-            false
+             return false
           }
       }
+
       // Stolen from collectionsPrelude
       method copy -> Dictionary<K,T>{ 
         def newDict = dictionary.empty
@@ -97,6 +99,7 @@ factory method dictionary<K,T> {
         }
         newDict
       }
+
       method asString {
         def returnString = book.asString
         "dict⟬"++ (returnString).substringFrom(1) to (returnString.size - 2) ++ "⟭"
@@ -127,7 +130,6 @@ factory method dictionary<K,T> {
 //while{l.hasNext} do {
 //  print(l.next)
 //}
-
 //print(oneToFive.count)
 //print(oneToFive.containsKey("one"))
 //print(oneToFive.containsValue(1))
