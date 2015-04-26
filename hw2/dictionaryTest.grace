@@ -168,7 +168,6 @@ def dictionaryTest = object {
                 "four"::4, "five"::5))
         }
         
->>>>>>> fcf2eb093456225a28ea109f363f8e767914d326
         method testDictionaryRemoveValue4 {
             assert (evens.size == 4) description "evens doesn't contain 4 elements"
             evens.removeValue(4)
