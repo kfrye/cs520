@@ -47,6 +47,23 @@ def dictionaryTest = object {
             assert(oneToFive.size) shouldBe 2
         }
         
+        method testDictionaryContentsAfterMultipleRemove {
+            oneToFive.removeKey("one", "two", "three")
+            assert(oneToFive.size) shouldBe 2
+            deny(oneToFive.containsKey "one") description "\"one\" still present"
+            deny(oneToFive.containsKey "two") description "\"two\" still present"
+            deny(oneToFive.containsKey "three") description "\"three\" still present"
+            assert(oneToFive.containsKey "four")
+            assert(oneToFive.containsKey "five")
+        }
+        
+        method testAsString {
+            def dict2 = dictionary.with("one"::1, "two"::2)
+            def dStr = dict2.asString
+            assert((dStr == "dict⟬one::1, two::2⟭").orElse{dStr == "dict⟬two::2, one::1⟭"})
+                description "\"{dStr}\" should be \"dict⟬one::1, two::2⟭\""
+        }
+        
         method testDictionaryRemoveValue4 {
             assert (evens.size == 4) description "evens doesn't contain 4 elements"
             evens.removeValue(4)

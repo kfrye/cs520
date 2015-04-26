@@ -20,7 +20,7 @@ class page (key':Object, value':Object) -> Page {
   }
   method value { value' }
   method copy -> Page { page(key, value) }
-  method asString { "{key}:{value} ," }
+  method asString { "{key}::{value}" }
   method == (other:page) ->   Boolean { 
     (self.key == other.key)  && (self.value == other.value)
   }

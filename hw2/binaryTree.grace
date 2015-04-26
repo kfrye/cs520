@@ -292,21 +292,26 @@ factory method binaryTree {
       
       method removeValue (obj:Object) {
         //print("find and remove {obj}")
-        findAndRemove(root, obj)
+        while { valueExists(obj) } do {
+          findAndRemove(root, obj)
+        }
       }
       method findAndRemove (node, value:Object) {
         if (node.empty) then {
           return
         }
-        
-        findAndRemove(node.left, value)
         if (node.value == value) then {
           removeKey(node.key)
           //print ("value found and removed")
           //print (self.asString)
           return
         }
+        
+        findAndRemove(node.left, value)
         findAndRemove(node.right, value)
+        
+        
+        
       }
       method smallestNode (node:Node) {
         if (node.emptyLeft) then {
@@ -348,7 +353,7 @@ class bookNode.new(newVal:p.Page) -> Node {
   }
   method empty { page.empty }
   method update (val:p.Page) { page' := val }
-  method asString { page.asString }
+  method asString { page.asString ++ ", " }
   method copyValue { page.copy }
   method leaf { return (left.empty && right.empty)}
   method emptyLeft { return (left.empty) }

@@ -76,7 +76,11 @@ factory method dictionary<K,T> {
       method do(action:Block1<T,Done>) -> Done{ }
       method ==(other:Object) -> Boolean{ book.isEqual(other.book) }
       method copy -> Dictionary<K,T>{ print("this works") }
-      method asString {"\[" ++ book.asString ++ "\]"}
+      method asString {
+        def returnString = book.asString
+        "dict⟬"++ (returnString).substringFrom(1) to (returnString.size - 2) ++ "⟭"
+        
+      }
     }
   }
 }
