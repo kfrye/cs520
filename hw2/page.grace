@@ -17,7 +17,7 @@ class page (key', value') -> Page {
   method key { key' }
   method value { value' }
   method copy -> Page { page(key, value) }
-  method asString { "key: {key}, value: {value}" }
+  method asString { "{key}::{value}" }
   method == (other:page) -> Boolean { 
     (other.key == self.key)  && (other.value == self.value)
   }
