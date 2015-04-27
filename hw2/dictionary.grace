@@ -1,11 +1,9 @@
 import "binaryTree" as bt
-import "page" as p
 
 factory method dictionary<K,T> {
   inherits collectionFactory.trait<T>
   
-  var book' := bt.binaryTree.new
-  var count' := 0
+  var book := bt.binaryTree.new
   method at(k:K)put(v:T) {
             self.empty.at(k)put(v)
   }
@@ -16,17 +14,14 @@ factory method dictionary<K,T> {
        
       for (initialBindings) do { b -> at(b.key)put(b.value) }
       
-      method book { book' }
       method at(key:K)put(value:T) -> Dictionary<K,T>{ 
-        count' := book.insert(p.page(key,value))
+        book.insert(key::value)
         self
       }
       
-      method count { count' }
-      
       method size -> Number { book.size }
       
-      method isEmpty -> Boolean { }
+      method isEmpty -> Boolean { (size > 0) }
       method containsKey(k:K) -> Boolean{ book.keyExists(k) }
       method containsValue(v:T) -> Boolean{ book.valueExists(v) }
   
@@ -38,8 +33,8 @@ factory method dictionary<K,T> {
         at(k)put(v) 
         done
       }
-      method at(k:K) -> T { book.get(k) }
-      method [](k:K) -> T{ book.get(k) }
+      method at(k:K) -> T { book.valueOfKey(k) }
+      method [](k:K) -> T{ book.valueOfKey(k) }
       method removeAllKeys(keys:Collection<K>) -> Dictionary<K,T>{ 
         for(keys) do { k ->
           book.removeKey(k)
@@ -50,7 +45,6 @@ factory method dictionary<K,T> {
       method removeKey(*keys:K) -> Dictionary<K,T>{ removeAllKeys(keys) }
       method removeAllValues(removals:Collection<T>) -> Dictionary<K,T>{
         for (removals) do { v->
-          //print ("removing {v}")
           book.removeValue(v)
         }
         return self
@@ -85,16 +79,20 @@ factory method dictionary<K,T> {
         match (other)
           case {o:Dictionary ->
              if (self.size != o.size) then {return false}
-             return book.isEqual(other.book)
+             return other.isEqual(book)
           } 
           case {_ ->
              return false
           }
       }
       
+<<<<<<< HEAD
       method asDictionary {
         self
       }
+=======
+      method isEqual(other) { book.isEqual(other) }
+>>>>>>> b99cd133c510f9db3416baff9299adb769286c44
 
       // Stolen from collectionsPrelude
       method copy -> Dictionary<K,T>{ 
@@ -108,11 +106,13 @@ factory method dictionary<K,T> {
       method asString {
         def returnString = book.asString
         "dict⟬"++ (returnString).substringFrom(1) to (returnString.size - 2) ++ "⟭"
-        
       }
+      
+      method asDictionary { self }
     }
   }
 }
+<<<<<<< HEAD
 
 def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3, 
     "four"::4, "five"::5)
@@ -152,3 +152,5 @@ print(oneToFive.bindings.onto(set))
 //evens.removeValue(4)
 //print (evens.containsKey("six"))
 //print(evens)
+=======
+>>>>>>> b99cd133c510f9db3416baff9299adb769286c44

@@ -33,7 +33,6 @@ def dictionaryTest = object {
             assert(oneToFive.containsKey "four")
             assert(oneToFive.containsKey "five")
         }
-        
         method testAsString {
             def dict2 = dictionary.with("one"::1, "two"::2)
             def dStr = dict2.asString
@@ -44,7 +43,8 @@ def dictionaryTest = object {
         method testAsStringEmpty {
             assert(empty.asString) shouldBe "dict⟬⟭"
         }
-
+        
+        
         method testDictionaryEmptyDo {
             empty.do {each -> failBecause "emptySet.do did with {each}"}
         }
@@ -183,7 +183,7 @@ def dictionaryTest = object {
                 separatedBy { s := "kilroy" }
             assert (s) shouldBe ("nothing")
         }
-
+        
         method testDictionaryAsStringNonEmpty {
             evens.removeValue(6, 8)
             assert ((evens.asString == "dict⟬two::2, four::4⟭") ||
@@ -250,6 +250,7 @@ def dictionaryTest = object {
         method testDictionaryAsDictionary {
             assert(evens.asDictionary) shouldBe (evens)
         }
+
     }
 }
 
