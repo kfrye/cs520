@@ -2,28 +2,29 @@ import "binaryTree" as bt
 
 factory method dictionary<K,T> {
   inherits collectionFactory.trait<T>
-  
-  var book := bt.binaryTree.new
+   
+  //var book := bt.binaryTree.new
   method at(k:K)put(v:T) {
             self.empty.at(k)put(v)
   }
   
   method withAll(initialBindings:Collection<Binding<K,T>>) -> Dictionary<K,T> {
     object {
-      inherits enumerable.trait
+      inherits bt.binaryTree
        
       for (initialBindings) do { b -> at(b.key)put(b.value) }
       
       method at(key:K)put(value:T) -> Dictionary<K,T>{ 
-        book.insert(key::value)
+        //book.insert(key::value)
+        insert(key::value)
         self
       }
       
-      method size -> Number { book.size }
+      method size -> Number { super.size }
       
       method isEmpty -> Boolean { (size > 0) }
-      method containsKey(k:K) -> Boolean{ book.keyExists(k) }
-      method containsValue(v:T) -> Boolean{ book.valueExists(v) }
+      method containsKey(k:K) -> Boolean{ keyExists(k) }
+      method containsValue(v:T) -> Boolean{ valueExists(v) }
   
       method at(key:K)ifAbsent(action:Block0<Unknown>) -> Unknown {
         if(containsKey(key)) then { at(key) }
@@ -33,11 +34,11 @@ factory method dictionary<K,T> {
         at(k)put(v) 
         done
       }
-      method at(k:K) -> T { book.valueOfKey(k) }
-      method [](k:K) -> T{ book.valueOfKey(k) }
+      method at(k:K) -> T { valueOfKey(k) }
+      method [](k:K) -> T{ valueOfKey(k) }
       method removeAllKeys(keys:Collection<K>) -> Dictionary<K,T>{ 
         for(keys) do { k ->
-          book.removeKey(k)
+          delete(k)
         }
         return self
       
@@ -45,15 +46,35 @@ factory method dictionary<K,T> {
       method removeKey(*keys:K) -> Dictionary<K,T>{ removeAllKeys(keys) }
       method removeAllValues(removals:Collection<T>) -> Dictionary<K,T>{
         for (removals) do { v->
-          book.removeValue(v)
+          //removeValue(v)
+          while { valueExists(v) } do {
+            findValueAndRemoveKey(root, v)
+          }
         }
         return self
       }
+     
+    
+  
+      method findValueAndRemoveKey (node, value:Object) is confidential {
+        if (node.empty) then {
+          return
+        }
+        if (node.value == value) then {
+          delete(node.key)
+          return
+        }
+        
+        findValueAndRemoveKey(node.left, value)
+        findValueAndRemoveKey(node.right, value)
+      }
+      
+      
       method removeValue(*removals:T) -> Dictionary<K,T>{ removeAllValues(removals) }
       method keys -> Iterator<K>{
         object {
           inherits iterable.trait
-          def pageList = book.iterator
+          def pageList = bindings
           method havemore { pageList.havemore }
           method hasNext { pageList.havemore }
           method next { pageList.next.key }
@@ -62,69 +83,154 @@ factory method dictionary<K,T> {
       method values -> Iterator<T>{ 
         object {
           inherits iterable.trait
-          def pageList = book.iterator
+          def pageList = bindings
           method havemore { pageList.havemore }
           method hasNext { pageList.havemore }
           method next { pageList.next.value }
         }
       }
+      
+      method bindings {
+        object {
+          inherits iterable.trait
+          
+          var currentNode := smallestNode(root)
+          var currentPos := 0
+          var prevNode
+          var triggerPrev
+          
+          setNextInTree
+          self
+          
+          method hasNext { 
+            if(currentPos < count') then { true }
+            else { false }
+          }
+          
+          method havemore { hasNext }
+          
+          method next { 
+            if (currentPos >= count') then { 
+              Exhausted.raise "over {count'}"
+            }
+            if(currentPos != 0) then { currentNode := currentNode.next }
+            currentPos := currentPos + 1
+            return currentNode
+          }
+            
+          method setNextInTree is confidential {
+            prevNode := smallestNode(root)
+            triggerPrev := false
+            setNextInTreeRecurse(root)
+          }
+          
+          method setNextInTreeRecurse(node) is confidential {
+            if(node.empty) then { return }
+            setNextInTreeRecurse(node.left)
+            if(node == prevNode) then {
+              triggerPrev := true
+            }
+            elseif(triggerPrev == true) then {
+              prevNode.setNext(node)
+              prevNode := node
+            }
+            setNextInTreeRecurse(node.right)
+          }
+        }
+      }
+      
       method iterator { values }
-      method bindings -> Iterator<Binding<K,T>>{ book.iterator }
-      method keysAndValuesDo(action:Block2<K,T,Done>) -> Done{ book.keysAndValuesDo(action) }
-      method keysDo(action:Block1<K,Done>) -> Done{ book.keysDo(action) }
-      method valuesDo(action:Block1<T,Done>) -> Done{ book.valuesDo(action) }
+  
+      method keysAndValuesDo(action) {
+        def all = bindings
+        while{all.hasNext} do {
+          var node := all.next
+          action.apply(node.key, node.value)
+        }
+      }
+      
+      method keysDo(action) {
+        def all = bindings
+        while{all.hasNext} do {
+          var node := all.next
+          action.apply(node.key)
+        }
+      }
+      
+      method valuesDo(action) {
+        def all = bindings
+        while{all.hasNext} do {
+          var node := all.next
+          action.apply(node.value)
+        }
+      }
+
+      //method keysAndValuesDo(action:Block2<K,T,Done>) -> Done{ keysAndValuesDo(action) }
+      //method keysDo(action:Block1<K,Done>) -> Done{ keysDo(action) }
+     // method valuesDo(action:Block1<T,Done>) -> Done{ valuesDo(action) }
       method do(action:Block1<T,Done>) -> Done{ valuesDo(action) }
       
       method ==(other:Object) -> Boolean{ 
         match (other)
           case {o:Dictionary ->
              if (self.size != o.size) then {return false}
-             return other.isEqual(book)
+             return isEqual(o)
           } 
           case {_ ->
              return false
           }
       }
       
-<<<<<<< HEAD
-      method asDictionary {
-        self
-      }
-=======
-      method isEqual(other) { book.isEqual(other) }
->>>>>>> b99cd133c510f9db3416baff9299adb769286c44
+      //method isEqual(other) { book.isEqual(other) }
 
       // Stolen from collectionsPrelude
       method copy -> Dictionary<K,T>{ 
         def newDict = dictionary.empty
-        book.keysAndValuesDo{ k, v ->
+        keysAndValuesDo{ k, v ->
           newDict.at(k)put(v)
         }
         newDict
       }
 
       method asString {
-        def returnString = book.asString
+        def returnString = super.asString
         "dict⟬"++ (returnString).substringFrom(1) to (returnString.size - 2) ++ "⟭"
       }
       
       method asDictionary { self }
+      
+      
     }
   }
 }
-<<<<<<< HEAD
+//def empty = dictionary.empty
+//empty.at"two"put(2)
+//def copye = dictionary.empty
+//copye.at"two"put(2)
+//print(copye)
+//print(empty)
+//print(empty == copye)
+//assert (evens) shouldBe (dictionary.at"two"put(2))
+//empty.do {each -> print ("emptySet.do did with {each}")}
 
-def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3, 
-    "four"::4, "five"::5)
-print(oneToFive.bindings.onto(set))
+//def evens = dictionary.with("two"::2, "four"::4, "six"::6, "eight"::8)
+//evens.map{x -> x + 1}.onto(set)
+
+
+//def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3, 
+//    "four"::4, "five"::5)
+//print(oneToFive == dictionary.with("one"::1, "two"::2, "three"::3,
+//                "four"::4, "five"::5))
+//print(oneToFive.bindingss.onto(set))
 //def oneToFiveCopy = oneToFive.copy 
 //def evens = dictionary.with("two"::2, "four"::4, "six"::6, "eight"::8)
 //def empty = dictionary.empty
-//print(oneToFive.count)
+//print(oneToFive)
 //print(oneToFive.containsKey("one"))
 //print(oneToFive.containsValue(1))
 //print(oneToFive.at("four"))
-//var l := oneToFiveCopy.values
+//var l := oneToFive.values
+
 //print(l.current)
 //print(l.next)
 //print(l.next)
@@ -152,5 +258,4 @@ print(oneToFive.bindings.onto(set))
 //evens.removeValue(4)
 //print (evens.containsKey("six"))
 //print(evens)
-=======
->>>>>>> b99cd133c510f9db3416baff9299adb769286c44
+

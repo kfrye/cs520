@@ -23,7 +23,6 @@ def dictionaryTest = object {
             oneToFive.removeKey "three"
             assert(oneToFive.size) shouldBe 2
         }
-        
         method testDictionaryContentsAfterMultipleRemove {
             oneToFive.removeKey("one", "two", "three")
             assert(oneToFive.size) shouldBe 2
@@ -49,6 +48,14 @@ def dictionaryTest = object {
             empty.do {each -> failBecause "emptySet.do did with {each}"}
         }
         
+
+        method testDictionaryInequalityFive {
+            evens.at "ten" put 10
+            assert(evens.size == oneToFive.size) description "evens.size should be 5"
+            deny(oneToFive == evens)
+            assert(oneToFive != evens)
+        }
+        
         method testDictionaryEqualityEmpty {
             assert(empty == dictionary.empty)
             deny(empty != dictionary.empty)
@@ -63,18 +70,11 @@ def dictionaryTest = object {
             deny(empty == evens)
         }
         
-        method testDictionaryInequalityFive {
-            evens.at "ten" put 10
-            assert(evens.size == oneToFive.size) description "evens.size should be 5"
-            deny(oneToFive == evens)
-            assert(oneToFive != evens)
-        }
         
         method testDictionaryEqualityFive {
             assert(oneToFive == dictionary.with("one"::1, "two"::2, "three"::3,
                 "four"::4, "five"::5))
         }
-        
         method testDictionaryKeysAndValuesDo {
             def accum = dictionary.empty
             var n := 1
@@ -85,7 +85,6 @@ def dictionaryTest = object {
             }   
             assert(accum) shouldBe (oneToFive)
         }  
-        
         method testDictionaryEmptyBindingsIterator {                                                                                                                                           
             deny (empty.bindings.havemore) description "the empty iterator has elements"
         }
@@ -103,7 +102,6 @@ def dictionaryTest = object {
                 shouldBe (dictionary.with("nine"::9))
             assert (evens.at "ten" put(10).values.onto(sP.set)) shouldBe (sP.set.with(2, 4, 6, 8, 10))
         }
-        
         method testDictionaryRemoveKeyTwo {
             assert (evens.removeKey "two".values.onto(sP.set)) shouldBe (sP.set.with(4, 6, 8))
             assert (evens.values.onto(sP.set)) shouldBe (sP.set.with(4, 6, 8))
@@ -112,6 +110,7 @@ def dictionaryTest = object {
         method testDictionaryRemoveValue4 {
             assert (evens.size == 4) description "evens doesn't contain 4 elements"
             evens.removeValue(4)
+            
             assert (evens.size == 3) 
                 description "after removing 4, 3 elements should remain"
             assert (evens.containsKey "two") description "Can't find key \"two\""
@@ -122,7 +121,6 @@ def dictionaryTest = object {
             assert (evens.values.onto(sP.set)) shouldBe (sP.set.with(2, 6, 8))
             assert (evens.keys.onto(sP.set)) shouldBe (sP.set.with("two", "six", "eight"))
         }
-        
         method testDictionaryRemoveMultiple {
             evens.removeValue(4, 6, 8)
             assert (evens) shouldBe (dictionary.at"two"put(2))
@@ -161,7 +159,6 @@ def dictionaryTest = object {
             assert(evens.fold{a, each -> a + each}startingWith(0))shouldBe(20)        
             assert(empty.fold{a, each -> a + each}startingWith(17))shouldBe(17)
         }
-        
         method testDictionaryDoSeparatedBy {
             var s := ""
             evens.removeValue(2, 4)
@@ -203,7 +200,7 @@ def dictionaryTest = object {
             assert(evens.map{x -> x + 1}.onto(sP.set)) 
                 shouldBe (sP.set.with(3, 5, 7, 9))
         }
-
+        
         method testDictionaryMapEvensInto {
             assert(evens.map{x -> x + 10}.into(sP.set.withAll(evens)))
                 shouldBe (sP.set.with(2, 4, 6, 8, 12, 14, 16, 18))
@@ -250,7 +247,6 @@ def dictionaryTest = object {
         method testDictionaryAsDictionary {
             assert(evens.asDictionary) shouldBe (evens)
         }
-
     }
 }
 
