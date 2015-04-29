@@ -1,5 +1,4 @@
 type Node = {
-  binding -> Binding
   update(val) -> Done
   value -> Unknown
   key -> Unknown
@@ -17,32 +16,39 @@ type Node = {
   hash -> Number
 }
 
-class bookNode.new(newVal) -> Node {
-  var left' := emptyNode
-  var right' := emptyNode
-  var next' := emptyNode
-  var key' := newVal.key
-  var value' := newVal.value
-  method binding { key::value }
-  method update (val) { 
-    key' := val.key
-    value' := val.value
+factory method bookNode<K,T> -> Binding<K,T> {
+  method new(newVal:Binding<K,T>) {
+    object {
+      inherits binding.key(newVal.key)value(newVal.value)
+      var left':Node := emptyNode
+      var right':Node := emptyNode
+      var next':Node := emptyNode
+      var key':K := newVal.key
+      var value':T := newVal.value
+      
+      method < (other) { self.key < other.key }
+      method > (other) { self.key > other.key }
+      method isEqual(other) { self.key == other.key }
+      method update (val) { 
+        key' := val.key
+        value' := val.value
+      }
+      method value { value' }
+      method key { key' }
+      method left { left' }
+      method setLeft(node:Node) { left' := node }
+      method right { right' }
+      method setRight(node:Node) { right' := node }
+      method next { next' }
+      method setNext(node:Node) { next' := node }
+      method empty { false }
+      method asString { "{key}::{value}, " }
+      method leaf { return (left.empty && right.empty)}
+      method emptyLeft { return (left.empty) }
+      method emptyRight { return (right.empty) }
+      method hash { (key.hash * 1021) + value.hash }
+    }
   }
-  
-  method value { value' }
-  method key { key' }
-  method left { left' }
-  method setLeft(node:Node) { left' := node }
-  method right { right' }
-  method setRight(node:Node) { right' := node }
-  method next { next' }
-  method setNext(node:Node) { next' := node }
-  method empty { false }
-  method asString { "{key}::{value}, " }
-  method leaf { return (left.empty && right.empty)}
-  method emptyLeft { return (left.empty) }
-  method emptyRight { return (right.empty) }
-  method hash { (key.hash * 1021) + value.hash }
 }
 
 class emptyNode -> Node {
@@ -62,4 +68,5 @@ class emptyNode -> Node {
   method emptyLeft { true }
   method emptyRight { true }
   method hash { NoSuchObject.raise }
+  method new(newVal) { bookNode.new(newVal) }
 }

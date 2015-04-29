@@ -1,11 +1,19 @@
 import "node" as n
 
-class binaryTree {
+factory method binaryTree(initialNode:n.Node) {
   inherits enumerable.trait
   
-  var root:n.Node := n.emptyNode
-  var count' := 0
+  var root:n.Node := initialNode
+  var size' := 0
+  if(!root.empty) then { countNodes(root) }
 
+  method countNodes(node:n.Node) -> Done {
+    if(node.empty) then { return }
+    countNodes(node.left)
+    size' := size' + 1
+    countNodes(node.right)
+  }
+  
   method smallestNode (node:n.Node) -> n.Node is confidential {
     if (node.emptyLeft) then { return node }
     return (smallestNode(node.left))
@@ -14,97 +22,54 @@ class binaryTree {
   method isEqual(other) {
     var otherList := other.bindings
     while{otherList.hasNext} do {
-      if(!pageExists(otherList.next.binding)) then { 
+      def tempNode = 
+      if(!nodeExists(otherList.next)) then { 
         return false 
       }
     }
     true
   }
   
-  
   method insert(obj:Object) -> Number {
     root := insertRecurse(root, obj)
-    count' := count' + 1
-    return count'
+    size' := size' + 1
+    return size'
   }
 
   method insertRecurse(node:n.Node, obj:Object) -> n.Node is confidential {
     if(node.empty) then {
-      return n.bookNode.new(obj)
+      return node.new(obj)
     }
     var tempNode
-    if(obj.key < node.key) then {
+    if(obj < node) then {
       tempNode := insertRecurse(node.left, obj)
       node.setLeft(tempNode)
     }
-    elseif(obj.key > node.key) then {
+    elseif(obj > node) then {
       tempNode := insertRecurse(node.right, obj)
       node.setRight(tempNode)
     }
     else {
       node.update(obj)
+      size' := size' - 1
     }
     return node
   }
+  
+  method nodeExists(obj) -> Boolean {
+    def node = retrieveNode(obj)
+    !node.empty
+  }
 
-  method valueOfKey(obj) -> Unknown {
-    valueOfKeyRecurse(root, obj)
+  method retrieveNode(obj) -> n.Node {
+    retrieveNodeRecurse(root, obj)
   }
   
-  method valueOfKeyRecurse(node:n.Node, obj) -> Unknown is confidential {
-    if(node.empty) then { NoSuchObject.raise "{obj} not found" }
-    elseif(obj == node.key) then { node.value }
-    elseif(obj < node.key) then { valueOfKeyRecurse(node.left, obj) }
-    else { valueOfKeyRecurse(node.right, obj) }
-  }
-  
-  method pageExists(obj) -> Boolean {
-    pageExistsRecurse(root, obj)
-  }
-  
-  method pageExistsRecurse(node:n.Node, obj) is confidential {
-    //print("node.binding = {node.binding}")
-    //print("obj = {obj}")
-    if(node.empty) then { false }
-    elseif(obj == node.binding) then { 
-      print("found equals")
-      true 
-      
-    }
-    elseif(obj.key < node.key) then { 
-      print("key is less than")
-      pageExistsRecurse(node.left, obj) 
-      
-    }
-    else { 
-      print("else")
-      pageExistsRecurse(node.right, obj) 
-      
-    }
-  } 
-  
-  method valueExists(obj) -> Boolean {
-    valueExistsRecurse(root, obj)
-  }
-  
-  method valueExistsRecurse(node:n.Node, obj) is confidential {
-    if(node.empty) then { false }
-    elseif(node.value == obj) then { true }
-    elseif(!valueExistsRecurse(node.left, obj)) then {
-      valueExistsRecurse(node.right, obj)
-    }
-    else {true}
-  } 
-
-  method keyExists(obj) -> Boolean {
-    keyExistsRecurse(root, obj)
-  }
-  
-  method keyExistsRecurse(node:n.Node, obj) -> Boolean is confidential {
-    if(node.empty) then { false }
-    elseif(obj == node.key) then { true }
-    elseif(obj < node.key) then { keyExistsRecurse(node.left, obj) }
-    else { keyExistsRecurse(node.right, obj) }
+  method retrieveNodeRecurse(node:n.Node, obj) -> n.Node is confidential {
+    if(node.empty) then { node }
+    elseif(node.isEqual(obj)) then { node }
+    elseif(obj < node) then { retrieveNodeRecurse(node.left, obj) }
+    else { retrieveNodeRecurse(node.right, obj) }
   }
   
   method asString {
@@ -119,7 +84,7 @@ class binaryTree {
   method delete (obj:Object) {
     if (!root.empty) then {
       root := deleteRecurse(root, obj)
-      count' := count' - 1
+      size' := size' - 1
     } else { NoSuchObject.raise }
   }
 
@@ -130,7 +95,7 @@ class binaryTree {
       if (node.emptyLeft) then { return node.right }
       if (node.emptyRight ) then { return node.left }
       var tempNode := smallestNode(node.right)
-      node.update(tempNode.binding)
+      node.update(tempNode)
       node.setRight(deleteRecurse (node.right, tempNode.key))
       return node
 
@@ -145,6 +110,22 @@ class binaryTree {
     }
   }
   
-  
-  method size { count' }
+  method size { size' }
 }
+
+//def p1 = n.bookNode.new(1::"one")
+//def p2 = n.bookNode.new(2::"two")
+//def p3 = n.bookNode.new(3::"three")
+//def p4 = n.bookNode.new(4::"four")
+//def p5 = n.bookNode.new(5::"five")
+//def p12 = n.bookNode.new(1::"repeat")
+//def list = binaryTree(p1)
+//list.insert(p2)
+//list.insert(p3)
+//list.insert(p4)
+//list.insert(p5)
+//list.insert(p12)
+//print(list)
+//print(list.size)
+//print(list.nodeExists(n.bookNode.new(5::"no")))
+//print(list.countNodes)
