@@ -1,10 +1,10 @@
 import "binaryTree" as bt
 import "node" as n
-
-factory method dictionary<K,T> {
+ 
+factory method dictionary<K,T> -> Dictionary<K,T> {
   inherits collectionFactory.trait<T>
    
-  method at(k:K)put(v:T) {
+  method at(k:K)put(v:T) -> Dictionary<K,T> {
     self.empty.at(k)put(v)
   }
   
@@ -15,17 +15,14 @@ factory method dictionary<K,T> {
       for (initialBindings) do { b -> at(b.key)put(b.value) }
       
       method at(key:K)put(value:T) -> Dictionary<K,T>{ 
-        //book.insert(key::value)
         insert(n.bookNode.new(key::value))
         self
       }
       
       method size -> Number { super.size }
-      
       method isEmpty -> Boolean { (size > 0) }
       method containsKey(k:K) -> Boolean{ nodeExists(n.bookNode.new(k::"empty")) }
       method containsValue(v:T) -> Boolean{ valueExists(v) }
-  
       method at(key:K)ifAbsent(action:Block0<Unknown>) -> Unknown {
         if(containsKey(key)) then { at(key) }
         else { action.apply }
@@ -40,7 +37,17 @@ factory method dictionary<K,T> {
       }
       method [](k:K) -> T{ at(k) }
       
-      method valueExists(obj) -> Boolean {
+      method isEqual(other:dictionary<K,T>) -> Boolean {
+        var otherList := other.bindings
+        while{otherList.hasNext} do {
+          def nextNode = otherList.next
+          def foundNode = retrieveNode(nextNode)
+          if(foundNode.notEqual(nextNode)) then { return false }
+        }
+        true
+      }
+  
+      method valueExists(obj:T) -> Boolean {
         def valList = values
         while{valList.hasNext} do {
           if(valList.next == obj) then { return true }
@@ -50,7 +57,7 @@ factory method dictionary<K,T> {
       
       method removeAllKeys(keys:Collection<K>) -> Dictionary<K,T>{ 
         for(keys) do { k ->
-          delete(k)
+          delete(n.bookNode.new(k::"empty"))
         }
         return self
       
@@ -58,7 +65,6 @@ factory method dictionary<K,T> {
       method removeKey(*keys:K) -> Dictionary<K,T>{ removeAllKeys(keys) }
       method removeAllValues(removals:Collection<T>) -> Dictionary<K,T>{
         for (removals) do { v->
-          //removeValue(v)
           while { valueExists(v) } do {
             findValueAndRemoveKey(root, v)
           }
@@ -66,12 +72,12 @@ factory method dictionary<K,T> {
         return self
       }
      
-      method findValueAndRemoveKey (node, value:Object) is confidential {
+      method findValueAndRemoveKey (node:n.Node, value:T) -> Done is confidential {
         if (node.empty) then {
           return
         }
         if (node.value == value) then {
-          delete(node.key)
+          delete(n.bookNode.new(node.key::"empty"))
           return
         }
         
@@ -147,11 +153,11 @@ factory method dictionary<K,T> {
             setNextInTreeRecurse(node.right)
           }
         }
-      }
+      } 
       
       method iterator { values }
   
-      method keysAndValuesDo(action) {
+      method keysAndValuesDo(action:Block2<K,T,Done>) -> Done {
         def all = bindings
         while{all.hasNext} do {
           var node := all.next
@@ -159,7 +165,7 @@ factory method dictionary<K,T> {
         }
       }
       
-      method keysDo(action) {
+      method keysDo(action:Block1<K,Done>) -> Done {
         def all = bindings
         while{all.hasNext} do {
           var node := all.next
@@ -167,7 +173,7 @@ factory method dictionary<K,T> {
         }
       }
       
-      method valuesDo(action) {
+      method valuesDo(action:Block1<T,Done>) -> Done {
         def all = bindings
         while{all.hasNext} do {
           var node := all.next
@@ -197,12 +203,12 @@ factory method dictionary<K,T> {
         newDict
       }
 
-      method asString {
+      method asString -> String {
         def returnString = super.asString
         "dict⟬"++ (returnString).substringFrom(1) to (returnString.size - 2) ++ "⟭"
       }
       
-      method asDictionary { self }
+      method asDictionary -> Dictionary<K,T> { self }
     }
   }
 }
@@ -222,6 +228,8 @@ factory method dictionary<K,T> {
 
 //def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3, 
 //    "four"::4, "five"::5)
+//def testset = oneToFive.bindings.onto(set)
+//print(testset)
 //print(oneToFive == dictionary.with("one"::1, "two"::2, "three"::3,
 //                "four"::4, "five"::5))
 //print(oneToFive.bindingss.onto(set))

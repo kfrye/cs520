@@ -1,7 +1,7 @@
 import "gUnit" as gU
 import "StandardPrelude" as sP
 dialect "dictionary" 
-
+  
 def dictionaryTest = object {
     class forMethod(m) {
         inherits gU.testCaseNamed(m)
@@ -23,6 +23,7 @@ def dictionaryTest = object {
             oneToFive.removeKey "three"
             assert(oneToFive.size) shouldBe 2
         }
+        
         method testDictionaryContentsAfterMultipleRemove {
             oneToFive.removeKey("one", "two", "three")
             assert(oneToFive.size) shouldBe 2
@@ -32,6 +33,7 @@ def dictionaryTest = object {
             assert(oneToFive.containsKey "four")
             assert(oneToFive.containsKey "five")
         }
+        
         method testAsString {
             def dict2 = dictionary.with("one"::1, "two"::2)
             def dStr = dict2.asString
@@ -48,7 +50,6 @@ def dictionaryTest = object {
             empty.do {each -> failBecause "emptySet.do did with {each}"}
         }
         
-
         method testDictionaryInequalityFive {
             evens.at "ten" put 10
             assert(evens.size == oneToFive.size) description "evens.size should be 5"
@@ -70,7 +71,6 @@ def dictionaryTest = object {
             deny(empty == evens)
         }
         
-        
         method testDictionaryEqualityFive {
             assert(oneToFive == dictionary.with("one"::1, "two"::2, "three"::3,
                 "four"::4, "five"::5))
@@ -88,6 +88,7 @@ def dictionaryTest = object {
         method testDictionaryEmptyBindingsIterator {                                                                                                                                           
             deny (empty.bindings.havemore) description "the empty iterator has elements"
         }
+        
         method testDictionaryEvensBindingsIterator {                                                                                                                                           
             def ei = evens.bindings
             assert (evens.size == 4) description "evens doesn't contain 4 elements!"
@@ -159,6 +160,7 @@ def dictionaryTest = object {
             assert(evens.fold{a, each -> a + each}startingWith(0))shouldBe(20)        
             assert(empty.fold{a, each -> a + each}startingWith(17))shouldBe(17)
         }
+        
         method testDictionaryDoSeparatedBy {
             var s := ""
             evens.removeValue(2, 4)
