@@ -5,9 +5,10 @@ Homework 2
 Implementation of Dictionary
 
 We implemented dictionary using a standard binary tree. We considered
-implementing a self-balancing tree, but decided our time would be 
-better spent improving the structure of the code instead of
-changing the binary tree implementation.
+implementing a self-balancing tree, but it took a while to get all the
+basic functionality of dictionary working and, when our first draft was
+completed, we decided our time would be better spent improving the structure of
+the code instead of changing the binary tree implementation.
 
 Our goal was to create a binaryTree implementation that was
 independent of the dictionary implementation. To that end, we created
@@ -48,10 +49,22 @@ the collection whenever a node was deleted or added, which would
 add not insignificant overhead. Alternately, the collection could be created
 when the iterator is created, but this would be another linear operation.
 
+We added several tests to the existing collection of dictionary tests 
+in order to more the functionality in the dictionary. Each test only
+tests one thing in order to allow easier debugging. Several of these
+tests exposed bugs that were not evident in the original testing
+framework.
+
 The files should be compiled in this order:
 nodeInterface
 node
 binaryTree
 dictionary
 dictionaryTest
+
+Todo list:
+--Update binaryTree for self-balancing
+--Figure out a better solution (or maybe just nomenclature) for 
+equals/notequals/==/!=
+--Add more tests, especially to test binaryTree behavior
 

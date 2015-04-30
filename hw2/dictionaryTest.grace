@@ -14,6 +14,53 @@ def dictionaryTest = object {
         def nested = dictionary.with("one"::1, "nest"::small)
         def empty = dictionary.empty
         
+        method testDictionaryRemoveAllValues {
+          oneToFive.removeAllValues(sP.set.with(1, 2, 3, 4, 5))
+          assert(oneToFive == empty)
+        }
+        
+        method testDictionaryRemoveAllKeys {
+          oneToFive.removeAllKeys(sP.set.with("one", "two", "three", "four", "five"))
+          assert(oneToFive == empty)
+        }
+        
+        method testDictionaryIsEmpty {
+          assert(empty.isEmpty == true)
+        }
+        
+        method testDictionaryIfAbsentTrue {
+          var testBool := false
+          oneToFive.at("six")ifAbsent { testBool := true }
+          assert(testBool == true)
+        }
+        
+        method testDictionaryIfAbsentFalse {
+          var testBool := false
+          def found = oneToFive.at("one")ifAbsent { testBool := true }
+          assert(found == 1)
+          assert(testBool == false)
+        }
+        
+        method testDictionaryAt {
+          def found = oneToFive.at("one")
+          assert(found == 1)
+        }
+        
+        method testDictionaryConstructor {
+          def test = dictionary.at("one")put("1")
+          assert(test == small)
+        }
+        
+        method testDictionaryEqualityWithDiffValues {
+          def oneToFiveAlmost = dictionary.with("one"::1, "two"::2, "three"::3, 
+            "four"::4, "five"::6)
+          deny (oneToFive == oneToFiveAlmost)
+          assert(oneToFive != oneToFiveAlmost)
+        }
+        
+        method testDictionaryContainsValue {
+          assert(oneToFive.containsValue(4))
+        }
         
         method testDictionaryEmptyKeys {
           assert(empty.keys.onto(sP.set)) shouldBe (sP.set.with())

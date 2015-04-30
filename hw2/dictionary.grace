@@ -20,7 +20,7 @@ factory method dictionary<K,T> -> Dictionary<K,T> {
       }
       
       method size -> Number { super.size }
-      method isEmpty -> Boolean { (size > 0) }
+      method isEmpty -> Boolean { (size <= 0) }
       method containsKey(k:K) -> Boolean{ nodeExists(n.bookNode.new(k::"empty")) }
       method containsValue(v:T) -> Boolean{ valueExists(v) }
       method at(key:K)ifAbsent(action:Block0<Unknown>) -> Unknown {
@@ -32,10 +32,10 @@ factory method dictionary<K,T> -> Dictionary<K,T> {
         done
       }
       method at(k:K) -> T { 
-        def node = retrieveNode(n.bookNode.new(k, "empty")) 
+        def node = retrieveNode(n.bookNode.new(k::"empty")) 
         node.value
       }
-      method [](k:K) -> T{ at(k) }
+      method [](k:K) -> T { at(k) }
       
       method isEqual(other:dictionary<K,T>) -> Boolean {
         var otherList := other.bindings
@@ -212,61 +212,3 @@ factory method dictionary<K,T> -> Dictionary<K,T> {
     }
   }
 }
-//def empty = dictionary.empty
-//empty.at"two"put(2)
-//def copye = dictionary.empty
-//copye.at"two"put(2)
-//print(copye)
-//print(empty)
-//print(empty == copye)
-//assert (evens) shouldBe (dictionary.at"two"put(2))
-//empty.do {each -> print ("emptySet.do did with {each}")}
-
-//def evens = dictionary.with("two"::2, "four"::4, "six"::6, "eight"::8)
-//evens.map{x -> x + 1}.onto(set)
-
-
-//def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3, 
-//    "four"::4, "five"::5)
-//def testset = oneToFive.bindings.onto(set)
-//print(testset)
-//print(oneToFive == dictionary.with("one"::1, "two"::2, "three"::3,
-//                "four"::4, "five"::5))
-//print(oneToFive.bindingss.onto(set))
-//def oneToFiveCopy = oneToFive.copy 
-//def evens = dictionary.with("two"::2, "four"::4, "six"::6, "eight"::8)
-//def empty = dictionary.empty
-//print(oneToFive)
-//print(oneToFive.containsKey("one"))
-//print(oneToFive.containsValue(1))
-//print(oneToFive.at("four"))
-//var l := oneToFive.values
-
-//print(l.current)
-//print(l.next)
-//print(l.next)
-//print(l.next)
-//print(l.next)
-//print(l.next)
-//print(l.hasNext)
-//print(l.next)
-//while{l.hasNext} do {
-//  print(l.next)
-//}
-//print(oneToFive.count)
-//print(oneToFive.containsKey("one"))
-//print(oneToFive.containsValue(1))
-
-//oneToFive.removeValue(1)
-//print (oneToFive)
-//print(oneToFive.size)
-//oneToFive.copy
-//print(evens.count)
-//print(empty.count)
-//def evens = dictionary.with("two"::2, "four"::4, "six"::6, "eight"::8)
-//print (evens) 
-//print (evens.containsKey("six"))
-//evens.removeValue(4)
-//print (evens.containsKey("six"))
-//print(evens)
-
