@@ -8,7 +8,47 @@ def dictionaryTest = object {
         def oneToFive = dictionary.with("one"::1, "two"::2, "three"::3, 
             "four"::4, "five"::5)
         def evens = dictionary.with("two"::2, "four"::4, "six"::6, "eight"::8)
+        def multiValue =  dictionary.with("one"::1, "two"::1, "three"::2, 
+            "four"::2, "five"::3)
+        def small = dictionary.with("one"::1)
+        def nested = dictionary.with("one"::1, "nest"::small)
         def empty = dictionary.empty
+        
+        
+        method testDictionaryEmptyKeys {
+          assert(empty.keys.onto(sP.set)) shouldBe (sP.set.with())
+        }
+        
+        method testNestedDictionary {
+          nested.at("nested") put (oneToFive)
+          assert(nested) shouldBe (dictionary.with("one"::1, 
+            "nest"::dictionary.with("one"::1),
+            "nested"::dictionary.with("one"::1, "two"::2, "three"::3, "four"::4, "five"::5)))
+        }
+        
+        
+        method testDictionaryRemoveMultipleValues {
+            multiValue.removeValue(1)
+            assert (multiValue.size) shouldBe 3
+            assert (multiValue) shouldBe (dictionary.with("three"::2,"four"::2, "five"::3))
+            multiValue.removeValue(2)
+            assert (multiValue.size) shouldBe 1
+            assert (multiValue) shouldBe (dictionary.with("five"::3))
+            multiValue.removeValue(3)
+            assert (multiValue.size) shouldBe 0
+            assert (multiValue) shouldBe (empty)
+        }
+        
+        method testDictionaryAfterAddingExistingKey {
+            oneToFive.at("six") put (7)
+            assert(oneToFive.size) shouldBe 6
+            assert (oneToFive) shouldBe (dictionary.with("one"::1, "two"::2, "three"::3, 
+            "four"::4, "five"::5, "six"::7))
+            oneToFive.at("six") put (6)
+            assert(oneToFive.size) shouldBe 6
+            assert (oneToFive) shouldBe (dictionary.with("one"::1, "two"::2, "three"::3, 
+            "four"::4, "five"::5, "six"::6))
+        }
         
         method testDictionarySize {
             assert(oneToFive.size) shouldBe 5
