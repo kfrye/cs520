@@ -1,0 +1,25 @@
+Structure
+  name (array of string)
+  majorCategory (string)
+  category (string)
+  codepoint (hex)
+
+Option 1:
+array indexed by codepoint
+tree/hash indexed by name
+
+Option 2:
+Dictionary keyed by name, returns codepoint
+
+Option 3:
+One hash table of nodes
+indexed by codepoint
+indexed by string
+
+Todo:
+--create/parse data structure for node: Konstantin
+
+--write code for methods for grabbing data from structures: Tyler
+ 
+--write tests: Kris
+
