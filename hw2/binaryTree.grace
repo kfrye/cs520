@@ -1,150 +1,107 @@
-import "node" as n
+import "nodeInterface" as n // binaryTree only knows about the node interface
 
-class binaryTree {
+factory method binaryTree(initialNode:n.Node) {
   inherits enumerable.trait
   
-  var root:n.Node := n.emptyNode
-  var count' := 0
+  var root:n.Node := initialNode
+  var size':Number := 0
+  if(!root.empty) then { countNodes(root) }
 
+  method countNodes(node:n.Node) -> Done is confidential {
+    if(node.empty) then { return }
+    countNodes(node.left)
+    size' := size' + 1
+    countNodes(node.right)
+  }
+  
   method smallestNode (node:n.Node) -> n.Node is confidential {
     if (node.emptyLeft) then { return node }
     return (smallestNode(node.left))
   }
   
-  method isEqual(other) {
-    var otherList := other.bindings
-    while{otherList.hasNext} do {
-      if(!pageExists(otherList.next.binding)) then { 
-        return false 
-      }
-    }
-    true
+  method isEqual(other) -> Boolean {
+    abstract
   }
   
-  
-  method insert(obj:Object) -> Number {
-    root := insertRecurse(root, obj)
-    count' := count' + 1
-    return count'
+  method insert(node:n.Node) -> Number {
+    root := insertRecurse(root, node)
+    size' := size' + 1
+    return size'
   }
 
-  method insertRecurse(node:n.Node, obj:Object) -> n.Node is confidential {
+  method insertRecurse(node:n.Node, newNode:n.Node) -> n.Node is confidential {
     if(node.empty) then {
-      return n.bookNode.new(obj)
+      return node.new(newNode)
     }
     var tempNode
-    if(obj.key < node.key) then {
-      tempNode := insertRecurse(node.left, obj)
+    if(newNode < node) then {
+      tempNode := insertRecurse(node.left, newNode)
       node.setLeft(tempNode)
     }
-    elseif(obj.key > node.key) then {
-      tempNode := insertRecurse(node.right, obj)
+    elseif(newNode > node) then {
+      tempNode := insertRecurse(node.right, newNode)
       node.setRight(tempNode)
     }
     else {
-      node.update(obj)
+      node.update(newNode)
+      size' := size' - 1
     }
     return node
   }
+  
+  method nodeExists(node:n.Node) -> Boolean {
+    def existingNode = retrieveNode(node)
+    !existingNode.empty
+  }
 
-  method valueOfKey(obj) -> Unknown {
-    valueOfKeyRecurse(root, obj)
+  method retrieveNode(node:n.Node) -> n.Node {
+    retrieveNodeRecurse(root, node)
   }
   
-  method valueOfKeyRecurse(node:n.Node, obj) -> Unknown is confidential {
-    if(node.empty) then { NoSuchObject.raise "{obj} not found" }
-    elseif(obj == node.key) then { node.value }
-    elseif(obj < node.key) then { valueOfKeyRecurse(node.left, obj) }
-    else { valueOfKeyRecurse(node.right, obj) }
+  method retrieveNodeRecurse(node:n.Node, nodeToFind:n.Node) -> n.Node is confidential {
+    if(node.empty) then { node }
+    elseif(node.isEqual(nodeToFind)) then { node }
+    elseif(nodeToFind < node) then { retrieveNodeRecurse(node.left, nodeToFind) }
+    else { retrieveNodeRecurse(node.right, nodeToFind) }
   }
   
-  method pageExists(obj) -> Boolean {
-    pageExistsRecurse(root, obj)
-  }
-  
-  method pageExistsRecurse(node:n.Node, obj) is confidential {
-    //print("node.binding = {node.binding}")
-    //print("obj = {obj}")
-    if(node.empty) then { false }
-    elseif(obj == node.binding) then { 
-      print("found equals")
-      true 
-      
-    }
-    elseif(obj.key < node.key) then { 
-      print("key is less than")
-      pageExistsRecurse(node.left, obj) 
-      
-    }
-    else { 
-      print("else")
-      pageExistsRecurse(node.right, obj) 
-      
-    }
-  } 
-  
-  method valueExists(obj) -> Boolean {
-    valueExistsRecurse(root, obj)
-  }
-  
-  method valueExistsRecurse(node:n.Node, obj) is confidential {
-    if(node.empty) then { false }
-    elseif(node.value == obj) then { true }
-    elseif(!valueExistsRecurse(node.left, obj)) then {
-      valueExistsRecurse(node.right, obj)
-    }
-    else {true}
-  } 
-
-  method keyExists(obj) -> Boolean {
-    keyExistsRecurse(root, obj)
-  }
-  
-  method keyExistsRecurse(node:n.Node, obj) -> Boolean is confidential {
-    if(node.empty) then { false }
-    elseif(obj == node.key) then { true }
-    elseif(obj < node.key) then { keyExistsRecurse(node.left, obj) }
-    else { keyExistsRecurse(node.right, obj) }
-  }
-  
-  method asString {
+  method asString -> String {
     asStringRecurse(root)
   }
   
-  method asStringRecurse(node:n.Node) is confidential {
+  method asStringRecurse(node:n.Node) -> String is confidential {
     if (node.empty) then { return "" }
     return (asStringRecurse(node.left) ++ node.asString ++ asStringRecurse(node.right))
   }
   
-  method delete (obj:Object) {
+  method delete (node:n.Node) {
     if (!root.empty) then {
-      root := deleteRecurse(root, obj)
-      count' := count' - 1
+      root := deleteRecurse(root, node)
+      size' := size' - 1
     } else { NoSuchObject.raise }
   }
 
-  method deleteRecurse (node:n.Node, obj:Object) is confidential {
+  method deleteRecurse (node:n.Node, nodeToDelete:n.Node) -> n.Node is confidential {
     if (node.empty) then { NoSuchObject.raise } 
-    if(obj == node.key) then {
-      if (node.leaf) then { return n.emptyNode }
+    if(nodeToDelete.isEqual(node)) then {
+      if (node.leaf) then { return node.createEmptyNode }
       if (node.emptyLeft) then { return node.right }
       if (node.emptyRight ) then { return node.left }
       var tempNode := smallestNode(node.right)
-      node.update(tempNode.binding)
-      node.setRight(deleteRecurse (node.right, tempNode.key))
+      node.update(tempNode)
+      node.setRight(deleteRecurse (node.right, tempNode))
       return node
 
     }
-    elseif(obj < node.key) then { 
-      node.setLeft(deleteRecurse(node.left, obj)) 
+    elseif(nodeToDelete < node) then { 
+      node.setLeft(deleteRecurse(node.left, nodeToDelete)) 
       return node
     }
     else { 
-      node.setRight(deleteRecurse(node.right, obj)) 
+      node.setRight(deleteRecurse(node.right, nodeToDelete)) 
       return node
     }
   }
   
-  
-  method size { count' }
+  method size -> Number { size' }
 }

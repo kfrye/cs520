@@ -1,0 +1,70 @@
+Kristina Frye
+Konstantin Macarenco
+CS 520
+Homework 2
+Implementation of Dictionary
+
+We implemented dictionary using a standard binary tree. We considered
+implementing a self-balancing tree, but it took a while to get all the
+basic functionality of dictionary working and, when our first draft was
+completed, we decided our time would be better spent improving the structure of
+the code instead of changing the binary tree implementation.
+
+Our goal was to create a binaryTree implementation that was
+independent of the dictionary implementation. To that end, we created
+a Node type in the file nodeInterface.grace. This interface defines
+basic binary tree operations such as insert, delete, setLeft, setRight,
+etc. It does not contain any references to the key/value bindings
+that are used by the dictionary, and it doesn't know the details
+of the node object or how to construct one beyond calling the "new" method
+defined by the Node type. Given more time, we could change
+the implementation of binaryTree to make it an AVL or other type of
+self-balancing tree without requiring changes to any of the other
+components of the dictionary implementation.
+
+node.grace implements the Node type for our dictionary. It works
+with binaryTree, but it hides all its internal workings from binaryTree. 
+We needed two different types of equality: one to check equality of
+just the key, in case we want to update the key's value. The other is
+to check the equality of the key and the value, for cases when we are
+checking the equality of two different trees. 
+
+We created functions isEqual to check for key-only equality and
+notEqual to check key/value inequality. Originally, we were going to
+overwrite != to check for key/value inequality to at least be
+consist with the notation style, but this threw a weird bug in the 
+inherited call set.onto of binaryTree. So notEqual was created instead.
+
+dictionary inherits binaryTree and is tied fairly closely to the 
+implementation of node. It has a couple of different iterator
+sub-objects that allow it to iterate over the keys, values, and key/value
+pairs contained in the dictionary. When an iterator is created, a
+linear operation is performed that goes through all the nodes in 
+the tree and determines the "next" node of the tree when iterating
+through the tree in order. Another possible implementation would
+be to create a collection of nodes that could be iterated over. This
+collection could use the same nodes as the binaryTree and thus only
+require minimal more space. However, it would require maintaining
+the collection whenever a node was deleted or added, which would
+add not insignificant overhead. Alternately, the collection could be created
+when the iterator is created, but this would be another linear operation.
+
+We added several tests to the existing collection of dictionary tests 
+in order to more the functionality in the dictionary. Each test only
+tests one thing in order to allow easier debugging. Several of these
+tests exposed bugs that were not evident in the original testing
+framework.
+
+The files should be compiled in this order:
+nodeInterface
+node
+binaryTree
+dictionary
+dictionaryTest
+
+Todo list:
+--Update binaryTree for self-balancing
+--Figure out a better solution (or maybe just nomenclature) for 
+equals/notequals/==/!=
+--Add more tests, especially to test binaryTree behavior
+
