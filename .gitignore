@@ -1,0 +1,16 @@
+.gradle
+build
+.idea
+classes
+*.iml
+*.ipr
+*.iws
+out
+*.log
+*.swp
+*.xml
+*.class
+*.aux
+ignore
+*.out
+*.diff
