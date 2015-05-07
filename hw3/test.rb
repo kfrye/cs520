@@ -1,3 +1,6 @@
+#This file is for screwing around with data. Don't turn it in with
+#the assignment
+
 require './unicode'
 
 unicode = UnicodeData.new
@@ -9,3 +12,4 @@ puts data.character('GREATER-THAN SIGN')
 puts data.category('003E')
 
 puts data.name('FFFF')
+puts data.name(nil)

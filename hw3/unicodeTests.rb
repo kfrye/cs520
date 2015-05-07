@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require './unicode'
+require './unicodeData'
 
 class UnicodeTest < MiniTest::Test
   def setup
@@ -23,8 +23,24 @@ class UnicodeTest < MiniTest::Test
     assert_equal(@data.category('003E'), 'Sm')
   end
 
-  def test_badcode_name
+  def test_badcodepoint_name
     assert_nil(@data.name('FFFF'))
+  end
+
+  def test_badcodepoint_majorCategory
+    assert_nil(@data.majorCategory('FFFF'))
+  end
+
+  def test_badcodepoint_category
+    assert_nil(@data.category('FFFF'))
+  end
+
+  def test_badcodepoint_character
+    assert_nil(@data.category('BAD NAME'))
+  end
+
+  def test_nil_input
+    assert_nil(@data.name(nil))
   end
 end
 
