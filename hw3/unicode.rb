@@ -1,24 +1,30 @@
-require 'dataMethods'
-require 'parser/parser'
+require './dataMethods'
+require './parser/parser'
 
-$LOAD_PATH.unshift File.dirname(__FILE__) #add current dir to the path
+class UnicodeData
 
-currdir = Dir.getwd #current dir
-unicodeFile =currdir + "/parser/UnicodeData.txt"
-aliasesFile =currdir + "/parser/NameAliases.txt"
+  def initialize
+       @data = DataSystem.new(buildData)
+  end
 
-p = UnicodeParser.new(unicodeFile, aliasesFile)
+  def buildData
+    unicodeFile = "./parser/UnicodeData.txt"
+    aliasesFile = "./parser/NameAliases.txt"
+    unicodeTable = UnicodeParser.new(unicodeFile, aliasesFile)
+    characterArray = Array.new()
 
-characterArray = Array.new()
+    unicodeTable.table.each do |key, value|
+      characterArray.push(Character.new(unicodeTable.table[key].fields[:characterName], 
+        key, unicodeTable.table[key].fields[:generalCategory]))
+    end
+    characterArray
+  end
 
-
-p.table.each do |key, value|
-	characterArray.push(Character.new(p.table[key].fields[:characterName], key, p.table[key].fields[:generalCategory]))
+  def data
+    @data
+  end
 end
-
-s = DataSystem.new(characterArray)
-
-puts s.name('003E')
-puts s.majorCategory('003E')
-puts s.category('003E')
-puts s.character('GREATER-THAN SIGN')
+#puts s.name('003E')
+#puts s.majorCategory('003E')
+#puts s.category('003E')
+#puts s.character('GREATER-THAN SIGN')

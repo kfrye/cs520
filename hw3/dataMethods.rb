@@ -26,18 +26,38 @@ class DataSystem
 	end
 
 	def name(toFind)
-		codepoints[toFind].name
+        	data = codepoints[toFind]
+		if data != nil
+           		data.name
+      		else 	
+ 			nil	
+		end
 	end
 
 	def character(toFind)
-		names[toFind].codepoint
+		data = names[toFind]
+		if data != nil
+			data.codepoint
+		else
+			nil	
+		end
 	end
 
 	def majorCategory(toFind)
-		codepoints[toFind].category[0,1]
+		data = codepoints[toFind]
+		if data != nil
+			data.category[0,1]
+		else
+			nil
+		end
 	end
 
 	def category(toFind)
-		codepoints[toFind].category
+		data = codepoints[toFind]
+		if data != nil
+			data.category
+		else	
+			nil
+		end
 	end
 end
