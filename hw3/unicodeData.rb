@@ -11,16 +11,13 @@ class UnicodeData
     unicodeFile = "./parser/UnicodeData.txt"
     aliasesFile = "./parser/NameAliases.txt"
     unicodeTable = UnicodeParser.new(unicodeFile, aliasesFile)
-    charArray = Array.new()
 
-    unicodeTable.table.each do |key, value|
-      charArray.push(Character.new(unicodeTable.table[key].fields[:characterName], 
-        key, unicodeTable.table[key].fields[:generalCategory]))
-    end
-    charArray
+    unicodeTable.table
   end
 
   def data
     @data
   end
 end
+
+p = UnicodeData.new()

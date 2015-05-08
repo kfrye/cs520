@@ -1,18 +1,3 @@
-class Character
-  attr_reader :name, :codepoint, :category
-
-  def initialize(name, codepoint, category)
-    #Each character has these things
-    @name = name;
-    @codepoint = codepoint
-    @category = category
-  end
-
-  def to_s
-    puts @name + '     ' + @codepoint + '     ' + @category + "\n"
-  end
-end
-
 class DataSystem
   attr_reader :codepoints, :names
 
@@ -20,8 +5,8 @@ class DataSystem
     @codepoints = Hash.new();
     @names = Hash.new();
     characters.each do |item|
-      names[item.name] = item
-      codepoints[item.codepoint] = item
+      names[item[1]] = item
+      codepoints[item[0]] = item
     end
   end
 
