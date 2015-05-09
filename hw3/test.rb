@@ -1,11 +1,11 @@
 #This file is for screwing around with data. Don't turn it in with
 #the assignment
 
-require './unicode'
+require './unicodeData'
 
 unicode = UnicodeData.new
 data = unicode.data
-
+puts data
 puts data.name('003E')
 puts data.majorCategory('003E')
 puts data.character('GREATER-THAN SIGN')

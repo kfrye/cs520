@@ -10,18 +10,19 @@ class TableEntry
         :codeValue=> entries[0],
         :characterName=> entries[1],
         :generalCategory=> entries[2],
-        :canonicalCombiningClasses=> entries[3],
-        :bidirectionalCategory=> entries[4],
-        :characterDecompositionMapping=> entries[5],
-        :decimalDigitValue=> entries[6],
-        :digitValue=> entries[7],
-        :numericValue=> entries[8],
-        :mirrored=> entries[9],
-        :unicode1Name=> entries[10],
-        :commentField=> entries[11],
-        :uppercaseMapping=> entries[12],
-        :lowercaseMapping=> entries[13],
-        :titlecaseMapping=> entries[14]
+        :majorCategory=> entries[2][0]
+#        :canonicalCombiningClasses=> entries[3],
+#        :bidirectionalCategory=> entries[4],
+#        :characterDecompositionMapping=> entries[5],
+#        :decimalDigitValue=> entries[6],
+#        :digitValue=> entries[7],
+#        :numericValue=> entries[8],
+#        :mirrored=> entries[9],
+#        :unicode1Name=> entries[10],
+#        :commentField=> entries[11],
+#        :uppercaseMapping=> entries[12],
+#        :lowercaseMapping=> entries[13],
+#        :titlecaseMapping=> entries[14]
     }
     return self
   end
@@ -42,6 +43,7 @@ class TableEntry
     @fields.each(&block)
     self
   end
+
 end
 
 class UnicodeParser
