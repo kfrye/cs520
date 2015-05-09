@@ -1,9 +1,9 @@
 require 'minitest/autorun'
-require './unicodeData'
+require './unicode'
 
-class UnicodeTest < MiniTest::Test
+class UnicodeTest < Minitest::Unit::TestCase
   def setup
-    unicode = UnicodeData.new
+    unicode = Unicode.new
     @data = unicode.data
   end
 
@@ -41,6 +41,12 @@ class UnicodeTest < MiniTest::Test
 
   def test_nil_input
     assert_nil(@data.name(nil))
+  end
+
+  def test_object_equality
+    obj = @data.objByCodepoint('003E')
+    obj2 = @data.objByName('GREATER-THAN SIGN')
+    assert_equal(obj.object_id, obj2.object_id)
   end
 end
 
