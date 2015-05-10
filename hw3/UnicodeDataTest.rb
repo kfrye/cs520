@@ -1,3 +1,4 @@
+$LOAD_PATH.unshift File.dirname(__FILE__) #add current dir to the path
 require './dataMethodsTest'
 require './parser/parser'
 
@@ -8,9 +9,7 @@ class UnicodeData
   end
 
   def buildData
-    unicodeFile = "./parser/UnicodeData.txt"
-    aliasesFile = "./parser/NameAliases.txt"
-    unicodeTable = UnicodeParser.new(unicodeFile, aliasesFile)
+    unicodeTable = UnicodeParser.new()
     charArray = Array.new()
 
     unicodeTable.hashTable.each do |key, value|

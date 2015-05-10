@@ -1,3 +1,4 @@
+$LOAD_PATH.unshift File.dirname(__FILE__) #add current dir to the path
 require './unicodeBiMap'
 require './parser/parser'
 
