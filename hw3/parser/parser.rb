@@ -26,10 +26,6 @@ class Character
     @name = newName
   end
 
-  def to_s
-    @fields.to_s
-  end
-
   def size
     @fields.length
   end
@@ -41,6 +37,14 @@ class Character
 
   def codeValue
     @fields
+  end
+
+  def to_s
+    if (!@codepoint.nil? && !@name.nil? && !@category.nil? && !@majorCategory.nil?)
+      "\""+codepoint+ "\""+"=> [" + "\""+@codepoint+ "\""+","+"\""+@name+ "\""+","+"\""+@category+ "\"" + "," +"\""+ @majorCategory+ "\""+"],"
+    else
+      return "empty string"
+    end
   end
 end
 
