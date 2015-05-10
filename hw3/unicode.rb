@@ -9,9 +9,7 @@ class Unicode
   end
 
   def buildData
-    unicodeFile = "./parser/UnicodeData.txt"
-    aliasesFile = "./parser/NameAliases.txt"
-    unicodeTable = UnicodeParser.new(unicodeFile, aliasesFile)
+    unicodeTable = UnicodeParser.new()
 
     unicodeTable
   end
