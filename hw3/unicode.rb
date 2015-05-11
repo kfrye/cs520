@@ -1,5 +1,5 @@
 require './unicodeMap'
-require './parser/parser'
+require './UnicodeParser'
 
 #Unicode class which holds all the data after being processed
 class Unicode
@@ -9,8 +9,8 @@ class Unicode
   end
 
   def buildData
-    unicodeFile = "./parser/UnicodeData.txt"
-    aliasesFile = "./parser/NameAliases.txt"
+    unicodeFile = "./UnicodeData.txt"
+    aliasesFile = "./NameAliases.txt"
     unicodeTable = UnicodeParser.new(unicodeFile, aliasesFile)
 
     unicodeTable
