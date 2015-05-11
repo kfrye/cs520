@@ -2,8 +2,9 @@
 #the assignment
 
 require './Unicode'
+require './staticData'
 
-unicode = Unicode.new
+unicode = Unicode.new($table)
 data = unicode.data
 #puts data
 puts data.name('003E')

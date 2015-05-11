@@ -7,7 +7,7 @@ class UnicodeMap
     @codepoints = Hash.new().extend(ExtHashTrait)
     @names      = Hash.new().extend(ExtHashTrait)
 
-    table.table.each do |item|
+    table.each do |item|
       @names[item.name] = item
       @codepoints[item.codepoint] = item
     end

@@ -1,9 +1,10 @@
 require 'minitest/autorun'
 require './Unicode'
+require './staticData'
 
 class UnicodeTest < Minitest::Unit::TestCase
   def setup
-    unicode = Unicode.new
+    unicode = Unicode.new($table)
     @data = unicode.data
   end
 
@@ -68,6 +69,13 @@ class UnicodeTest < Minitest::Unit::TestCase
   def test_complete_memory_by_codepoint
     @data.codepoints.each do |key, value|
       assert_equal(value.codepoint.object_id,  key.object_id)
+    end
+  end
+
+  def integrity_test
+    $table.each do | i |
+      keyCode = i[0]
+      assert_equal(i[1], @data.name(i[0]))
     end
   end
 end
