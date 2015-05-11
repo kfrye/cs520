@@ -1,11 +1,10 @@
 #This file is for screwing around with data. Don't turn it in with
 #the assignment
 
-require './Unicode'
+require './UnicodeMap'
 require './staticData'
 
-unicode = Unicode.new($table)
-data = unicode.data
+data = UnicodeMap.new($table)
 #puts data
 puts data.name('003E')
 puts data.majorCategory('003E')

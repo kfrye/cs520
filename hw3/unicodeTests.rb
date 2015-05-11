@@ -1,11 +1,10 @@
 require 'minitest/autorun'
-require './Unicode'
+require './UnicodeMap'
 require './staticData'
 
 class UnicodeTest < Minitest::Unit::TestCase
   def setup
-    unicode = Unicode.new($table)
-    @data = unicode.data
+    @data = UnicodeMap.new($table)
   end
 
   def test_greaterthan_nameByCode
