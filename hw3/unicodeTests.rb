@@ -8,19 +8,19 @@ class UnicodeTest < Minitest::Unit::TestCase
   end
 
   def test_greaterthan_nameByCode
-    assert_equal(@data.name('003E'), 'GREATER-THAN SIGN')
+    assert_equal(@data.name('003E'), :'GREATER-THAN SIGN')
   end
 
   def test_greaterthan_majorCategory
-    assert_equal(@data.majorCategory('003E'), 'S')
+    assert_equal(@data.majorCategory('003E'), :'S')
   end
 
   def test_greaterthan_character
-    assert_equal(@data.character('GREATER-THAN SIGN'), '003E')
+    assert_equal(@data.character('GREATER-THAN SIGN'), :'003E')
   end
 
   def test_greaterthan_category
-    assert_equal(@data.category('003E'), 'Sm')
+    assert_equal(@data.category('003E'), :'Sm')
   end
 
   def test_badcodepoint_name
@@ -47,6 +47,11 @@ class UnicodeTest < Minitest::Unit::TestCase
     obj = @data.objByCodepoint('003E')
     obj2 = @data.objByName('GREATER-THAN SIGN')
     assert_equal(obj.object_id, obj2.object_id)
+  end
+
+  def test_symbol_equality
+    obj1 = @data.objByCodepoint('003E')
+    assert_equal(obj1.name.object_id, @data.names.key(obj1).object_id)
   end
 end
 

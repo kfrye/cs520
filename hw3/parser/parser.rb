@@ -3,10 +3,10 @@ class Character
   attr_reader :codepoint, :name, :category, :majorCategory
   def initialize(entries)
     #in total we have 15 entries for each Unicode character
-      @codepoint= entries[0]
-      @name= entries[1]
-      @category= entries[2]
-      @majorCategory= entries[2][0]
+      @codepoint= entries[0].to_sym
+      @name= entries[1].to_sym
+      @category= entries[2].to_sym
+      @majorCategory= entries[2][0].to_sym
 #        :canonicalCombiningClasses=> entries[3],
 #        :bidirectionalCategory=> entries[4],
 #        :characterDecompositionMapping=> entries[5],
@@ -58,7 +58,7 @@ class UnicodeParser
     @aliasesFile = aliasesFile
     self.parseUnicode
     self.parseAliases
-    @hashTable.each do | key, value|
+    @hashTable.each do |key, value|
       @table.push(value)
     end
   end
@@ -83,7 +83,7 @@ class UnicodeParser
       file_handle.each_line do |server|
         entries =  server.split(';')
         resetEmpty(entries)
-        key = entries[0]
+        key = entries[0].to_sym
         @hashTable[key] = Character.new(entries)
       end
     end
@@ -95,7 +95,7 @@ class UnicodeParser
       file_handle.each_line do |server|
         entries =  server.split(';')
         resetEmpty(entries)
-        key = entries[0]
+        key = entries[0].to_sym
         if /#.*/.match(key) or /$^/.match(key) #skip comments and empty lines
           next
         end

@@ -10,6 +10,7 @@ class UnicodeBiMap
   end
 
   def name(toFind)
+    toFind = toFind.to_sym
     if codepoints.has_key?(toFind)
       codepoints[toFind].name
     else
@@ -18,6 +19,7 @@ class UnicodeBiMap
   end
 
   def character(toFind)
+    toFind = toFind.to_sym
     if names.has_key?(toFind)
       names[toFind].codepoint
     else
@@ -26,6 +28,7 @@ class UnicodeBiMap
   end
 
   def majorCategory(toFind)
+    toFind = toFind.to_sym
     if codepoints.has_key?(toFind)
       codepoints[toFind].majorCategory
     else
@@ -34,6 +37,7 @@ class UnicodeBiMap
   end
 
   def category(toFind)
+    toFind = toFind.to_sym
     if codepoints.has_key?(toFind)
       codepoints[toFind].category
     else
@@ -42,10 +46,12 @@ class UnicodeBiMap
   end
 
   def objByCodepoint(toFind)
+    toFind = toFind.to_sym
     codepoints[toFind]
   end
 
   def objByName(toFind)
+    toFind = toFind.to_sym
     names[toFind]
   end
 end
