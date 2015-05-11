@@ -1,7 +1,7 @@
 #This file is for screwing around with data. Don't turn it in with
 #the assignment
 
-require './unicode'
+require './Unicode'
 
 unicode = Unicode.new
 data = unicode.data

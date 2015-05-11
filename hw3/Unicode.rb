@@ -1,4 +1,4 @@
-require './unicodeMap'
+require './UnicodeMap'
 require './UnicodeParser'
 
 #Unicode class which holds all the data after being processed

@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require './unicode'
+require './Unicode'
 
 class UnicodeTest < Minitest::Unit::TestCase
   def setup

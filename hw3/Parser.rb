@@ -1,6 +1,3 @@
-require './Character'
-# Parses the unicode files and creates a collection of unicode characters
-
 class Parser
   def parse(file, separator = nil)
     lines = []

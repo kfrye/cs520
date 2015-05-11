@@ -1,14 +1,15 @@
-$LOAD_PATH.unshift File.dirname(__FILE__) #add current dir to the path
+require './Parser'
+require './Character'
 
-require 'parser'
 
 class UnicodeParser <  Parser
   attr_reader :table
-  def initialize(unicodeFile, aliasesFile)
+
+  def initialize(*args)
     @hashTable = Hash.new()
     @table = []
-    @unicodeFile = unicodeFile
-    @aliasesFile = aliasesFile
+    @unicodeFile = args[0]
+    @aliasesFile = args[1]
     self.parseUnicode
     self.parseAliases
 

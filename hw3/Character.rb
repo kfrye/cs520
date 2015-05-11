@@ -1,4 +1,4 @@
-require 'ArrayUtilitiesTrait'
+require './ArrayUtilitiesTrait'
 
 # Holds the data for each unicode character
 class Character
