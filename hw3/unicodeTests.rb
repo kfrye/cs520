@@ -49,9 +49,14 @@ class UnicodeTest < Minitest::Unit::TestCase
     assert_equal(obj.object_id, obj2.object_id)
   end
 
-  def test_symbol_equality
+  def test_symbol_equality_by_name
     obj1 = @data.objByCodepoint('003E')
     assert_equal(obj1.name.object_id, @data.names.key(obj1).object_id)
+  end
+
+  def test_symbol_equality_by_codepoint
+    obj1 = @data.objByCodepoint('003E')
+    assert_equal(obj1.codepoint.object_id, @data.codepoints.key(obj1).object_id)
   end
 end
 
