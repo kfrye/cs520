@@ -2,41 +2,15 @@
 class Character
   attr_reader :codepoint, :name, :category, :majorCategory
   def initialize(entries)
-    #in total we have 15 entries for each Unicode character
       @codepoint= entries[0].to_sym
       @name= entries[1].to_sym
       @category= entries[2].to_sym
       @majorCategory= entries[2][0].to_sym
-#        :canonicalCombiningClasses=> entries[3],
-#        :bidirectionalCategory=> entries[4],
-#        :characterDecompositionMapping=> entries[5],
-#        :decimalDigitValue=> entries[6],
-#        :digitValue=> entries[7],
-#        :numericValue=> entries[8],
-#        :mirrored=> entries[9],
-#        :unicode1Name=> entries[10],
-#        :commentField=> entries[11],
-#        :uppercaseMapping=> entries[12],
-#        :lowercaseMapping=> entries[13],
-#        :titlecaseMapping=> entries[14]
     return self
   end
 
   def updateName(newName)
     @name = newName
-  end
-
-  def size
-    @fields.length
-  end
-
-  def each(&block)
-    @fields.each(&block)
-    self
-  end
-
-  def codeValue
-    @fields
   end
 
   def to_s
@@ -78,6 +52,7 @@ class UnicodeParser
     retVal
   end
 
+  #Perform first run through the base unicode file
   def parseUnicode()
     File.open(@unicodeFile, "r") do |file_handle|
       file_handle.each_line do |server|

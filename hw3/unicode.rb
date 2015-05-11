@@ -1,10 +1,11 @@
-require './unicodeBiMap'
+require './unicodeMap'
 require './parser/parser'
 
+#Unicode class which holds all the data after being processed
 class Unicode
 
   def initialize
-    @data = UnicodeBiMap.new(buildData)
+    @data = UnicodeMap.new(buildData)
   end
 
   def buildData
