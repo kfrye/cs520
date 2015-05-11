@@ -2,10 +2,10 @@
 class Character
   attr_reader :codepoint, :name, :category, :majorCategory
   def initialize(entries)
-      @codepoint= entries[0].to_sym
-      @name= entries[1].to_sym
-      @category= entries[2].to_sym
-      @majorCategory= entries[2][0].to_sym
+      @codepoint= entries[0]
+      @name= entries[1]
+      @category= entries[2]
+      @majorCategory= @category[0].to_sym
     return self
   end
 
@@ -26,12 +26,14 @@ end
 class UnicodeParser
   attr_reader :table, :hashTable
   def initialize(unicodeFile, aliasesFile)
-    @hashTable = {}
+    @hashTable = Hash.new()
     @table = []
     @unicodeFile = unicodeFile
     @aliasesFile = aliasesFile
     self.parseUnicode
     self.parseAliases
+
+
     @hashTable.each do |key, value|
       @table.push(value)
     end
@@ -52,16 +54,33 @@ class UnicodeParser
     retVal
   end
 
-  #Perform first run through the base unicode file
-  def parseUnicode()
-    File.open(@unicodeFile, "r") do |file_handle|
+  def parse(file)
+    lines = []
+    File.open(file, "r") do |file_handle|
       file_handle.each_line do |server|
         entries =  server.split(';')
         resetEmpty(entries)
-        key = entries[0].to_sym
-        @hashTable[key] = Character.new(entries)
+        arrayToSym(entries)
+        lines.push(entries)
       end
     end
+    lines
+
+  end
+
+  def skipComments(lines)
+    ret = []
+    lines.each do |key|
+      if /#.*/.match(key) or /$^/.match(key) #skip comments and empty lines
+        next
+      end
+      ret.push(key)
+    end
+  end
+  #Perform first run through the base unicode file
+  def parseUnicode()
+    lines = parse(@unicodeFile)
+    @hashTable = Hash[lines.each_with_index.map { |value| [value[0], Character.new(value)] }]
   end
 
   # Update the unicode names if needed
@@ -70,6 +89,8 @@ class UnicodeParser
       file_handle.each_line do |server|
         entries =  server.split(';')
         resetEmpty(entries)
+        arrayToSym(entries)
+
         key = entries[0].to_sym
         if /#.*/.match(key) or /$^/.match(key) #skip comments and empty lines
           next
@@ -82,5 +103,9 @@ class UnicodeParser
 
   def resetEmpty(arr)
     arr.map! {|x| x == "" ? nil : x}
+  end
+
+  def arrayToSym(arr)
+    arr.map! {|x| x == nil ? nil : x.to_sym}
   end
 end
