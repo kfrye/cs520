@@ -58,5 +58,17 @@ class UnicodeTest < Minitest::Unit::TestCase
     obj1 = @data.objByCodepoint('003E')
     assert_equal(obj1.codepoint.object_id, @data.codepoints.key(obj1).object_id)
   end
+
+  def test_complete_memory_by_name
+    @data.names.each do |key, value|
+      assert_equal(value.name.object_id, key.object_id)
+    end
+  end
+
+  def test_complete_memory_by_codepoint
+    @data.codepoints.each do |key, value|
+      assert_equal(value.codepoint.object_id,  key.object_id)
+    end
+  end
 end
 

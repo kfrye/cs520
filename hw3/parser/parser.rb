@@ -99,7 +99,7 @@ class UnicodeParser
         if /#.*/.match(key) or /$^/.match(key) #skip comments and empty lines
           next
         end
-        newName = entries[1]
+        newName = entries[1].to_sym
         @hashTable[key].updateName(newName) #update value name
       end
     end
