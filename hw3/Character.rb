@@ -11,7 +11,7 @@ class Character
     @codepoint= entries[0]
     @name= entries[1]
     @category= entries[2]
-    @majorCategory= entries[-1]
+    @majorCategory= entries[3]
     return self
   end
 
