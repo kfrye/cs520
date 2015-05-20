@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cd "$(git rev-parse --show-toplevel)"
+
+rev=$1
+[ "$rev" ] || rev=HEAD
+if [ "$rev" = "STABLE" ]
+then
+    rev=$(awk -F= '/STABLE=/ { print $2 }' Makefile)
+fi
+gen=$(tools/git-calculate-generation "$rev")
+
+echo "$gen"

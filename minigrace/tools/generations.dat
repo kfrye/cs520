@@ -1,0 +1,17 @@
+#!/bin/bash -c false
+
+# Data file containing generation numbers of some versions to simplify
+# calculation and avoid hitting recursion limits.
+declare -A known
+known=(
+    [4df500fa93a8e8f5886b3590424a7aa67e21bf0e]=543
+    [ffaca44bd543917c1c9f29e02e8070ae8c6299d7]=595
+    [30a3cefedaa93e1da661d3853cfb8b9aab584eea]=742
+    [cc2ded6be7e705924e6a331ed01d8c3240ceb688]=857
+    [58023464a5f53e19806b0b867bcd78b8214cc16b]=1000
+    [7c9986bc77c7f13621e4616f44c4be4fed710326]=1340
+    [08f7d89889a7bc8afac98ab1d0a6d10033a1d24d]=1674
+    [88855bc35225a388b52f1574488df3486543f510]=1926
+    [7d2460e3ce8d942d7ba379c961aa378457e3483f]=2000
+    [61482bce15cec41844a512fd6f07853796a59bdb]=2188
+)

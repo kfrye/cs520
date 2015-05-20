@@ -1,0 +1,85 @@
+#!/bin/bash
+
+set -e
+if [ ${BASH_VERSINFO[0]} -ge 4 ]
+then
+    . "$(dirname $0)"/generations.dat
+    KNOWN=y
+fi
+mkdir -p .git-generation-cache
+ct=0
+RV=$1
+[ "$RV" ] || RV=HEAD
+
+findgen() {
+    local RV=$1
+    h=$(git rev-parse $RV)
+    if [ "cc2ded6be7e705924e6a331ed01d8c3240ceb688" = "$h" ]
+    then
+        echo 857
+        return 0
+    elif [ "7c9986bc77c7f13621e4616f44c4be4fed710326" = "$h" ]
+    then
+        echo 1340
+        return 0
+    elif [ "08f7d89889a7bc8afac98ab1d0a6d10033a1d24d" = "$h" ]
+    then
+        echo 1674
+        return 0
+    elif [ "88855bc35225a388b52f1574488df3486543f510" = "$h" ]
+    then
+        echo 1926
+        return 0
+    elif [ "7d2460e3ce8d942d7ba379c961aa378457e3483f" = "$h" ]
+    then
+        echo 2000
+        return 0
+    elif [ "90f7b6b09a615e8dcda829cbe082fd644f9c0961" = $h ]
+    then
+        echo 2037
+        return 0
+    elif [ "c01c85ef098bb275d73965aa95d8fdbe0bf2cf18" = $h ]
+    then
+        echo 2104
+        return 0
+    elif [ "61482bce15cec41844a512fd6f07853796a59bdb" = $h ]
+    then
+        echo 2188
+        return 0
+    elif [ "3351a750205e9eabde8cbf2d23c38256c10ee20c" = $h ]
+    then
+        echo 2313
+        return 0
+	elif [ "66625d4f94cdf2ecc7b7689ea147277ffe16f1c1" = $h ]
+	then
+		echo 2325
+		return 0
+    fi
+    if [ "$KNOWN" ] && [ "${known[$h]}" ]
+    then
+        echo ${known[$h]}
+        return 0
+    fi
+    if [ -e .git-generation-cache/$h ]
+    then
+        cat .git-generation-cache/$h
+        return 0
+    fi
+    for par in $(git show --format=%P -s $h)
+    do
+        if [ -e .git-generation-cache/$par ]
+        then
+            nct=$(cat .git-generation-cache/$par)
+        else
+            nct=$($0 $par)
+        fi
+        if [ $nct -ge $ct ]
+        then
+            ct=$((nct + 1))
+        fi
+    done
+    echo $ct > .git-generation-cache/$h
+    echo $ct
+}
+
+findgen "$RV"
