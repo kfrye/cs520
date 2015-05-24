@@ -2,7 +2,7 @@ factory method createGraphics {
   var stage
   
   stage := native "js" code ‹  
-    var myWindow = window.open("", "grace", "height=300, width=300");
+    var myWindow = window.open("", "grace", "height=500, width=500");
     myWindow.document.title = "Grace Graphics";
     var canvas = myWindow.document.createElement("canvas");
     myWindow.document.body.appendChild(canvas);
@@ -84,6 +84,19 @@ factory method createGraphics {
       var result = wrapDOMObject(stage);
     ›
   }
+  
+  method addText(id)withContent(content)ofFont(font)ofColor(color)at(location){
+    stage := native "js" code ‹ 
+      var stage = unwrapDOMObject(this.data.stage);
+      var text = new createjs.Text(var_content._value, var_font._value, var_color._value);
+      text.x = var_location.data.x._value;
+      text.y = var_location.data.x._value;
+      text.name = var_id._value;
+      stage.addChild(text);
+      stage.update();
+      var result = wrapDOMObject(stage);
+    ›
+  }
 }
 
 var test := createGraphics
@@ -92,3 +105,4 @@ test.addRect("test2")ofWidth(80)ofHeight(80)ofColor("blue")at(65@65)
 test.addPolyStar("test3")ofSize(80)withSides(5)withPointSize(0.6)withAngle(-90)ofColor("red")at(50@50)
 test.addRoundRect("test4")ofWidth(80)ofHeight(40)withRadius(10)ofColor("blue")at(20@20)
 test.addEllipse("test5")ofWidth(50)ofHeight(100)ofColor("black")at(20@20)
+test.addText("textTest")withContent("hello")ofFont("20px Arial")ofColor("black")at(20@20)
