@@ -1,61 +1,77 @@
 import "timer" as timer
+import "dom" as dom
 
 factory method shape(location: Point, id) {
   
   var _color := "black"
-  var _fill := "black"
+  var _fill := false
   
   method color(c:String) {
     _color := c
   }
   
-  method fill(f:String) {
+  method fill(f:Boolean) {
     _fill := f
   }
-  
-  
-  
 }
 
-factory method createGraphics {
-  var stage
+factory method createGraphics(height, width) {
+  var isOpened : Boolean := false
   var id := 0
+  var myWindow
+  var circles := list.empty
   
-  stage := native "js" code ‹  
-    var myWindow = window.open("", "grace", "height=300, width=300");
-    myWindow.document.title = "Grace Graphics";
-    var canvas = myWindow.document.createElement("canvas");
-    myWindow.document.body.appendChild(canvas);
-    var stage = new createjs.Stage(canvas);
-    this.stage = stage;
-    var result = wrapDOMObject(stage);
-  ›
-   
+  if(!isOpened) then {
+    native "js" code ‹
+      wrapDOMObject(var_height)
+      var size = "height=" + var_height._value.toString() + ",width=" + var_width._value.toString()
+      myWindow = window.open("", "_blank", size);
+      myWindow.document.title = "Grace Graphics";
+      var canvas = myWindow.document.createElement("canvas");
+      myWindow.document.body.appendChild(canvas);
+      var stage = new createjs.Stage(canvas);
+      stage.enableDOMEvents(true);
+    ›
+    isOpened := true
+  }
+  
+  method draw {
+    for (circles) do { x -> x.draw }
+  }
+  
   method addCircleAt(location) {
-    object {
-      inherits shape(location, id)
+    var common := shape(location, id)
+    def circle = object {
+      method color:=(c) {
+        common.color(c)
+      }
+      method fill:=(f) {
+        common.fill(f)
+      }
       
       method draw {
-        var loc := location
-        //var stage := stage'
         native "js" code ‹ 
-          //stage = unwrapDOMObject(var_stage);
+          unwrapDOMObject(stage);
           var circle = new createjs.Shape();
-          circle.x = var_loc.data.x._value;
-          circle.y = var_loc.data.y._value;
-          circle.graphics.beginFill("red").drawCircle(10, 10, 10);
-        //circle.name = var_id._value;
+          circle.x = var_location.data.x._value;
+          circle.y = var_location.data.y._value;
+          if(var_common.data._fill._value == true) {
+            circle.graphics.beginFill(var_common.data._color._value).drawCircle(5, 5, 10);
+          }
+          else {
+            circle.graphics.beginStroke(var_common.data._color._value).drawCircle(5, 5, 10);
+          }
+          circle.addEventListener("click", function(event) { callmethod(var_clicker, "click", [0])});
           stage.addChild(circle);
           stage.update();
         ›
       }
     }
+    circles.add(circle)
+    circle
   }
-    
-    
   
-    
-  
+   
 //  method addRect(id)ofWidth(width)ofHeight(height)ofColor(color)at(location) {
 //    stage := native "js" code ‹
 //      //var stage = unwrapDOMObject(this.data.stage);
@@ -118,12 +134,9 @@ factory method createGraphics {
 //  }
 }
 
-var test := createGraphics
-var circle := test.addCircleAt(30@30)
-circle.draw
-//var circle.draw
-//test.addCircle("test")ofSize(30)ofColor("red")at(30@30)
-//test.addRect("test2")ofWidth(80)ofHeight(80)ofColor("blue")at(65@65)
-//test.addPolyStar("test3")ofSize(80)withSides(5)withPointSize(0.6)withAngle(-90)ofColor("red")at(50@50)
-//test.addRoundRect("test4")ofWidth(80)ofHeight(40)withRadius(10)ofColor("blue")at(20@20)
-//test.addEllipse("test5")ofWidth(50)ofHeight(100)ofColor("black")at(20@20)
+var graphics := createGraphics(200,200)
+var circle := graphics.addCircleAt(30@30)
+circle.color := "red"
+circle.fill := true
+graphics.draw
+

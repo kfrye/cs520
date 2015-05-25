@@ -1,0 +1,17 @@
+Create Graphics API
+
+Import the module:
+import “createGraphics” as createGraphics
+
+Create the graphics object:
+var graphics := createGraphics(width, height)
+
+Add shapes:
+var circle := graphics.addCircleAt(30@30)
+circle.color := “red”
+circle.fill := true
+
+Draw objects:
+circle.draw (draws one object)
+graphics.draw (draws all objects)
+
