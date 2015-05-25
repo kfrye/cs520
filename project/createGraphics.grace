@@ -1,17 +1,34 @@
 import "timer" as timer
 import "dom" as dom
 
-factory method shape(location: Point, id) {
+factory method shape(location': Point, id) {
   
   var _color := "black"
   var _fill := false
+  var _location := location'
   
+  method location(l:Point) {
+    _location := l
+  }
   method color(c:String) {
     _color := c
   }
-  
   method fill(f:Boolean) {
     _fill := f
+  }
+}
+
+factory method listener_default {
+  var clickBlock := { }
+  var clickIsSet := false
+  
+  method click {
+    clickBlock.apply
+  }
+  
+  method click:=(block) {
+    clickIsSet := true
+    clickBlock := block
   }
 }
 
@@ -39,8 +56,12 @@ factory method createGraphics(height, width) {
     for (circles) do { x -> x.draw }
   }
   
-  method addCircleAt(location) {
+  method addCircleAt(location) ofRadius(radius') {
     var common := shape(location, id)
+    var listener := listener_default
+    
+    var radius := radius'
+
     def circle = object {
       method color:=(c) {
         common.color(c)
@@ -48,20 +69,28 @@ factory method createGraphics(height, width) {
       method fill:=(f) {
         common.fill(f)
       }
+      method click:=(l) {
+        listener.click:=(l)
+      }
       
       method draw {
         native "js" code ‹ 
           unwrapDOMObject(stage);
           var circle = new createjs.Shape();
-          circle.x = var_location.data.x._value;
-          circle.y = var_location.data.y._value;
+          var x = var_common.data._location.data.x._value;
+          var y = var_common.data._location.data.y._value;
+          var radius = var_radius._value
+          var color = var_common.data._color._value
           if(var_common.data._fill._value == true) {
-            circle.graphics.beginFill(var_common.data._color._value).drawCircle(5, 5, 10);
+            circle.graphics.beginFill(color).drawCircle(x, y, radius);
           }
           else {
-            circle.graphics.beginStroke(var_common.data._color._value).drawCircle(5, 5, 10);
+            circle.graphics.beginStroke(color).drawCircle(x, y, 10);
           }
-          circle.addEventListener("click", function(event) { callmethod(var_clicker, "click", [0])});
+          if(var_listener.data.clickIsSet._value == true) {
+            circle.addEventListener("click", function(event) { callmethod(var_listener, "click", [0])});
+          }
+          
           stage.addChild(circle);
           stage.update();
         ›
@@ -135,8 +164,9 @@ factory method createGraphics(height, width) {
 }
 
 var graphics := createGraphics(200,200)
-var circle := graphics.addCircleAt(30@30)
+var circle := graphics.addCircleAt(30@30)ofRadius(15)
 circle.color := "red"
 circle.fill := true
+circle.click := { print("clicked") }
 graphics.draw
 

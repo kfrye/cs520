@@ -7,7 +7,7 @@ Create the graphics object:
 var graphics := createGraphics(width, height)
 
 Add shapes:
-var circle := graphics.addCircleAt(30@30)
+var circle := graphics.addCircleAt(x@y)ofRadius(length)
 circle.color := “red”
 circle.fill := true
 
