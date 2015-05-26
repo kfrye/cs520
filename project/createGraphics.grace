@@ -8,9 +8,8 @@ factory method listener_default {
   var clickBlock := { }
   var clickIsSet := false
   
-  method click(x, y) {
-    print("x: {x}, y:{y}")
-    //clickBlock.apply
+  method click {
+    clickBlock.apply
   }
   
   method click:=(block) {
@@ -20,7 +19,6 @@ factory method listener_default {
 }
 
 method createGraphics(canvasHeight, canvasWidth) {
-  var listener := listener_default
   
   object {
     var isOpened : Boolean := false
@@ -39,13 +37,6 @@ method createGraphics(canvasHeight, canvasWidth) {
         var stage = new createjs.Stage(canvas);
         stage.enableDOMEvents(true);
         unwrapDOMObject(stage);
-        stage.addEventListener("stagemousedown", function(event) { 
-          var x = event.stageX;
-          var y = event.stageY;
-          console.log(x);
-          console.log(y);
-          callmethod(var_listener, "click", [2], new GraceNum(x), new GraceNum(y));
-        });
       ›
       isOpened := true
     }
@@ -56,6 +47,8 @@ method createGraphics(canvasHeight, canvasWidth) {
     }
     
     method addCircle {
+      var listener := listener_default
+      
       def circle = object {
         inherits shape
         
@@ -73,17 +66,30 @@ method createGraphics(canvasHeight, canvasWidth) {
             var y = this.data.location.data.y._value;
             var radius = this.data.radius._value
             var color = this.data.color._value
+            circle.setBounds(x - radius, y - radius, x + radius, y + radius);
             if(this.data.fill._value == true) {
               circle.graphics.beginFill(color).drawCircle(x, y, radius);
             }
             else {
               circle.graphics.beginStroke(color).drawCircle(x, y, radius);
             }
-            
-            
-            
+            if(var_listener.data.clickIsSet._value == true) {
+              stage.addEventListener("stagemousedown", function(event) { 
+                var x = event.stageX;
+                var y = event.stageY;
+                console.log("x: " + x.toString());
+                console.log("y: " + y.toString());
+                var bounds = circle.getBounds();
+                if(x >= bounds.x && x <= bounds.width &&
+                   y >= bounds.y && y <= bounds.height) {
+                     console.log("found circle");
+                     callmethod(var_listener, "click", [0]);
+                }
+              });
+            }
             stage.addChild(circle);
             stage.update();
+            console.log(circle);
           ›
         }
       }
@@ -91,8 +97,8 @@ method createGraphics(canvasHeight, canvasWidth) {
       circle
     }
     
-     
     method addRect {
+      var listener := listener_default
       
       def rect = object {
         inherits shape
@@ -111,6 +117,7 @@ method createGraphics(canvasHeight, canvasWidth) {
             var y = this.data.location.data.y._value;
             var height = this.data.height._value
             var width = this.data.width._value
+            rect.setBounds(x-.5*width, y-.5*height, x+.5*width, y+.5*height);
             var color = this.data.color._value
             if(this.data.fill._value == true) {
               rect.graphics.beginFill(color).drawRect(x, y, width, height);
@@ -118,12 +125,26 @@ method createGraphics(canvasHeight, canvasWidth) {
             else {
               rect.graphics.beginStroke(color).drawRect(x, y, width, height);
             }
-            stage.addChild(circle);
+            if(var_listener.data.clickIsSet._value == true) {
+              stage.addEventListener("stagemousedown", function(event) { 
+                var x = event.stageX;
+                var y = event.stageY;
+                console.log("x: " + x.toString());
+                console.log("y: " + y.toString());
+                var bounds = rect.getBounds();
+                if(x >= bounds.x && x <= bounds.width &&
+                   y >= bounds.y && y <= bounds.height) {
+                     console.log("found rectangle");
+                     callmethod(var_listener, "click", [0]);
+                }
+              });
+            }
+            stage.addChild(rect);
             stage.update();
           ›
         }
       }
-      rects.add(circle)
+      rects.add(rect)
       rect
     }
   //  
@@ -181,6 +202,9 @@ var circle := graphics.addCircle
 circle.radius := 10
 circle.color := "red"
 circle.fill := true
-circle.click := { print("clicked") }
+circle.click := { print("clicked circle") }
+var rect := graphics.addRect
+rect.location := 100@100
+rect.click := { print("clicked rectangle")}
 graphics.draw
 
