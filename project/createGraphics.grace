@@ -16,6 +16,21 @@ factory method listener_default {
     clickIsSet := true
     clickBlock := block
   }
+  
+  method addListener(stage, obj, listener) {
+    native "js" code ‹
+      var_stage.on("stagemousedown", function(event) { 
+        var x = event.stageX;
+        var y = event.stageY;
+        console.log("x: "+x.toString()+", y: " + y.toString());
+        var bounds = var_obj.getBounds();
+        console.log(bounds);
+        if(bounds.contains(x,y)) {
+          callmethod(var_listener, "click", [0]);
+        }
+      });
+    ›
+  }
 }
 
 method createGraphics(canvasHeight, canvasWidth) {
@@ -26,6 +41,7 @@ method createGraphics(canvasHeight, canvasWidth) {
     var myWindow
     var circles := list.empty
     var rects := list.empty
+    var polyStars := list.empty
     
     if(!isOpened) then {
       native "js" code ‹
@@ -44,6 +60,7 @@ method createGraphics(canvasHeight, canvasWidth) {
     method draw {
       for (circles) do { x -> x.draw }
       for (rects) do { x -> x.draw }
+      for (polyStars) do { x -> x.draw }
     }
     
     method addCircle {
@@ -60,7 +77,6 @@ method createGraphics(canvasHeight, canvasWidth) {
         
         method draw {
           native "js" code ‹ 
-            unwrapDOMObject(stage);
             var circle = new createjs.Shape();
             var x = this.data.location.data.x._value;
             var y = this.data.location.data.y._value;
@@ -74,22 +90,11 @@ method createGraphics(canvasHeight, canvasWidth) {
               circle.graphics.beginStroke(color).drawCircle(x, y, radius);
             }
             if(var_listener.data.clickIsSet._value == true) {
-              stage.addEventListener("stagemousedown", function(event) { 
-                var x = event.stageX;
-                var y = event.stageY;
-                console.log("x: " + x.toString());
-                console.log("y: " + y.toString());
-                var bounds = circle.getBounds();
-                if(x >= bounds.x && x <= bounds.width &&
-                   y >= bounds.y && y <= bounds.height) {
-                     console.log("found circle");
-                     callmethod(var_listener, "click", [0]);
-                }
-              });
+              callmethod(var_listener, "addListener", [3], stage, circle, var_listener);
             }
             stage.addChild(circle);
             stage.update();
-            console.log(circle);
+            //console.log(circle);
           ›
         }
       }
@@ -117,7 +122,7 @@ method createGraphics(canvasHeight, canvasWidth) {
             var y = this.data.location.data.y._value;
             var height = this.data.height._value
             var width = this.data.width._value
-            rect.setBounds(x-.5*width, y-.5*height, x+.5*width, y+.5*height);
+            rect.setBounds(x, y, x+width, y+height);
             var color = this.data.color._value
             if(this.data.fill._value == true) {
               rect.graphics.beginFill(color).drawRect(x, y, width, height);
@@ -126,18 +131,7 @@ method createGraphics(canvasHeight, canvasWidth) {
               rect.graphics.beginStroke(color).drawRect(x, y, width, height);
             }
             if(var_listener.data.clickIsSet._value == true) {
-              stage.addEventListener("stagemousedown", function(event) { 
-                var x = event.stageX;
-                var y = event.stageY;
-                console.log("x: " + x.toString());
-                console.log("y: " + y.toString());
-                var bounds = rect.getBounds();
-                if(x >= bounds.x && x <= bounds.width &&
-                   y >= bounds.y && y <= bounds.height) {
-                     console.log("found rectangle");
-                     callmethod(var_listener, "click", [0]);
-                }
-              });
+              callmethod(var_listener, "addListener", [3], stage, rect, var_listener);
             }
             stage.addChild(rect);
             stage.update();
@@ -146,6 +140,54 @@ method createGraphics(canvasHeight, canvasWidth) {
       }
       rects.add(rect)
       rect
+    }
+    
+    method addPolyStar {
+      var listener := listener_default
+      
+      def polyStar = object {
+        inherits shape
+        
+        var size is public := 40
+        var sides is public := 5
+        var pointSize is public := 0.5
+        var angle is public := -90
+        
+        method click:=(block) {
+          listener.click := block
+        }
+        
+        method draw {
+          native "js" code ‹ 
+            var polyStar = new createjs.Shape();
+            var x = this.data.location.data.x._value;
+            var y = this.data.location.data.y._value;
+            var size = this.data.size._value;
+            var sides = this.data.sides._value;
+            var pointSize = this.data.pointSize._value;
+            var color = this.data.color._value;
+            var angle = this.data.angle._value;
+            var left = 
+            polyStar.setBounds(x-size/2, y-size/2, x+size/2, y+size/2);
+            console.log(polyStar.getBounds());
+            if(this.data.fill._value == true) {
+              polyStar.graphics.beginFill(color).drawPolyStar(x, y, size, sides,
+                pointSize, angle);
+            }
+            else {
+              polyStar.graphics.beginStroke(color).drawPolyStar(x, y, size, sides,
+                pointSize, angle);
+            }
+            if(var_listener.data.clickIsSet._value == true) {
+              callmethod(var_listener, "addListener", [3], stage, polyStar, var_listener);
+            }
+            stage.addChild(polyStar);
+            stage.update();
+          ›
+        }
+      }
+      polyStars.add(polyStar)
+      polyStar
     }
   //  
   //  method addPolyStar(id)ofSize(size)withSides(sides)withPointSize(pointSize)withAngle(angle)ofColor(color)at(location) {
@@ -202,9 +244,12 @@ var circle := graphics.addCircle
 circle.radius := 10
 circle.color := "red"
 circle.fill := true
-circle.click := { print("clicked circle") }
+//circle.click := { print("clicked circle") }
 var rect := graphics.addRect
 rect.location := 100@100
-rect.click := { print("clicked rectangle")}
+//rect.click := { print("clicked rectangle")}
+var star := graphics.addPolyStar
+star.location := 0@0
+star.click := { print ("clicked star") }
 graphics.draw
 
