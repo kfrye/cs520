@@ -7,9 +7,11 @@ factory method shape {
 factory method listener_default {
   var clickBlock := { }
   var clickIsSet := false
+  var listenerIsCalled := false
   
   method click {
     clickBlock.apply
+    listenerIsCalled := false
   }
   
   method click:=(block) {
@@ -22,7 +24,7 @@ factory method listener_default {
       var_stage.on("stagemousedown", function(event) { 
         var x = event.stageX;
         var y = event.stageY;
-        console.log("x: "+x.toString()+", y: " + y.toString());
+        //console.log("x: "+x.toString()+", y: " + y.toString());
         var bounds = var_obj.getBounds();
         console.log(bounds);
         if(bounds.contains(x,y)) {
@@ -36,26 +38,21 @@ factory method listener_default {
 method createGraphics(canvasHeight, canvasWidth) {
   
   object {
-    var isOpened : Boolean := false
     var id := 0
     var myWindow
     var circles := list.empty
     var rects := list.empty
     var polyStars := list.empty
     
-    if(!isOpened) then {
-      native "js" code ‹
-        var size = "height=" + var_canvasHeight._value.toString() + ",width=" + var_canvasWidth._value.toString()
-        myWindow = window.open("", "_blank", size);
-        myWindow.document.title = "Grace Graphics";
-        var canvas = myWindow.document.createElement("canvas");
-        myWindow.document.body.appendChild(canvas);
-        var stage = new createjs.Stage(canvas);
-        stage.enableDOMEvents(true);
-        unwrapDOMObject(stage);
-      ›
-      isOpened := true
-    }
+    native "js" code ‹
+      var size = "height=" + var_canvasHeight._value.toString() + ",width=" + var_canvasWidth._value.toString()
+      myWindow = window.open("", "_blank", size);
+      myWindow.document.title = "Grace Graphics";
+      var canvas = myWindow.document.createElement("canvas");
+      myWindow.document.body.appendChild(canvas);
+      var stage = new createjs.Stage(canvas);
+      stage.enableDOMEvents(true);
+    ›
     
     method draw {
       for (circles) do { x -> x.draw }
@@ -65,18 +62,24 @@ method createGraphics(canvasHeight, canvasWidth) {
     
     method addCircle {
       var listener := listener_default
+      var listenerIsSet := false
       
       def circle = object {
         inherits shape
         
         var radius is public := 15
-        
+        var jscircle
+
         method click:=(block) {
           listener.click := block
         }
         
         method draw {
-          native "js" code ‹ 
+          jscircle := native "js" code ‹ 
+            if(this.data.jscircle != null) {
+              var circle = this.data.jscircle;
+              stage.removeChild(circle);
+            }
             var circle = new createjs.Shape();
             var x = this.data.location.data.x._value;
             var y = this.data.location.data.y._value;
@@ -91,10 +94,11 @@ method createGraphics(canvasHeight, canvasWidth) {
             }
             if(var_listener.data.clickIsSet._value == true) {
               callmethod(var_listener, "addListener", [3], stage, circle, var_listener);
+              console.log(var_listener);
             }
             stage.addChild(circle);
             stage.update();
-            //console.log(circle);
+            var result = circle;
           ›
         }
       }
@@ -107,7 +111,7 @@ method createGraphics(canvasHeight, canvasWidth) {
       
       def rect = object {
         inherits shape
-        
+        var jsrect
         var height is public := 15
         var width is public := 15
         
@@ -116,7 +120,13 @@ method createGraphics(canvasHeight, canvasWidth) {
         }
         
         method draw {
-          native "js" code ‹ 
+          jsrect := native "js" code ‹ 
+            // Remove any existing rectangles so that we only draw one
+            // per object
+            if(this.data.jsrect != null) {
+              var rect = this.data.jsrect;
+              stage.removeChild(rect);
+            }
             var rect = new createjs.Shape();
             var x = this.data.location.data.x._value;
             var y = this.data.location.data.y._value;
@@ -135,6 +145,7 @@ method createGraphics(canvasHeight, canvasWidth) {
             }
             stage.addChild(rect);
             stage.update();
+            var result = rect;
           ›
         }
       }
@@ -189,23 +200,7 @@ method createGraphics(canvasHeight, canvasWidth) {
       polyStars.add(polyStar)
       polyStar
     }
-  //  
-  //  method addPolyStar(id)ofSize(size)withSides(sides)withPointSize(pointSize)withAngle(angle)ofColor(color)at(location) {
-  //    stage := native "js" code ‹
-  //      //var stage = unwrapDOMObject(this.data.stage);
-  //      var polyStar = new createjs.Shape();
-  //      polyStar.x = var_location.data.x._value;
-  //      polyStar.y = var_location.data.y._value;
-  //      polyStar.graphics.beginFill(var_color._value).drawPolyStar(polyStar.x,polyStar.y,
-  //                                                    var_size._value,var_sides._value,
-  //                                                    var_pointSize._value, var_angle._value);
-  //      polyStar.name = var_id._value;
-  //      stage.addChild(polyStar);
-  //      stage.update();
-  //      //var result = wrapDOMObject(stage);
-  //    ›
-  //  }
-  //  
+
   //  method addRoundRect(id)ofWidth(width)ofHeight(height)withRadius(radius)ofColor(color)at(location){
   //    stage := native "js" code ‹
   //      //var stage = unwrapDOMObject(this.data.stage);
@@ -244,12 +239,25 @@ var circle := graphics.addCircle
 circle.radius := 10
 circle.color := "red"
 circle.fill := true
-//circle.click := { print("clicked circle") }
+circle.draw
+//circle.color := "blue"
+//circle.update
+circle.click := { 
+  print("clicked circle") 
+  circle.color := "blue"
+  circle.location := 30@30
+  circle.draw
+}
 var rect := graphics.addRect
 rect.location := 100@100
-//rect.click := { print("clicked rectangle")}
-var star := graphics.addPolyStar
-star.location := 0@0
-star.click := { print ("clicked star") }
+rect.click := { 
+  print("clicked rectangle")
+  circle.location := 100@50
+  circle.color := "red"
+  circle.draw
+}
+//var star := graphics.addPolyStar
+//star.location := 0@0
+//star.click := { print ("clicked star") }
 graphics.draw
 
