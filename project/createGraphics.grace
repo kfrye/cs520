@@ -45,6 +45,7 @@ method createGraphics(canvasHeight, canvasWidth) {
     var polyStars := list.empty
     var roundRects := list.empty
     var ellipses := list.empty
+    var texts := list.empty
     
     native "js" code ‹
       var size = "height=" + var_canvasHeight._value.toString() + ",width=" + var_canvasWidth._value.toString()
@@ -62,6 +63,7 @@ method createGraphics(canvasHeight, canvasWidth) {
       for (polyStars) do { x -> x.draw }
       for (roundRects) do { x -> x.draw }
       for (ellipses) do { x -> x.draw }
+      for (texts) do { x -> x.draw }
     }
     
     method addCircle {
@@ -89,7 +91,7 @@ method createGraphics(canvasHeight, canvasWidth) {
             var y = this.data.location.data.y._value;
             var radius = this.data.radius._value
             var color = this.data.color._value
-            circle.setBounds(x - radius, y - radius, x + radius, y + radius);
+            circle.setBounds(x, y,2*radius, 2*radius);
             if(this.data.fill._value == true) {
               circle.graphics.beginFill(color).drawCircle(x, y, radius);
             }
@@ -183,7 +185,7 @@ method createGraphics(canvasHeight, canvasWidth) {
             var color = this.data.color._value;
             var angle = this.data.angle._value;
             var left = 
-            polyStar.setBounds(x-size/2, y-size/2, x+size/2, y+size/2);
+            polyStar.setBounds(x, y, size, size);
             console.log(polyStar.getBounds());
             if(this.data.fill._value == true) {
               polyStar.graphics.beginFill(color).drawPolyStar(x, y, size, sides,
@@ -233,7 +235,7 @@ method createGraphics(canvasHeight, canvasWidth) {
             var height = this.data.height._value
             var width = this.data.width._value
             var radius = this.data.radius._value
-            roundRect.setBounds(x, y, x+width, y+height);
+            roundRect.setBounds(x, y, width, height);
             var color = this.data.color._value
             if(this.data.fill._value == true) {
               roundRect.graphics.beginFill(color).drawRoundRect(x, y, width, height, radius);
@@ -280,7 +282,7 @@ method createGraphics(canvasHeight, canvasWidth) {
             var y = this.data.location.data.y._value;
             var height = this.data.height._value
             var width = this.data.width._value
-            ellipse.setBounds(x, y, x+width, y+height);
+            ellipse.setBounds(x, y, width, height);
             var color = this.data.color._value
             if(this.data.fill._value == true) {
               ellipse.graphics.beginFill(color).drawEllipse(x, y, width, height);
@@ -300,6 +302,51 @@ method createGraphics(canvasHeight, canvasWidth) {
       ellipses.add(ellipse)
       ellipse
     }
+    
+    method addText {
+      var listener := listener_default
+      
+      def text = object {
+        
+        var location is public
+        var color is public := "black"
+        var jsText
+        var content is public := "Did you forget to set text.content?"
+        var font is public := "12px Arial"
+        
+        method click:=(block) {
+          listener.click := block
+        }
+        
+        method draw {
+          jsText := native "js" code ‹ 
+            // Remove any existing text so that we only draw one
+            // per object
+            if(this.data.jsText != null) {
+              var text = this.data.jsText;
+              stage.removeChild(text);
+            }
+            var x = this.data.location.data.x._value;
+            var y = this.data.location.data.y._value;
+            var color = this.data.color._value;
+            var font = this.data.font._value;
+            var content = this.data.content._value;
+            var text = new createjs.Text(content, font, color);
+            bounds = text.getBounds()
+            text.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
+            
+            if(var_listener.data.clickIsSet._value == true) {
+              callmethod(var_listener, "addListener", [3], stage, text, var_listener);
+            }
+            stage.addChild(text);
+            stage.update();
+            var result = text;
+          ›
+        }
+      }
+      texts.add(text)
+      text
+    }
   }
 }
 
@@ -309,53 +356,54 @@ circle.radius := 10
 circle.color := "red"
 circle.fill := true
 circle.draw
-//circle.color := "blue"
-//circle.update
 circle.click := { 
   print("clicked circle") 
   circle.color := "blue"
   circle.location := 30@30
   circle.draw
 }
-var rect := graphics.addRect
-rect.location := 100@100
-rect.click := { 
-  print("clicked rectangle")
-  circle.location := 100@50
-  circle.color := "red"
-  circle.draw
-}
+//var rect := graphics.addRect
+//rect.location := 100@100
+//rect.click := { 
+//  print("clicked rectangle")
+//  circle.location := 100@50
+//  circle.color := "red"
+//  circle.draw
+//}
+//
+//var roundRect := graphics.addRoundRect
+//roundRect.location := 50@50
+//roundRect.radius := 5
+//roundRect.width := 20
+//roundRect.height := 20
+//roundRect.color := "blue"
+//roundRect.fill := true
+//roundRect.draw
+//
+//roundRect.click := {
+//  print("clicked round rect")
+//  roundRect.color := "red"
+//  roundRect.location := 200@200
+//  roundRect.draw
+//}
+//
+//var ellipse := graphics.addEllipse
+//ellipse.location := 80@80
+//ellipse.width := 10
+//ellipse.height := 20
+//ellipse.color := "blue"
+//ellipse.fill := true
+//ellipse.draw
+//
+//ellipse.click := {
+//  print("clicked ellipse")
+//}
 
-var roundRect := graphics.addRoundRect
-roundRect.location := 50@50
-roundRect.radius := 5
-roundRect.width := 20
-roundRect.height := 20
-roundRect.color := "blue"
-roundRect.fill := true
-roundRect.draw
-
-roundRect.click := {
-  print("clicked round rect")
-  roundRect.color := "red"
-  roundRect.location := 200@200
-  roundRect.draw
-}
-
-var ellipse := graphics.addEllipse
-ellipse.location := 80@80
-ellipse.width := 10
-ellipse.height := 20
-ellipse.color := "blue"
-ellipse.fill := true
-ellipse.draw
-
-ellipse.click := {
-  print("clicked ellipse")
-  
-}
-//var star := graphics.addPolyStar
-//star.location := 0@0
-//star.click := { print ("clicked star") }
+var text := graphics.addText
+text.location := 50@50
+text.click := { print ("clicked text")}
+var star := graphics.addPolyStar
+star.location := 100@100
+star.click := { print ("clicked star") }
 graphics.draw
 
