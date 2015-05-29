@@ -43,6 +43,8 @@ method createGraphics(canvasHeight, canvasWidth) {
     var circles := list.empty
     var rects := list.empty
     var polyStars := list.empty
+    var roundRects := list.empty
+    var ellipses := list.empty
     
     native "js" code ‹
       var size = "height=" + var_canvasHeight._value.toString() + ",width=" + var_canvasWidth._value.toString()
@@ -58,6 +60,8 @@ method createGraphics(canvasHeight, canvasWidth) {
       for (circles) do { x -> x.draw }
       for (rects) do { x -> x.draw }
       for (polyStars) do { x -> x.draw }
+      for (roundRects) do { x -> x.draw }
+      for (ellipses) do { x -> x.draw }
     }
     
     method addCircle {
@@ -200,38 +204,103 @@ method createGraphics(canvasHeight, canvasWidth) {
       polyStars.add(polyStar)
       polyStar
     }
-
-  //  method addRoundRect(id)ofWidth(width)ofHeight(height)withRadius(radius)ofColor(color)at(location){
-  //    stage := native "js" code ‹
-  //      //var stage = unwrapDOMObject(this.data.stage);
-  //      var roundRect = new createjs.Shape();
-  //      roundRect.x = var_location.data.x._value;
-  //      roundRect.y = var_location.data.y._value;
-  //      roundRect.graphics.beginFill(var_color._value).drawRoundRect(roundRect.x,roundRect.y,var_width._value,
-  //                                                              var_height._value, var_radius._value);
-  //      roundRect.name = var_id._value;
-  //      stage.addChild(roundRect);
-  //      stage.update();
-  //      //var result = wrapDOMObject(stage);
-  //    ›
-  //  }
-  //  
-  //  method addEllipse(id)ofWidth(width)ofHeight(height)ofColor(color)at(location){
-  //    stage := native "js" code ‹ 
-  //      //var stage = unwrapDOMObject(this.data.stage);
-  //      var ellipse = new createjs.Shape();
-  //      ellipse.x = var_location.data.x._value;
-  //      ellipse.y = var_location.data.y._value;
-  //      ellipse.graphics.beginFill(var_color._value).drawEllipse(ellipse.x, ellipse.y, 
-  //                                                              var_width._value,var_height._value);
-  //      ellipse.name = var_id._value;
-  //      stage.addChild(ellipse);
-  //      stage.update();
-  //      //var result = wrapDOMObject(stage);
-  //    ›
-  //  }
+    
+    method addRoundRect {
+      var listener := listener_default
+      
+      def roundRect = object {
+        inherits shape
+        var jsRoundRect
+        var height is public := 15
+        var width is public := 15
+        var radius is public := 15
+        
+        method click:=(block) {
+          listener.click := block
+        }
+        
+        method draw {
+          jsRoundRect := native "js" code ‹ 
+            // Remove any existing rectangles so that we only draw one
+            // per object
+            if(this.data.jsRoundRect != null) {
+              var roundRect = this.data.jsRoundRect;
+              stage.removeChild(roundRect);
+            }
+            var roundRect = new createjs.Shape();
+            var x = this.data.location.data.x._value;
+            var y = this.data.location.data.y._value;
+            var height = this.data.height._value
+            var width = this.data.width._value
+            var radius = this.data.radius._value
+            roundRect.setBounds(x, y, x+width, y+height);
+            var color = this.data.color._value
+            if(this.data.fill._value == true) {
+              roundRect.graphics.beginFill(color).drawRoundRect(x, y, width, height, radius);
+            }
+            else {
+              rect.graphics.beginStroke(color).drawRoundRect(x, y, width, height, radius);
+            }
+            if(var_listener.data.clickIsSet._value == true) {
+              callmethod(var_listener, "addListener", [3], stage, roundRect, var_listener);
+            }
+            stage.addChild(roundRect);
+            stage.update();
+            var result = roundRect;
+          ›
+        }
+      }
+      roundRects.add(roundRect)
+      roundRect
+    }
+    
+    method addEllipse {
+      var listener := listener_default
+      
+      def ellipse = object {
+        inherits shape
+        var jsEllipse
+        var height is public := 15
+        var width is public := 15
+        
+        method click:=(block) {
+          listener.click := block
+        }
+        
+        method draw {
+          jsEllipse := native "js" code ‹ 
+            // Remove any existing ellipses so that we only draw one
+            // per object
+            if(this.data.jsEllipse != null) {
+              var ellipse = this.data.jsEllipse;
+              stage.removeChild(ellipse);
+            }
+            var ellipse = new createjs.Shape();
+            var x = this.data.location.data.x._value;
+            var y = this.data.location.data.y._value;
+            var height = this.data.height._value
+            var width = this.data.width._value
+            ellipse.setBounds(x, y, x+width, y+height);
+            var color = this.data.color._value
+            if(this.data.fill._value == true) {
+              ellipse.graphics.beginFill(color).drawEllipse(x, y, width, height);
+            }
+            else {
+              ellipse.graphics.beginStroke(color).drawEllipse(x, y, width, height);
+            }
+            if(var_listener.data.clickIsSet._value == true) {
+              callmethod(var_listener, "addListener", [3], stage, ellipse, var_listener);
+            }
+            stage.addChild(ellipse);
+            stage.update();
+            var result = ellipse;
+          ›
+        }
+      }
+      ellipses.add(ellipse)
+      ellipse
+    }
   }
-  
 }
 
 var graphics := createGraphics(200,200)
@@ -255,6 +324,35 @@ rect.click := {
   circle.location := 100@50
   circle.color := "red"
   circle.draw
+}
+
+var roundRect := graphics.addRoundRect
+roundRect.location := 50@50
+roundRect.radius := 5
+roundRect.width := 20
+roundRect.height := 20
+roundRect.color := "blue"
+roundRect.fill := true
+roundRect.draw
+
+roundRect.click := {
+  print("clicked round rect")
+  roundRect.color := "red"
+  roundRect.location := 200@200
+  roundRect.draw
+}
+
+var ellipse := graphics.addEllipse
+ellipse.location := 80@80
+ellipse.width := 10
+ellipse.height := 20
+ellipse.color := "blue"
+ellipse.fill := true
+ellipse.draw
+
+ellipse.click := {
+  print("clicked ellipse")
+  
 }
 //var star := graphics.addPolyStar
 //star.location := 0@0
