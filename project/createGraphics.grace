@@ -91,7 +91,7 @@ method createGraphics(canvasHeight, canvasWidth) {
             var y = this.data.location.data.y._value;
             var radius = this.data.radius._value
             var color = this.data.color._value
-            circle.setBounds(x, y,2*radius, 2*radius);
+            circle.setBounds(x-radius, y-radius,2*radius, 2*radius);
             if(this.data.fill._value == true) {
               circle.graphics.beginFill(color).drawCircle(x, y, radius);
             }
@@ -165,9 +165,9 @@ method createGraphics(canvasHeight, canvasWidth) {
       def polyStar = object {
         inherits shape
         
-        var size is public := 40
+        var size is public := 20
         var sides is public := 5
-        var pointSize is public := 0.5
+        var pointSize is public := 2
         var angle is public := -90
         
         method click:=(block) {
@@ -184,8 +184,7 @@ method createGraphics(canvasHeight, canvasWidth) {
             var pointSize = this.data.pointSize._value;
             var color = this.data.color._value;
             var angle = this.data.angle._value;
-            var left = 
-            polyStar.setBounds(x, y, size, size);
+            polyStar.setBounds(x-size, y-size, 2*size, 2*size);
             console.log(polyStar.getBounds());
             if(this.data.fill._value == true) {
               polyStar.graphics.beginFill(color).drawPolyStar(x, y, size, sides,
