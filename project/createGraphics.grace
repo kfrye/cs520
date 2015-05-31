@@ -64,7 +64,7 @@ method createGraphics(canvasHeight, canvasWidth) {
     }
   
     method draw {
-      native "js" code ‹ stage.removeAllEventListeners ›
+      native "js" code ‹ stage.removeAllEventListeners(); ›
       for (circles) do { x -> x.draw }
       for (rects) do { x -> x.draw }
       for (polyStars) do { x -> x.draw }
@@ -144,7 +144,7 @@ method createGraphics(canvasHeight, canvasWidth) {
             var y = this.data.location.data.y._value;
             var height = this.data.height._value
             var width = this.data.width._value
-            rect.setBounds(x, y, x+width, y+height);
+            rect.setBounds(x, y, width, height);
             var color = this.data.color._value
             if(this.data.fill._value == true) {
               rect.graphics.beginFill(color).drawRect(x, y, width, height);
@@ -355,26 +355,26 @@ method createGraphics(canvasHeight, canvasWidth) {
 }
 
 var graphics := createGraphics(500,500)
-//var circle := graphics.addCircle
-//circle.radius := 10
-//circle.color := "red"
-//circle.fill := true
-//circle.draw
-//circle.click := { 
-//  print("clicked circle") 
-//  circle.color := "blue"
-//  circle.location := 30@30
-//  circle.draw
-//}
-//var rect := graphics.addRect
-//rect.location := 100@100
-//rect.click := { 
-//  print("clicked rectangle")
-//  rect.play("note3")
-//  //circle.location := 100@50
-//  //circle.color := "red"
-//  //circle.draw
-//}
+var circle := graphics.addCircle
+circle.radius := 10
+circle.color := "red"
+circle.fill := true
+circle.draw
+circle.click := { 
+  print("clicked circle") 
+  circle.color := "blue"
+  circle.location := 30@30
+  circle.draw
+}
+var rect := graphics.addRect
+rect.location := 100@100
+rect.click := { 
+  print("clicked rectangle")
+  graphics.play("note3")
+  circle.location := 100@50
+  circle.color := "red"
+  graphics.draw
+}
 //
 //var roundRect := graphics.addRoundRect
 //roundRect.location := 50@50
@@ -407,6 +407,9 @@ var graphics := createGraphics(500,500)
 //text.click := { print ("clicked text")}
 var star := graphics.addPolyStar
 star.location := 200@200
-star.click := { graphics.play("note1") }
+star.click := { 
+  print "star clicked"
+  graphics.play("note1") 
+}
 graphics.draw
 
