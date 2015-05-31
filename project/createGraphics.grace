@@ -34,7 +34,6 @@ factory method listener_default {
 }
 
 method createGraphics(canvasHeight, canvasWidth) {
-  
   object {
     var id := 0
     var myWindow
@@ -133,8 +132,6 @@ method createGraphics(canvasHeight, canvasWidth) {
         
         method draw {
           jsrect := native "js" code ‹ 
-            // Remove any existing rectangles so that we only draw one
-            // per object
             if(this.data.jsrect != null) {
               var rect = this.data.jsrect;
               stage.removeChild(rect);
@@ -227,8 +224,6 @@ method createGraphics(canvasHeight, canvasWidth) {
         
         method draw {
           jsRoundRect := native "js" code ‹ 
-            // Remove any existing rectangles so that we only draw one
-            // per object
             if(this.data.jsRoundRect != null) {
               var roundRect = this.data.jsRoundRect;
               stage.removeChild(roundRect);
@@ -275,8 +270,6 @@ method createGraphics(canvasHeight, canvasWidth) {
         
         method draw {
           jsEllipse := native "js" code ‹ 
-            // Remove any existing ellipses so that we only draw one
-            // per object
             if(this.data.jsEllipse != null) {
               var ellipse = this.data.jsEllipse;
               stage.removeChild(ellipse);
@@ -311,7 +304,6 @@ method createGraphics(canvasHeight, canvasWidth) {
       var listener := listener_default
       
       def text = object {
-        
         var location is public
         var color is public := "black"
         var jsText
@@ -324,8 +316,6 @@ method createGraphics(canvasHeight, canvasWidth) {
         
         method draw {
           jsText := native "js" code ‹ 
-            // Remove any existing text so that we only draw one
-            // per object
             if(this.data.jsText != null) {
               var text = this.data.jsText;
               stage.removeChild(text);
@@ -336,8 +326,10 @@ method createGraphics(canvasHeight, canvasWidth) {
             var font = this.data.font._value;
             var content = this.data.content._value;
             var text = new createjs.Text(content, font, color);
+            text.x = x;
+            text.y = y;
             bounds = text.getBounds()
-            text.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
+            text.setBounds(x, y, bounds.width, bounds.height);
             
             if(var_listener.data.clickIsSet._value == true) {
               callmethod(var_listener, "addListener", [3], stage, text, var_listener);
@@ -375,36 +367,33 @@ rect.click := {
   circle.color := "red"
   graphics.draw
 }
-//
-//var roundRect := graphics.addRoundRect
-//roundRect.location := 50@50
-//roundRect.radius := 5
-//roundRect.width := 20
-//roundRect.height := 20
-//roundRect.color := "blue"
-//roundRect.fill := true
-//roundRect.draw
-//
-//roundRect.click := {
-//  print("clicked round rect")
-//  roundRect.color := "red"
-//  roundRect.location := 200@200
-//  roundRect.draw
-//}
-//
-//var ellipse := graphics.addEllipse
-//ellipse.location := 80@80
-//ellipse.width := 10
-//ellipse.height := 20
-//ellipse.color := "blue"
-//ellipse.fill := true
-//ellipse.draw
-//
-//ellipse.click := {nprint("clicked ellipse") }
 
-//var text := graphics.addText
-//text.location := 50@50
-//text.click := { print ("clicked text")}
+var roundRect := graphics.addRoundRect
+roundRect.location := 200@100
+roundRect.radius := 5
+roundRect.width := 20
+roundRect.height := 20
+roundRect.color := "blue"
+roundRect.fill := true
+roundRect.click := {
+  print("clicked round rect")
+}
+
+var ellipse := graphics.addEllipse
+ellipse.location := 50@400
+ellipse.width := 10
+ellipse.height := 20
+ellipse.color := "blue"
+ellipse.fill := true
+
+ellipse.click := {print("clicked ellipse") }
+
+var text := graphics.addText
+text.location := 300@300
+text.content := "Create Graphics"
+text.color := "purple"
+text.click := { print ("clicked text")}
+
 var star := graphics.addPolyStar
 star.location := 200@200
 star.click := { 
