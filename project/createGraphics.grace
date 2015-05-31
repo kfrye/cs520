@@ -2,6 +2,10 @@ factory method shape {
   var color is public := "black"
   var fill is public := false
   var location is public := 20@20
+  
+  method play(sound) {
+    native "js" code ‹ createjs.Sound.play(var_sound._value); ›
+  }
 }
 
 factory method listener_default {
@@ -24,9 +28,8 @@ factory method listener_default {
       var_stage.on("stagemousedown", function(event) { 
         var x = event.stageX;
         var y = event.stageY;
-        //console.log("x: "+x.toString()+", y: " + y.toString());
+        console.log("x: "+x.toString()+", y: " + y.toString());
         var bounds = var_obj.getBounds();
-        console.log(bounds);
         if(bounds.contains(x,y)) {
           callmethod(var_listener, "click", [0]);
         }
@@ -54,10 +57,23 @@ method createGraphics(canvasHeight, canvasWidth) {
       var canvas = myWindow.document.createElement("canvas");
       myWindow.document.body.appendChild(canvas);
       var stage = new createjs.Stage(canvas);
-      stage.enableDOMEvents(true);
+      console.log(stage);
+      createjs.Sound.registerSounds(
+        [ 
+          {id:"note1", src:"note1.mp3"},
+          {id:"note2", src:"note2.mp3"},
+          {id:"note3", src:"note3.mp3"},
+          {id:"note4", src:"note4.mp3"},
+          {id:"note5", src:"note5.mp3"},
+          {id:"note6", src:"note6.mp3"},
+          {id:"note7", src:"note7.mp3"},
+          {id:"note8", src:"note8.mp3"}
+        ], 
+        "res/");
     ›
     
     method draw {
+      native "js" code ‹ stage.removeAllEventListeners ›
       for (circles) do { x -> x.draw }
       for (rects) do { x -> x.draw }
       for (polyStars) do { x -> x.draw }
@@ -100,7 +116,7 @@ method createGraphics(canvasHeight, canvasWidth) {
             }
             if(var_listener.data.clickIsSet._value == true) {
               callmethod(var_listener, "addListener", [3], stage, circle, var_listener);
-              console.log(var_listener);
+              //console.log(var_listener);
             }
             stage.addChild(circle);
             stage.update();
@@ -176,7 +192,8 @@ method createGraphics(canvasHeight, canvasWidth) {
         
         method draw {
           native "js" code ‹ 
-            var polyStar = new createjs.Shape();
+            var polyStar = new createjs.Container();
+            var star = new createjs.Shape();
             var x = this.data.location.data.x._value;
             var y = this.data.location.data.y._value;
             var size = this.data.size._value;
@@ -184,19 +201,18 @@ method createGraphics(canvasHeight, canvasWidth) {
             var pointSize = this.data.pointSize._value;
             var color = this.data.color._value;
             var angle = this.data.angle._value;
-            polyStar.setBounds(x-size, y-size, 2*size, 2*size);
-            console.log(polyStar.getBounds());
             if(this.data.fill._value == true) {
-              polyStar.graphics.beginFill(color).drawPolyStar(x, y, size, sides,
+              star.graphics.beginFill(color).drawPolyStar(x, y, size, sides,
                 pointSize, angle);
             }
             else {
-              polyStar.graphics.beginStroke(color).drawPolyStar(x, y, size, sides,
+              star.graphics.beginStroke(color).drawPolyStar(x, y, size, sides,
                 pointSize, angle);
             }
             if(var_listener.data.clickIsSet._value == true) {
               callmethod(var_listener, "addListener", [3], stage, polyStar, var_listener);
             }
+            polyStar.addChild(star);
             stage.addChild(polyStar);
             stage.update();
           ›
@@ -240,7 +256,7 @@ method createGraphics(canvasHeight, canvasWidth) {
               roundRect.graphics.beginFill(color).drawRoundRect(x, y, width, height, radius);
             }
             else {
-              rect.graphics.beginStroke(color).drawRoundRect(x, y, width, height, radius);
+              roundRect.graphics.beginStroke(color).drawRoundRect(x, y, width, height, radius);
             }
             if(var_listener.data.clickIsSet._value == true) {
               callmethod(var_listener, "addListener", [3], stage, roundRect, var_listener);
@@ -354,24 +370,25 @@ var circle := graphics.addCircle
 circle.radius := 10
 circle.color := "red"
 circle.fill := true
-circle.draw
-circle.click := { 
-  print("clicked circle") 
-  circle.color := "blue"
-  circle.location := 30@30
-  circle.draw
-}
-//var rect := graphics.addRect
-//rect.location := 100@100
-//rect.click := { 
-//  print("clicked rectangle")
-//  circle.location := 100@50
-//  circle.color := "red"
+//circle.draw
+//circle.click := { 
+//  print("clicked circle") 
+//  circle.color := "blue"
+//  circle.location := 30@30
 //  circle.draw
 //}
+var rect := graphics.addRect
+rect.location := 100@100
+rect.click := { 
+  print("clicked rectangle")
+  rect.play("note3")
+  //circle.location := 100@50
+  //circle.color := "red"
+  //circle.draw
+}
 //
-//var roundRect := graphics.addRoundRect
-//roundRect.location := 50@50
+var roundRect := graphics.addRoundRect
+roundRect.location := 50@50
 //roundRect.radius := 5
 //roundRect.width := 20
 //roundRect.height := 20
@@ -386,23 +403,21 @@ circle.click := {
 //  roundRect.draw
 //}
 //
-//var ellipse := graphics.addEllipse
-//ellipse.location := 80@80
+var ellipse := graphics.addEllipse
+ellipse.location := 80@80
 //ellipse.width := 10
 //ellipse.height := 20
 //ellipse.color := "blue"
 //ellipse.fill := true
 //ellipse.draw
 //
-//ellipse.click := {
-//  print("clicked ellipse")
-//}
+//ellipse.click := {nprint("clicked ellipse") }
 
 var text := graphics.addText
 text.location := 50@50
-text.click := { print ("clicked text")}
-var star := graphics.addPolyStar
-star.location := 100@100
-star.click := { print ("clicked star") }
+//text.click := { print ("clicked text")}
+//var star := graphics.addPolyStar
+//star.location := 100@100
+//star.click := { print ("clicked star") }
 graphics.draw
 
