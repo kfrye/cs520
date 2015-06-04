@@ -1,0 +1,124 @@
+Discussion of last Tuesday's class on patterns
+
+Why don't we need to implement the singleton method in Grace?
+The default is to create only one instance of an object.
+
+A pattern is a solution to a problem in a certain context.
+
+In Grace, we use patterns when we use the graphics library. All the
+actual work is done in Javascript. 
+
+Traits: A Building Block for Classes
+
+Can we combine generic properties with existing objects in order to
+create new objects that can use these new properties?
+
+This does not fit into the single inheritance "tree" structure.
+
+One solution: Multiple inheritance and Mixin inheritance
+
+What is wrong with multiple inheritance?
+It gets very messy very quickly in order to figure out how all the
+methods fit together in the classes and superclasses. This is a complex
+solution for a simple problem. You need to add explicit class references,
+which increases dependencies.
+
+Mixin inheritance was invented to avoid these problems.
+If you only have one level of inheritance that you can reference, you lose 
+the ability to talk about the higher levels of inheritance.
+
+Once you have put inherited class in a hierarchy, you can only access
+one version of the function. You have no way of getting access to
+a higher level version of the function that has been overwritten.
+
+Traits:
+Traits are parameterized behaviors. They are written in terms of other
+methods. They provide a set of methods and require a set of methods.
+They are purely behavioral: just methods and no instance variables.
+
+Instead of building classes, we compose existing traits. 
+A class is made up of a superclass plus state plus traits and some
+glue methods in order to fix up things that don't quite work.
+
+Traits provide modularity within classes.
+
+The smart thing about traits are the composition rules.
+-Class methods take precedence over trait methods.
+-Conflicts must be resolved explicitly. If you have two traits that 
+implement the same method, then that method becomes undefined, and you
+need to write a new function in the class to define that method.
+Aliases are available for the trait methods so that you can reference them
+from the class. That way you can build methods from existing pieces
+instead of just rewriting them.
+-You can resolve conflicts by marking a trait method as "excluded" in
+order to get the rest of the trait functionality minus the method that
+conflicts with the other trait.
+
+You can either look at the properties in the structured view (showing
+which methods came with each trait), or in a flat view where you just
+see all the methods that are available.
+
+Collections allow for a uniform protocol to iterate over all the
+members of the various types of collection instead of having to
+define separate ways to iterate through different types.
+
+The implementation is far from optimal. Single inheritance is not
+powerful enough to model the problem set.
+For instance, there are sequenced collections and unsequenced collections.
+Then there are fixed and variable sequenced collectiosn and fixed
+and variable unsequenced collections. But this creates duplication.
+-Methods are implemented too high: the implementation is pushed up
+to a super class, but then it's hard to get access to.
+-You end up inheriting classes that you don't really want to inherit,
+and then you have to overwrite some of their methods.
+-This makes it hard to see what the real interface of a class is.
+
+Inheritance is often used when only a fracetion of the superclass
+methods should be inherited.
+
+It turns out that collections don't actually have a uniform interface.
+For instance, text only implements 15 different string methods, so it
+can't really be treated as a string.
+
+The additional conplexity of multiple inheritance outweights their utility.
+
+Refactored the collections class in Smalltalk as a case study.
+Did a bottom-up refactoring by picking an existing class, created
+a new trait, made the class use this trait, etc.
+
+Refined the traits into smaller traits.
+
+Renamed classes and traits, introduced new abstract classes, replaced
+inheritance with traits.
+
+Ended up with 3 parts:
+--Abstract root contained only methods supported by all collection classes.
+--Abstract classes with traits
+--Concrete classes with traits
+ 
+Created 2 trait hierarchies: functional and implementation
+
+Why are traits better than Mixins or multiple inheritance?
+
+--Flattening property: Can still view and work with classes with single
+inheritance.
+
+--Did not have to trade-off fine-grained inheritance with 
+reachability.
+
+Most of the time, inheritance does not actually represent "is a" (Smalltalk).
+
+Problems: Unintended name capture: no visibility/scoping mechanism for
+methods. So hard if traits use other traits that have methods with the
+same name.
+
+Scala, Perl, Fortress, Ruby have traits. There has been a lot of theoretical
+work that has come out of this.
+
+This is harder to implement in Grace because of the scope involved in 
+inheritance. You have access to variables in all the parent classes,
+whereas in Smalltalk, you only have access to variables in the current
+class plus the globals.
+
+
+

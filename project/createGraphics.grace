@@ -74,25 +74,27 @@ method createGraphics(canvasHeight, canvasWidth) {
     
     method addCircle {
       var listener := listener_default
-      var listenerIsSet := false
       
       def circle = object {
         inherits shape
         
         var radius is public := 15
-        var jscircle
-
+        var jsShape is readable
+        var name is public := "circle" ++ id.asString()
+        id := id + 1
+        
         method click:=(block) {
           listener.click := block
         }
         
         method draw {
-          jscircle := native "js" code ‹ 
-            if(this.data.jscircle != null) {
-              var circle = this.data.jscircle;
+          native "js" code ‹ 
+            if(this.data.jsShape != null) {
+              var circle = this.data.jsShape;
               stage.removeChild(circle);
             }
             var circle = new createjs.Shape();
+            circle.name = this.data.name._value;
             var x = this.data.location.data.x._value;
             var y = this.data.location.data.y._value;
             var radius = this.data.radius._value
@@ -108,8 +110,10 @@ method createGraphics(canvasHeight, canvasWidth) {
               callmethod(var_listener, "addListener", [3], stage, circle, var_listener);
             }
             stage.addChild(circle);
+            console.log("circle stage");
+            console.log(stage);
             stage.update();
-            var result = circle;
+            this.data.jsShape = circle;
           ›
         }
       }
@@ -122,21 +126,25 @@ method createGraphics(canvasHeight, canvasWidth) {
       
       def rect = object {
         inherits shape
-        var jsrect
+        var jsShape
         var height is public := 15
         var width is public := 15
+        var name is public := "rect" ++ id.asString()
+        id := id + 1
         
         method click:=(block) {
           listener.click := block
         }
         
         method draw {
-          jsrect := native "js" code ‹ 
-            if(this.data.jsrect != null) {
-              var rect = this.data.jsrect;
+          native "js" code ‹ 
+            if(this.data.jsShape != null) {
+              var rect = this.data.jsShape;
               stage.removeChild(rect);
             }
+            console.log(stage)
             var rect = new createjs.Shape();
+            rect.name = this.data.name._value;
             var x = this.data.location.data.x._value;
             var y = this.data.location.data.y._value;
             var height = this.data.height._value
@@ -154,7 +162,7 @@ method createGraphics(canvasHeight, canvasWidth) {
             }
             stage.addChild(rect);
             stage.update();
-            var result = rect;
+            this.data.jsShape = rect;
           ›
         }
       }
@@ -172,6 +180,9 @@ method createGraphics(canvasHeight, canvasWidth) {
         var sides is public := 5
         var pointSize is public := 2
         var angle is public := -90
+        var name is public := "polyStar" ++ id.asString()
+        id := id + 1
+        var jsShape
         
         method click:=(block) {
           listener.click := block
@@ -179,7 +190,12 @@ method createGraphics(canvasHeight, canvasWidth) {
         
         method draw {
           native "js" code ‹ 
+            if(this.data.jsShape != null) {
+              var jsShape = this.data.jsShape;
+              stage.removeChild(jsShape);
+            }
             var polyStar = new createjs.Shape();
+            polyStar.name = this.data.name._value;
             var x = this.data.location.data.x._value;
             var y = this.data.location.data.y._value;
             var size = this.data.size._value;
@@ -199,6 +215,7 @@ method createGraphics(canvasHeight, canvasWidth) {
             if(var_listener.data.clickIsSet._value == true) {
               callmethod(var_listener, "addListener", [3], stage, polyStar, var_listener);
             }
+            this.data.jsShape = polyStar
             stage.addChild(polyStar);
             stage.update();
           ›
@@ -213,22 +230,25 @@ method createGraphics(canvasHeight, canvasWidth) {
       
       def roundRect = object {
         inherits shape
-        var jsRoundRect
+        var jsShape
         var height is public := 15
         var width is public := 15
         var radius is public := 15
+        var name is public := "roundRect" ++ id.asString()
+        id := id + 1
         
         method click:=(block) {
           listener.click := block
         }
         
         method draw {
-          jsRoundRect := native "js" code ‹ 
-            if(this.data.jsRoundRect != null) {
-              var roundRect = this.data.jsRoundRect;
+          native "js" code ‹ 
+            if(this.data.jsShape != null) {
+              var roundRect = this.data.jsShape;
               stage.removeChild(roundRect);
             }
             var roundRect = new createjs.Shape();
+            roundRect.name = this.data.name._value;
             var x = this.data.location.data.x._value;
             var y = this.data.location.data.y._value;
             var height = this.data.height._value
@@ -247,7 +267,7 @@ method createGraphics(canvasHeight, canvasWidth) {
             }
             stage.addChild(roundRect);
             stage.update();
-            var result = roundRect;
+            this.data.jsShape = roundRect;
           ›
         }
       }
@@ -260,21 +280,24 @@ method createGraphics(canvasHeight, canvasWidth) {
       
       def ellipse = object {
         inherits shape
-        var jsEllipse
+        var jsShape
         var height is public := 15
         var width is public := 15
+        var name is public := "ellipse" ++ id.asString()
+        id := id + 1
         
         method click:=(block) {
           listener.click := block
         }
         
         method draw {
-          jsEllipse := native "js" code ‹ 
-            if(this.data.jsEllipse != null) {
-              var ellipse = this.data.jsEllipse;
+          native "js" code ‹ 
+            if(this.data.jsShape != null) {
+              var ellipse = this.data.jsShape;
               stage.removeChild(ellipse);
             }
             var ellipse = new createjs.Shape();
+            ellipse.name = this.data.name._value;
             var x = this.data.location.data.x._value;
             var y = this.data.location.data.y._value;
             var height = this.data.height._value
@@ -292,7 +315,7 @@ method createGraphics(canvasHeight, canvasWidth) {
             }
             stage.addChild(ellipse);
             stage.update();
-            var result = ellipse;
+            this.data.jsShape = ellipse;
           ›
         }
       }
@@ -304,20 +327,22 @@ method createGraphics(canvasHeight, canvasWidth) {
       var listener := listener_default
       
       def text = object {
-        var location is public
+        var location is public := 0@0
         var color is public := "black"
-        var jsText
+        var jsShape
         var content is public := "Did you forget to set text.content?"
         var font is public := "12px Arial"
+        var name is public := "text" ++ id.asString()
+        id := id + 1
         
         method click:=(block) {
           listener.click := block
         }
         
         method draw {
-          jsText := native "js" code ‹ 
-            if(this.data.jsText != null) {
-              var text = this.data.jsText;
+          native "js" code ‹ 
+            if(this.data.jsShape != null) {
+              var text = this.data.jsShape;
               stage.removeChild(text);
             }
             var x = this.data.location.data.x._value;
@@ -326,6 +351,7 @@ method createGraphics(canvasHeight, canvasWidth) {
             var font = this.data.font._value;
             var content = this.data.content._value;
             var text = new createjs.Text(content, font, color);
+            text.name = this.data.name._value;
             text.x = x;
             text.y = y;
             bounds = text.getBounds()
@@ -336,69 +362,107 @@ method createGraphics(canvasHeight, canvasWidth) {
             }
             stage.addChild(text);
             stage.update();
-            var result = text;
+            console.log(stage);
+            this.data.jsShape = text;
           ›
         }
       }
       texts.add(text)
       text
     }
+    
+    method addContainer {
+      def container = object {
+        var location is public := 0@0
+        
+        method add(otherShape) {
+          native "js" code ‹
+            console.log("container stage");
+            console.log(stage);
+            stage.update();
+            var container = new createjs.Container();
+            console.log(var_otherShape);
+            var shape = var_otherShape.data.jsShape;
+            
+            //var shape = stage.getChildByName(var_otherShape.data.name._value);
+            container.addChild(shape);
+            container.x = this.data.location.data.x._value;
+            container.y = this.data.location.data.y._value;
+            stage.addChild(container);
+            stage.update();
+          › 
+        }
+      }
+      container
+    }
   }
 }
 
 var graphics := createGraphics(500,500)
-var circle := graphics.addCircle
-circle.radius := 10
-circle.color := "red"
+var circle := graphics.addCircle 
+circle.radius := 20
 circle.fill := true
-circle.draw
-circle.click := { 
-  print("clicked circle") 
-  circle.color := "blue"
-  circle.location := 30@30
-  circle.draw
-}
-var rect := graphics.addRect
-rect.location := 100@100
-rect.click := { 
-  print("clicked rectangle")
-  graphics.play("note3")
-  circle.location := 100@50
-  circle.color := "red"
-  graphics.draw
-}
+graphics.draw
+//var text := graphics.addText
+//text.location := 5@10
+//text.content := "button"
+//var rect := graphics.addRect
 
-var roundRect := graphics.addRoundRect
-roundRect.location := 200@100
-roundRect.radius := 5
-roundRect.width := 20
-roundRect.height := 20
-roundRect.color := "blue"
-roundRect.fill := true
-roundRect.click := {
-  print("clicked round rect")
-}
-
-var ellipse := graphics.addEllipse
-ellipse.location := 50@400
-ellipse.width := 10
-ellipse.height := 20
-ellipse.color := "blue"
-ellipse.fill := true
-
-ellipse.click := {print("clicked ellipse") }
-
-var text := graphics.addText
-text.location := 300@300
-text.content := "Create Graphics"
-text.color := "purple"
-text.click := { print ("clicked text")}
-
-var star := graphics.addPolyStar
-star.location := 200@200
-star.click := { 
-  print "star clicked"
-  graphics.play("note1") 
-}
+var container := graphics.addContainer
+container.location := 100@100
+container.add(circle)
+//container.add(text)
+//circle.radius := 10
+//circle.color := "red"
+//circle.fill := true
+//circle.draw
+//circle.click := { 
+//  print("clicked circle") 
+//  circle.color := "blue"
+//  circle.location := 100@100
+//  graphics.draw
+//}
+//var rect := graphics.addRect
+//rect.location := 100@100
+//rect.click := { 
+//  print("clicked rectangle")
+//  graphics.play("note3")
+//  circle.location := 100@50
+//  circle.color := "red"
+//  graphics.draw
+//}
+//
+//var roundRect := graphics.addRoundRect
+//roundRect.location := 200@100
+//roundRect.radius := 5
+//roundRect.width := 20
+//roundRect.height := 20
+//roundRect.color := "blue"
+//roundRect.fill := true
+//roundRect.click := {
+//  print("clicked round rect")
+//}
+//
+//var ellipse := graphics.addEllipse
+//ellipse.location := 50@400
+//ellipse.width := 10
+//ellipse.height := 20
+//ellipse.color := "blue"
+//ellipse.fill := true
+//
+//ellipse.click := {print("clicked ellipse") }
+//
+//var text := graphics.addText
+//text.location := 300@300
+//text.content := "Create Graphics"
+//text.color := "purple"
+//text.click := { print ("clicked text")}
+//
+//var star := graphics.addPolyStar
+//star.location := 200@200
+//star.click := { 
+//  print "star clicked"
+//  graphics.play("note1") 
+//}
 graphics.draw
 
