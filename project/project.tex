@@ -1,0 +1,207 @@
+\documentclass{article}
+
+\usepackage{xstring}
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[plain]{algorithm}
+\usepackage{algpseudocode}
+\usepackage{parskip}
+\usepackage{enumerate}
+\usepackage{setspace}
+\usepackage{subfig}
+\usepackage{listings}
+\usepackage{pgfplots}
+\usepackage{url}
+\usepackage{color}
+\usepackage{courier}
+\usepackage{hyperref}
+\usetikzlibrary{arrows,shapes,positioning,shadows,trees}
+
+%
+% Basic Document Settings
+%
+
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in
+
+\linespread{1.1}
+
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName}
+\chead{\hmwkClass\ (\hmwkClassInstructor): \hmwkTitle}
+\rhead{\firstxmark}
+\lfoot{\lastxmark}
+\cfoot{\thepage}
+
+\renewcommand\headrulewidth{0.4pt}
+\renewcommand\footrulewidth{0.4pt}
+
+\setlength\parindent{0pt}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=Java,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3
+}
+
+\tikzset{
+    raw sort entry/.style={rectangle, thick, draw, node distance=1.5em, align=center},
+    sort entry black/.style={raw sort entry, black, fill=white, align=center},
+    p1/.style={raw sort entry, black, fill=gray!25},
+    s1/.style={raw sort entry, red, fill=yellow!30},
+    s2/.style={raw sort entry, blue, fill=green!20},
+    s3/.style={raw sort entry, violet, fill=orange!25},
+    basic/.style  = {draw, font=\sffamily, rectangle},
+    root/.style   = {basic, rounded corners=2pt, thin, align=center},
+    level 2/.style = {basic, rounded corners=6pt, thin,align=center},
+    level 3/.style = {basic, thin, align=left}
+}
+
+\newcommand*{\List}[2][sort entry black]{%
+  \par\noindent%
+  \edef\listtoprocess{#2}%
+  \def\ListToProcess{}%
+  \begin{center}
+  \begin{tikzpicture}[inner sep=2pt, outer sep=0]
+    \foreach \content in \listtoprocess{
+      \IfSubStr{\content}{/}{% true
+        \xdef\ListToProcess{\ListToProcess,\content}
+      }{%                      false
+        \xdef\ListToProcess{\ListToProcess,#1/\content}
+      }
+    }
+    \StrGobbleLeft{\ListToProcess}{1}[\ListToProcess]% removes the first comma (\listToProcess is empty at the start)
+    \foreach [count=\i] \Style/\Value in \ListToProcess {
+      \ifnum\i=1\relax
+        \node [raw sort entry, \Style] (sortnode\i) {\Value};
+      \else
+        \node [raw sort entry, right of=sortnode\number\numexpr\i-1\relax, \Style] (sortnode\i) {\Value};
+      \fi
+    }
+  \end{tikzpicture}%
+  \end{center}
+}
+
+\setcounter{secnumdepth}{0}
+\newcounter{partCounter}
+\newcounter{homeworkProblemCounter}
+\setcounter{homeworkProblemCounter}{1}
+\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
+
+%
+% Homework Details
+%   - Title
+%   - Due date
+%   - Class
+%   - Section/Time
+%   - Instructor
+%   - Author
+%
+
+\newcommand{\hmwkTitle}{Sorting Algorithms}
+\newcommand{\hmwkDueDate}{February 26, 2015}
+\newcommand{\hmwkClass}{CS350 - Algorithms}
+\newcommand{\hmwkClassInstructor}{for Professor Andrew Black}
+\newcommand{\hmwkAuthorName}{Kristina Frye}
+
+%
+% Title Page
+%
+
+\title{
+    \vspace{2in}
+    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+    \normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate}\\
+    \vspace{0.1in}\large{\textit{\hmwkClassInstructor}}
+    \vspace{3in}
+}
+
+\author{\textbf{\hmwkAuthorName}}
+
+\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
+
+%
+% Various Helper Commands
+%
+
+% Useful for algorithms
+\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
+
+\begin{document}
+
+\section{Introduction}
+The CreateGraphics package allows the developer to:
+
+\begin{itemize}
+\item Generate basic graphics
+\item Add event listeners
+\item Sound functionality for built-in mp3 files
+\item Basic "tween" animations
+\end{itemize}
+
+Functionality is performed using the createjs javascript library available at:\\
+\url{http://www.createjs.com/}. 
+
+\section{Graphics}
+In order to work with the CreateGraphics package, you need to include the 
+following line at the top of your Grace file:
+
+\texttt{import createGraphics as cg}
+
+The graphics object needs to be created with the following command:
+
+\texttt{def graphics = createGraphics(width,height)} 
+
+where width and height correspond to the desired graphics window width
+and height. For example:
+
+\begin{lstlisting}
+def width = 300
+def height = 300
+def graphics = cg.createGraphics(width, height)
+\end{lstlisting}
+
+\section{Shapes}
+The following shape objects are available in CreateGraphics:Circle, Rectangle, PolyStar, Rounded Rectangle, and Ellipse.
+To draw one of these objects to the screen, pass a message to the graphics object:
+
+\begin{itemize}
+\item addCircle
+\item addRect
+\item addPolyStar
+\item addRoundRect
+\item addEllipse
+\end{itemize}
+
+For instance, to add a circle to the window, you might do the following:
+\begin{lstlisting}
+import createGraphics as cg
+def graphics = cg.createGraphics(300, 300)
+graphics.addCircle
+graphics.draw
+\end{lstlisting}
+
+\end{document}
