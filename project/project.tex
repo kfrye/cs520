@@ -3,10 +3,6 @@
 \usepackage{xstring}
 \usepackage{fancyhdr}
 \usepackage{extramarks}
-\usepackage{amsmath}
-\usepackage{amsthm}
-\usepackage{amsfonts}
-\usepackage{tikz}
 \usepackage[plain]{algorithm}
 \usepackage{algpseudocode}
 \usepackage{parskip}
@@ -16,14 +12,16 @@
 \usepackage{listings}
 \usepackage{pgfplots}
 \usepackage{url}
+\usepackage[hidelinks]{hyperref}
 \usepackage{color}
 \usepackage{courier}
 \usepackage{hyperref}
-\usetikzlibrary{arrows,shapes,positioning,shadows,trees}
+\usepackage{graphicx}
 
 %
 % Basic Document Settings
 %
+\graphicspath{ {images/} }
 
 \topmargin=-0.45in
 \evensidemargin=0in
@@ -35,9 +33,8 @@
 \linespread{1.1}
 
 \pagestyle{fancy}
-\lhead{\hmwkAuthorName}
-\chead{\hmwkClass\ (\hmwkClassInstructor): \hmwkTitle}
-\rhead{\firstxmark}
+\lhead{CreateGraphics Tutorial}
+\rhead{Grace}
 \lfoot{\lastxmark}
 \cfoot{\thepage}
 
@@ -66,89 +63,6 @@
   breakatwhitespace=true,
   tabsize=3
 }
-
-\tikzset{
-    raw sort entry/.style={rectangle, thick, draw, node distance=1.5em, align=center},
-    sort entry black/.style={raw sort entry, black, fill=white, align=center},
-    p1/.style={raw sort entry, black, fill=gray!25},
-    s1/.style={raw sort entry, red, fill=yellow!30},
-    s2/.style={raw sort entry, blue, fill=green!20},
-    s3/.style={raw sort entry, violet, fill=orange!25},
-    basic/.style  = {draw, font=\sffamily, rectangle},
-    root/.style   = {basic, rounded corners=2pt, thin, align=center},
-    level 2/.style = {basic, rounded corners=6pt, thin,align=center},
-    level 3/.style = {basic, thin, align=left}
-}
-
-\newcommand*{\List}[2][sort entry black]{%
-  \par\noindent%
-  \edef\listtoprocess{#2}%
-  \def\ListToProcess{}%
-  \begin{center}
-  \begin{tikzpicture}[inner sep=2pt, outer sep=0]
-    \foreach \content in \listtoprocess{
-      \IfSubStr{\content}{/}{% true
-        \xdef\ListToProcess{\ListToProcess,\content}
-      }{%                      false
-        \xdef\ListToProcess{\ListToProcess,#1/\content}
-      }
-    }
-    \StrGobbleLeft{\ListToProcess}{1}[\ListToProcess]% removes the first comma (\listToProcess is empty at the start)
-    \foreach [count=\i] \Style/\Value in \ListToProcess {
-      \ifnum\i=1\relax
-        \node [raw sort entry, \Style] (sortnode\i) {\Value};
-      \else
-        \node [raw sort entry, right of=sortnode\number\numexpr\i-1\relax, \Style] (sortnode\i) {\Value};
-      \fi
-    }
-  \end{tikzpicture}%
-  \end{center}
-}
-
-\setcounter{secnumdepth}{0}
-\newcounter{partCounter}
-\newcounter{homeworkProblemCounter}
-\setcounter{homeworkProblemCounter}{1}
-\nobreak\extramarks{Problem \arabic{homeworkProblemCounter}}{}\nobreak{}
-
-%
-% Homework Details
-%   - Title
-%   - Due date
-%   - Class
-%   - Section/Time
-%   - Instructor
-%   - Author
-%
-
-\newcommand{\hmwkTitle}{Sorting Algorithms}
-\newcommand{\hmwkDueDate}{February 26, 2015}
-\newcommand{\hmwkClass}{CS350 - Algorithms}
-\newcommand{\hmwkClassInstructor}{for Professor Andrew Black}
-\newcommand{\hmwkAuthorName}{Kristina Frye}
-
-%
-% Title Page
-%
-
-\title{
-    \vspace{2in}
-    \textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
-    \normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate}\\
-    \vspace{0.1in}\large{\textit{\hmwkClassInstructor}}
-    \vspace{3in}
-}
-
-\author{\textbf{\hmwkAuthorName}}
-
-\renewcommand{\part}[1]{\textbf{\large Part \Alph{partCounter}}\stepcounter{partCounter}\\}
-
-%
-% Various Helper Commands
-%
-
-% Useful for algorithms
-\newcommand{\alg}[1]{\textsc{\bfseries \footnotesize #1}}
 
 \begin{document}
 
@@ -185,7 +99,7 @@ def graphics = cg.createGraphics(width, height)
 \end{lstlisting}
 
 \section{Shapes}
-The following shape objects are available in CreateGraphics:Circle, Rectangle, PolyStar, Rounded Rectangle, and Ellipse.
+The following shape objects are available in CreateGraphics:Circle, Rectangle, Rounded Rectangle, PolyStar, Ellipse, and Text.
 To draw one of these objects to the screen, pass a message to the graphics object:
 
 \begin{itemize}
@@ -203,5 +117,133 @@ def graphics = cg.createGraphics(300, 300)
 graphics.addCircle
 graphics.draw
 \end{lstlisting}
+Each shape has different parameters that are used to create it. These parameters have default values, so you don't need to set each
+one every time you create an shape.
 
+\subsection{Common Parameters}
+There are a few parameters that are common to each type of shape.
+
+\begin{itemize}
+\item \textbf{location} (Point): The x,y coordinates where the shape will be placed in the graphics window. Coordinates are expressed in Grace "Point" notation: x@y. Keep in mind that the origin is in the upper left corner of the window, so 10@10 will be 10 down and 10 right from the corner of the window.
+\item \textbf{color} (String): The color of the shape. Most basic colors can be set as "red", "blue", etc. However, you can also use 6-digit hex numbers 
+such as "\#CC3300" that corresponds to an HTML 5 hex colors. See \url{http://www.w3schools.com/tags/ref_colorpicker.asp} for more details.
+\item \textbf{fill} (Boolean): Whether or not you want to fill in the shape when it is drawn on the window.
+\end{itemize}
+
+\subsection{Circle}
+\textbf{Create:} graphics.addCircle
+
+Parameters:
+\begin{itemize}
+\item \textbf{radius} (Number): The length of the circle radius
+\end{itemize}
+
+\subsection{Rectangle}
+\textbf{Create:} graphics.addRect
+
+Parameters:
+\begin{itemize}
+\item \textbf{width} (Number): Width of the rectangle
+\item \textbf{height}(Number): Height of the rectangle
+\end{itemize}
+
+\subsection{Rounded Rectangle}
+\textbf{Create:} graphics.addRoundRect
+
+Parameters:
+\begin{itemize}
+\item \textbf{width} (Number): Width of the rectangle
+\item \textbf{height}(Number): Height of the rectangle
+\item \textbf{radius} (Number): Radius of the rounded corners
+\end{itemize}
+
+\subsection{PolyStar}
+\textbf{Create:} graphics.addPolyStar
+
+Parameters:
+\begin{itemize}
+\item \textbf{size} (Number): Length of each side of the star
+\item \textbf{sides} (Number): Number of sides
+\item \textbf{pointSize} (Number): Size of the points
+\item \textbf{angle} (Number): Angle between the points
+\end{itemize}
+
+\subsection{Ellipse}
+\textbf{Create:} graphics.addEllipse
+
+Parameters:
+\begin{itemize}
+\item \textbf{width} (Number): Width of the ellipse
+\item \textbf{height}(Number): Height of the ellipse
+\end{itemize}
+
+\subsection{Text}
+\textbf{Create:} graphics.addText
+
+Parameters:
+\begin{itemize}
+\item \textbf{content} (String): The content of the string
+\end{itemize}
+
+\section{Drawing a Shape}
+To draw a shape on the graphics window, first create it, then configure it, and then draw it. The following code
+creates the output down in Figure \ref{fig:red_circle}.
+\begin{lstlisting}
+import createGraphics as cg
+def graphics = cg.createGraphics(200, 200)
+def circle = graphics.addCircle
+circle.color := "red"
+circle.radius := 20
+circle.position := 30@30
+circle.fill := true
+graphics.draw
+\end{lstlisting}
+
+\begin{figure}[h]
+\includegraphics{red_circle}
+\centering
+\caption{Creating a red circle}
+\label{fig:red_circle}
+\end{figure}
+
+\section{Adding a Click Handler}
+Adding a click handler to a shape defines a block of code that will be executed when the shape is clicked. For instance,
+let's say that we want the red circle to turn blue when it is clicked, and we want to add a message to the user. 
+Then you would add something like this:
+\begin{lstlisting}
+import createGraphics as cg
+def graphics = cg.createGraphics(200, 200)
+def circle = graphics.addCircle
+circle.color := "red"
+circle.click := { 
+  print("clicked circle") 
+  circle.color := "blue"
+  graphics.draw
+}
+graphics.draw
+\end{lstlisting}
+Notice that "graphics.draw" is located twice in this code. The second instance of graphics.draw (located in the last line
+of the code block) initially draws the circle onto the window. The first instance of graphics.draw (located at the end of the circle.click block),
+updates the circle on the window after it has been clicked. This instance of graphics.draw will occur at some point in the future when
+the circle is clicked.
+
+\section{Adding sound}
+CreateGraphics supports basic sounds. All sounds are preloaded in the browser and cannot be customized at this time.
+To play a sound, just use the "play" method of the graphics object. For example:
+\begin{lstlisting}
+import createGraphics as cg
+def graphics = cg.createGraphics(200, 200)
+def circle = graphics.addCircle
+circle.color := "red"
+circle.click := { 
+  print("clicked circle") 
+  graphics.play("bicycle_bell")
+  graphics.draw
+}
+graphics.draw
+\end{lstlisting}
+
+
+The following sounds are available: note1, note2, note3, note4, note5, note6, note7, note8, bicycle\_bell, snap, 
+whoosh, shutter.
 \end{document}
