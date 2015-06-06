@@ -16,18 +16,13 @@ factory method listener_default {
   
   method addListener(stage, obj, listener) {
     native "js" code ‹
-
       var_stage.on("stagemousedown", function(event) { 
         var x = event.stageX;
         var y = event.stageY;
-        
         var bounds = var_obj.getBounds();
-
-        if(bounds.contains(x,y)) {
-          alert("some object is clicked"); 
-          callmethod(var_listener, "click", [0]);
-          
-        }
+        
+        alert("some object is clicked" + x + y); 
+        callmethod(var_listener, "click", [0]);
       });
     ›
   }
@@ -126,20 +121,41 @@ factory method container {
   }
 }
 
-factory method shape {
-  var myShape is public := newShape
+factory method drawable {
   var filler is public
-  var color
+  var color is public
   var location :=0@0
   var listener is public := listener_default
+  var myShape is public
+  
   method setLocation(newLoc) {
     self.location := newLoc
   }
   
+  method click:=(block) {
+    listener.click := block
+  }
+}
+
+factory method textDrawable {
+  inherits drawable
+  myShape := newText
+  
+  method newText {
+      native "js" code ‹
+      var text = new createjs.Text("TESTTESTTEST", "12px Arial", "black");
+      return text;
+    ›
+  }
+}
+factory method shape {
+  inherits drawable
+  myShape := newShape
+  
   method newShape {
     native "js" code ‹
-      var circle = new createjs.Shape();
-      return circle;
+      var shape = new createjs.Shape();
+      return shape;
     ›
   }
   method setBounds(bounds, width, height) {
@@ -155,7 +171,7 @@ factory method shape {
     self.filler := native "js" code ‹
       
       var color = this.data.color._value;
-    	var filler = this.data.myShape.graphics.beginFill(color);
+      var filler = this.data.myShape.graphics.beginFill(color);
       return filler;
     ›
   }
@@ -164,7 +180,7 @@ factory method shape {
     self.filler := native "js" code ‹
       
       var color = this.data.color._value;
-    	var filler = this.data.myShape.graphics.beginStroke(color);
+      var filler = this.data.myShape.graphics.beginStroke(color);
       return filler;
     ›
   }
@@ -188,8 +204,8 @@ factory method circle {
       var radius = this.data.radius._value;
 
       this.data.myShape.graphics.drawCircle(x, y, radius);
-    	var circle = this.data.myShape;
-//    	circle.on("click", function(evt) {
+      var circle = this.data.myShape;
+//      circle.on("click", function(evt) {
 //    alert("circle click");
 //});
       return circle;
@@ -281,47 +297,78 @@ factory method ellipse {
   }
 }
 
+factory method text {
+  inherits textDrawable
+  
+  var content is public := "Did you forget to set text.content?"
+  var font is public := "12px Arial"
+        
+  method draw {
+    native "js" code ‹ 
+      var xVal = this.data.location.data.x._value;
+      var yVal = this.data.location.data.y._value;
+      var colorVal = this.data.color._value;
+      var fontVal = this.data.font._value;
+      var content = this.data.content._value;
+      
+      this.data.myShape.set({text:content, font:fontVal, color:colorVal, x:xVal, y:yVal});
+      bounds = this.data.myShape.getBounds();
+      this.data.myShape.setBounds(xVal, yVal, bounds.width, bounds.height);
+    ›
+  }
+}
 
 
-//var protoStage := stage
-////var protoContainer := container
-//
-//var protoCircle := circle
-//protoCircle.beginStroke("purple")
-//protoCircle.draw(50)
-//protoCircle.setDefaultBounds
-////protoContainer.add(protoCircle)
-////protoCircle.move(100,100)
-//protoStage.add(protoCircle)
-////protoStage.add(protoContainer)
-//protoStage.addListener(protoCircle, {print ("test")})
-//protoStage.update
-//
-//var protoSquare := rect
-//protoSquare.beginFill("yellow")
-//protoSquare.draw(25, 25)
-////protoContainer.add(protoSquare)
-//protoSquare.move(150,150)
-//protoStage.add(protoSquare)
-//protoStage.update
-//
-//var protoStar := polyStar
-//protoStar.beginFill("orange")
-//protoStar.draw(35, 35)
-//protoStage.add(protoStar)
-//protoStar.move(50,150)
-//protoStage.update
-//
-//var protoRoundSquare := roundRect
-//protoRoundSquare.beginFill("blue")
-//protoRoundSquare.draw(35, 35)
-//protoStage.add(protoRoundSquare)
-//protoRoundSquare.move(150,150)
-//protoStage.update
-//
-//var protoEllipse := ellipse
-//protoEllipse.beginFill("cyan")
-//protoEllipse.draw(35, 35)
-//protoStage.add(protoEllipse)
-//protoEllipse.move(250,150)
-//protoStage.update
+
+var protoStage := stage(500,500)
+//var protoContainer := container
+
+var protoCircle := circle
+protoCircle.beginStroke("purple")
+protoCircle.draw(50)
+protoCircle.setDefaultBounds
+//protoContainer.add(protoCircle)
+//protoCircle.move(100,100)
+protoStage.add(protoCircle)
+//protoStage.add(protoContainer)
+protoStage.addListener(protoCircle, {print ("test")})
+protoStage.update
+
+var protoSquare := rect
+protoSquare.beginFill("yellow")
+protoSquare.draw(25, 25)
+//protoContainer.add(protoSquare)
+protoSquare.move(150,150)
+protoStage.add(protoSquare)
+protoStage.update
+
+var protoStar := polyStar
+protoStar.beginFill("orange")
+protoStar.draw(35, 35)
+protoStage.add(protoStar)
+protoStar.move(50,150)
+protoStage.update
+
+var protoRoundSquare := roundRect
+protoRoundSquare.beginFill("blue")
+protoRoundSquare.draw(35, 35)
+protoStage.add(protoRoundSquare)
+protoRoundSquare.move(150,150)
+protoStage.update
+
+var protoEllipse := ellipse
+protoEllipse.beginFill("cyan")
+protoEllipse.draw(35, 35)
+protoStage.add(protoEllipse)
+protoEllipse.move(250,150)
+protoStage.update
+
+var protoText := text
+protoText.content := "Testing"
+protoText.color := "red"
+protoText.click := {
+  print "Text clicked"
+}
+protoText.draw
+protoStage.add(protoText)
+protoStage.update
