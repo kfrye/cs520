@@ -121,7 +121,7 @@ factory method createGraphics(canvasHeight, canvasWidth) {
           jsShapeObject.setBounds(x@y, 2*size, 2*size)
         }
         method shapeDraw {
-          jsShapeObject.draw(location, size, sides, pointSize, angle)
+          jsShapeObject.draw(size, sides, pointSize, angle)
         }
       }
       shapes.add(polyStar)
@@ -219,9 +219,7 @@ factory method createGraphics(canvasHeight, canvasWidth) {
         jsShapeObject := gr.customShape
         myStage := stage
         
-        method setBounds {
-          jsShapeObject.setBounds();
-        }
+        
         
         method shapeDraw {
           jsShapeObject.draw(color, stroke)

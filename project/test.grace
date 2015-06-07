@@ -32,6 +32,15 @@ star.click := {
   rect.location := 100@100
   rect.update
 }
+
+var customShape := graphics.addCustomShape
+
+customShape.addPoint(40@40)
+customShape.addPoint(80@40)
+customShape.addPoint(80@80)
+customShape.addPoint(40@80)
+customShape.color := "red"
+customShape.draw()
 //
 //var roundRect := graphics.addRoundRect
 //roundRect.location := 200@100

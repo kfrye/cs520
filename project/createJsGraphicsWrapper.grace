@@ -328,8 +328,8 @@ factory method customShape {
   var stroke;
   var current;
   
-  method addPoint(e){
-    points.add(e)
+  method addPoint(p){
+    points.add(p)
   }
   
   method draw(stroke', fill'){
@@ -360,16 +360,9 @@ factory method customShape {
       this.data.createJsGraphics.graphics.closePath()
     ›
   }
-  
-  method setBounds(){
-    native "js" code ‹
-      var bounds = this.data.createJsGraphics.getBounds();
-      this.data.createJsGraphics.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
-    ›
-  }
 }
 
-var protoStage := stage(500,500)
+//var protoStage := stage(500,500)
 //
 //var protoText := text
 //protoText.text(150@150 , "Hello cruel world", "12px Arial", "black")
