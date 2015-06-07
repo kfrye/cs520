@@ -1,4 +1,4 @@
-factory method listener_default {
+factory method eventListener {
   var clickBlock := { }
   var clickIsSet := false
   var listenerIsCalled := false
@@ -24,22 +24,19 @@ factory method listener_default {
         var bounds = var_obj.getBounds();
 
         if(bounds.contains(x,y)) {
-          alert("some object is clicked"); 
+          //console.log(x);
+          //alert("some object is clicked"); 
           callmethod(var_listener, "click", [0]);
           
         }
       });
     ›
   }
-  
-  method test{
-    print ("test method")
-  }
 }
 
 factory method stage(width', height') {
   var mystage := new (width', height')
-  var myshape
+  var createJsGraphics
   method new(width, height) {
     native "js" code ‹
       var width = var_width._value;
@@ -67,16 +64,16 @@ factory method stage(width', height') {
     ›
   }
   method add(shape) {
-    self.myshape := shape.myShape
-//    print (self.myshape)
+    self.createJsGraphics := shape.createJsGraphics
+//    print (self.createJsGraphics)
     native "js" code ‹
-      this.data.mystage.addChild(this.data.myshape);
+      this.data.mystage.addChild(this.data.createJsGraphics);
     ›
   }
   method removeChild(child) {
-    self.myshape := child.myShape
+    self.createJsGraphics := child.createJsGraphics
     native "js" code ‹
-      this.data.mystage.removeChild(this.data.myshape);
+      this.data.mystage.removeChild(this.data.createJsGraphics);
     ›
   }
   method removeAllEventListeners {native "js" code ‹ this.data.mystage.removeAllEventListeners(); ›}
@@ -88,21 +85,19 @@ factory method stage(width', height') {
   method addListener(containerTypeObject, block) {
     containerTypeObject.listener.click := block
     var listener := containerTypeObject.listener
-    var anObject := containerTypeObject.myShape
+    var anObject := containerTypeObject.createJsGraphics
     native "js" code ‹
-      callmethod(var_listener, "test", [0]);
       callmethod(var_listener, "addListener", [3], this.data.mystage, var_anObject, var_listener);
     ›
   }
 }
 
 
-factory method basicContainer {
-  var myShape is public
-  var filler is public
+factory method commonGraphics{
+  var createJsGraphics is public
   var color
   var location :=0@0
-  var listener is public := listener_default
+  var listener is public := eventListener
   
   method setLocation(newLoc) {
     self.location := newLoc
@@ -110,69 +105,65 @@ factory method basicContainer {
   
   method setBounds(bounds, width, height) {
     native "js" code ‹
+      
       var x = var_bounds.data.x._value;
       var y = var_bounds.data.y._value
-      this.data.myShape.setBounds(x, y, var_width._value, var_height._value);
+      this.data.createJsGraphics.setBounds(x, y, var_width._value, var_height._value);
     ›
   }
   
   method move(newX,newY) {
     native "js" code ‹
-      this.data.myShape.x = var_newX._value;
-      this.data.myShape.y = var_newY._value;
+      console.log("here")
+      this.data.createJsGraphics.x = var_newX._value;
+      this.data.createJsGraphics.y = var_newY._value;
     ›
     
   }
 }
 
 factory method shape {
-  inherits basicContainer
-  var myShape is public := new
+  inherits commonGraphics
+
+  createJsGraphics := new
   
   method new {
     native "js" code ‹
-      var dummyShape = new createjs.Shape();
-      return dummyShape;
+      return new createjs.Shape();
     ›
   }
 
   method beginFill(color') {
     self.color := color'
-    self.filler := native "js" code ‹
-      
+    native "js" code ‹
       var color = this.data.color._value;
-      var filler = this.data.myShape.graphics.beginFill(color);
-      return filler;
+      this.data.createJsGraphics.graphics.beginFill(color);
     ›
   }
   method beginStroke(color') {
     self.color := color'
-    self.filler := native "js" code ‹
-      
+    native "js" code ‹
       var color = this.data.color._value;
-      var filler = this.data.myShape.graphics.beginStroke(color);
-      return filler;
+      this.data.createJsGraphics.graphics.beginStroke(color);
     ›
   }
 }
 
 factory method container {
-  inherits basicContainer
-  var myShape is public := new
+  inherits commonGraphics
+
+  createJsGraphics := new
   method new {
     native "js" code ‹
-      var container = new createjs.Container();
-      container.x = 100;
-      container.y = 100;
-      return container;
+      return new createjs.Container();
     ›
   }
 
   method add(anObject') {
-    var anObject := anObject'.myShape
-    self.obj := anObject'.myShape
+    var anObject := anObject'.createJsGraphics
+    self.obj := anObject'.createJsGraphics
     native "js" code ‹
-      this.data.myShape.addChild(this.data.obj);
+      this.data.createJsGraphics.addChild(this.data.obj);
     ›
   }
 }
@@ -187,11 +178,8 @@ factory method circle {
       var y = this.data.location.data.y._value;
       var radius = this.data.radius._value;
 
-      this.data.myShape.graphics.drawCircle(x, y, radius);
-      var circle = this.data.myShape;
-//      circle.on("click", function(evt) {
-//    alert("circle click");
-//});
+      this.data.createJsGraphics.graphics.drawCircle(x, y, radius);
+      var circle = this.data.createJsGraphics;
       return circle;
     ›
   }
@@ -205,7 +193,7 @@ factory method rect {
   inherits shape
   var height
   var width
-  method draw(height', width') {
+  method draw(height', width', location') {
     self.height := height'
     self.width := width'
     native "js" code ‹
@@ -213,7 +201,7 @@ factory method rect {
       var y = this.data.location.data.y._value;
       var height = this.data.height._value
       var width = this.data.width._value
-      this.data.myShape.graphics.drawRect(x, y, width, height);
+      this.data.createJsGraphics.graphics.drawRect(x, y, width, height);
     ›
   }
 }
@@ -224,7 +212,7 @@ factory method polyStar {
   var sides is public := 5
   var pointSize is public := 2
   var angle is public := -90
-  method draw(location', size', sides', pointSize', angle') {
+  method draw(size', sides', pointSize', angle') {
     self.size := size'
     self.angle := angle'
     self.pointSize := pointSize'
@@ -236,7 +224,7 @@ factory method polyStar {
       var sides = this.data.sides._value;
       var pointSize = this.data.pointSize._value;
       var angle = this.data.angle._value;
-      this.data.myShape.graphics.drawPolyStar(x, y, size, sides,pointSize, angle);
+      this.data.createJsGraphics.graphics.drawPolyStar(x, y, size, sides,pointSize, angle);
     ›
   }
 }
@@ -246,8 +234,7 @@ factory method roundRect {
   var height
   var width
   var radius is public := 15
-  method draw(location', width', height', radius') {
-    self.location := location'
+  method draw(width', height', radius') {
     self.height := height'
     self.width := width'
     self.radius:= radius'
@@ -258,7 +245,7 @@ factory method roundRect {
       var height = this.data.height._value
       var width = this.data.width._value
       var radius = this.data.radius._value
-      this.data.myShape.graphics.drawRoundRect(x, y, width, height, radius);
+      this.data.createJsGraphics.graphics.drawRoundRect(x, y, width, height, radius);
   ›
   }
 }
@@ -267,8 +254,7 @@ factory method ellipse {
   inherits shape
   var height
   var width
-  method draw(location', height', width') {
-    self.location := location'
+  method draw(height', width') {
     self.height := height'
     self.width := width'
     native "js" code ‹ 
@@ -276,30 +262,31 @@ factory method ellipse {
       var y = this.data.location.data.y._value;
       var height = this.data.height._value
       var width = this.data.width._value
-      this.data.myShape.graphics.drawEllipse(x, y, width, height);
+      this.data.createJsGraphics.graphics.drawEllipse(x, y, width, height);
     ›
   }
 }
 
 factory method text {
-  inherits basicContainer
-//  var myShape is public := new
+  inherits commonGraphics
+
+//  var createJsGraphics is public := new
   var content is public := "Did you forget to set text.content?"
   var font is public := "12px Arial"
   method new {
     return 0
   }
-  method text(location', content', font', color') {
-    self.myShape := draw(location', content', font', color')
+  // This is necessary so that Grace waits for the Javascript part of the
+  // innerDraw to return before continuing
+  method draw(content', font', color') {
+    self.createJsGraphics := innerDraw(content', font', color')
   }
-  method draw(location', content', font', color') {
+  method innerDraw(content', font', color') is confidential {
     self.color := color'
-    self.location := location'
     self.content := content'
     self.font := font'
     
     native "js" code ‹
-      
       var color = this.data.color._value;
       var x = this.data.location.data.x._value;
       var y = this.data.location.data.y._value;
@@ -329,8 +316,8 @@ factory method line {
       var startY = this.data.start.data.y._value;
       var endX = this.data.end.data.x._value;
       var endY = this.data.end.data.y._value;
-      this.data.myShape.graphics.moveTo(startX, startY);
-      this.data.myShape.graphics.lineTo(endX, endY);
+      this.data.createJsGraphics.graphics.moveTo(startX, startY);
+      this.data.createJsGraphics.graphics.lineTo(endX, endY);
     ›
   }
 }
