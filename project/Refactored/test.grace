@@ -62,3 +62,10 @@ text.color := "purple"
 text.draw
 text.click := { print ("clicked text")}
 
+var line := graphics.addLine
+line.start := 50@50
+line.end := 100@100
+line.color := "purple"
+line.draw
+line.click := { print ("clicked Line")}
+

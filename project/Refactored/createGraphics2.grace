@@ -53,6 +53,7 @@ factory method createGraphics(canvasHeight, canvasWidth) {
   var roundRects := list.empty
   var ellipses := list.empty
   var texts := list.empty
+  var lines := list.empty
   var stage := gr.stage(canvasHeight, canvasWidth)
   
   method drawall {
@@ -63,6 +64,7 @@ factory method createGraphics(canvasHeight, canvasWidth) {
     for (roundRects) do { x -> x.draw }
     for (ellipses) do { x -> x.draw }
     for (texts) do { x -> x.draw }
+    for (lines) do { x -> x.draw }
   }
   method play(sound) {
       native "js" code ‹
@@ -196,5 +198,25 @@ factory method createGraphics(canvasHeight, canvasWidth) {
       }
       texts.add(text)
       text
+    }
+    
+    method addLine {
+      def line = object {
+        inherits shape
+        var start is public := 0@0
+        var end is public := 50@50
+        
+        jsShapeObject := gr.line
+        myStage := stage
+        
+        method setBounds{
+          jsShapeObject.setBounds(start, end.x-start.x, end.y-start.y)
+        }
+        method shapeDraw {
+          jsShapeObject.draw(start, end)
+        }
+      }
+      lines.add(line)
+      line
     }
 }

@@ -136,13 +136,12 @@ factory method shape {
     ›
   }
 
-  
   method beginFill(color') {
     self.color := color'
     self.filler := native "js" code ‹
       
       var color = this.data.color._value;
-    	var filler = this.data.myShape.graphics.beginFill(color);
+      var filler = this.data.myShape.graphics.beginFill(color);
       return filler;
     ›
   }
@@ -151,11 +150,12 @@ factory method shape {
     self.filler := native "js" code ‹
       
       var color = this.data.color._value;
-    	var filler = this.data.myShape.graphics.beginStroke(color);
+      var filler = this.data.myShape.graphics.beginStroke(color);
       return filler;
     ›
   }
 }
+
 factory method container {
   inherits basicContainer
   var myShape is public := new
@@ -188,13 +188,14 @@ factory method circle {
       var radius = this.data.radius._value;
 
       this.data.myShape.graphics.drawCircle(x, y, radius);
-    	var circle = this.data.myShape;
-//    	circle.on("click", function(evt) {
+      var circle = this.data.myShape;
+//      circle.on("click", function(evt) {
 //    alert("circle click");
 //});
       return circle;
     ›
   }
+  
   method setDefaultBounds {
     super.setBounds(self.location, self.radius*2, self.radius*2)
   }
@@ -213,9 +214,7 @@ factory method rect {
       var height = this.data.height._value
       var width = this.data.width._value
       this.data.myShape.graphics.drawRect(x, y, width, height);
-     
     ›
-
   }
 }
 
@@ -240,9 +239,7 @@ factory method polyStar {
       this.data.myShape.graphics.drawPolyStar(x, y, size, sides,pointSize, angle);
     ›
   }
-
 }
-
 
 factory method roundRect {
   inherits shape
@@ -270,7 +267,6 @@ factory method ellipse {
   inherits shape
   var height
   var width
-  var radius is public := 15
   method draw(location', height', width') {
     self.location := location'
     self.height := height'
@@ -301,7 +297,6 @@ factory method text {
     self.location := location'
     self.content := content'
     self.font := font'
-    self.color := color'
     
     native "js" code ‹
       
@@ -313,12 +308,33 @@ factory method text {
       var text = new createjs.Text(content, font, color);
       text.x = x;
       text.y = y;
-    	bounds = text.getBounds()
+      bounds = text.getBounds()
       text.setBounds(x, y, bounds.width, bounds.height);
       return text;
     ›
   }
 }
+
+factory method line {
+  inherits shape
+  var start is public := 0@0
+  var end is public := 50@50
+  
+  method draw(start', end'){
+    self.location := start'
+    self.start := start'
+    self.end := end'
+    native "js" code ‹ 
+      var startX = this.data.start.data.x._value;
+      var startY = this.data.start.data.y._value;
+      var endX = this.data.end.data.x._value;
+      var endY = this.data.end.data.y._value;
+      this.data.myShape.graphics.moveTo(startX, startY);
+      this.data.myShape.graphics.lineTo(endX, endY);
+    ›
+  }
+}
+
 //var protoStage := stage(500,500)
 //
 //var protoText := text
@@ -330,10 +346,9 @@ factory method text {
 ////protoStage.add(protoContainer)
 ////protoStage.addListener(protoText, {print ("test")})
 //protoStage.update
-
-//var protoStage := stage(500,500)
-//var protoContainer := container
 //
+//var protoContainer := container
+
 //var protoCircle := circle
 //protoCircle.beginFill("purple")
 //protoCircle.draw(50)
@@ -358,7 +373,7 @@ factory method text {
 //protoSquare.move(150,150)
 //protoStage.add(protoSquare)
 //protoStage.update
-//
+
 //var protoStar := polyStar
 //protoStar.beginFill("orange")
 //protoStar.draw(35, 35)
@@ -378,4 +393,10 @@ factory method text {
 //protoEllipse.draw(35, 35)
 //protoStage.add(protoEllipse)
 //protoEllipse.move(250,150)
+//protoStage.update
+
+//var protoLine := line
+//protoLine.beginStroke("black")
+//protoLine.draw(40@40, 80@80)
+//protoStage.add(protoLine)
 //protoStage.update
