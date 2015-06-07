@@ -1,6 +1,7 @@
 import "createJsGraphicsWrapper" as gr
 factory method shape {
   var color is public := "black"
+  var stroke is public := "black"
   var fill is public := false
   var location is public := 20@20
   var myStage
@@ -51,6 +52,7 @@ factory method createGraphics(canvasHeight, canvasWidth) {
   var ellipses := list.empty
   var texts := list.empty
   var lines := list.empty
+  var customShapes := list.empty
   var stage := gr.stage(canvasHeight, canvasWidth)
   
   method drawall {
@@ -209,5 +211,27 @@ factory method createGraphics(canvasHeight, canvasWidth) {
       }
       shapes.add(line)
       line
+    }
+    
+    method addCustomShape {
+      def customShape = object {
+        inherits shape
+        jsShapeObject := gr.customShape
+        myStage := stage
+        
+        method setBounds {
+          jsShapeObject.setBounds();
+        }
+        
+        method shapeDraw {
+          jsShapeObject.draw(color, fill)
+        }
+        
+        method addPoint(p) {
+          jsShapeObject.addPoint(p)
+        }
+      }
+      shapes.add(customShape);
+      customShape
     }
 }

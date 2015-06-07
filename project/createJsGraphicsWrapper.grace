@@ -322,7 +322,54 @@ factory method line {
   }
 }
 
-//var protoStage := stage(500,500)
+factory method customShape {
+  inherits shape
+  var points := list.empty
+  var stroke;
+  var current;
+  
+  method addPoint(e){
+    points.add(e)
+  }
+  
+  method draw(stroke', fill'){
+    if(points.size < 2) then { print("Not enough points in custom shape"); return }
+    
+    self.current := points.removeFirst
+    self.stroke := stroke';
+    self.color := fill';
+    
+    native "js" code ‹
+        var color = this.data.color._value;
+        var stroke = this.data.stroke._value;
+        var startX = this.data.current.data.x._value;
+        var startY = this.data.current.data.y._value;
+        this.data.createJsGraphics.graphics.beginFill(color);
+        this.data.createJsGraphics.graphics.beginStroke(stroke);
+        this.data.createJsGraphics.graphics.moveTo(startX, startY);
+      ›
+    while{!points.isEmpty} do {
+      current := points.removeFirst
+      native "js" code ‹ 
+        var endX = this.data.current.data.x._value;
+        var endY = this.data.current.data.y._value;
+        this.data.createJsGraphics.graphics.lineTo(endX, endY);
+      ›
+    }
+    native "js" code ‹
+      this.data.createJsGraphics.graphics.closePath()
+    ›
+  }
+  
+  method setBounds(){
+    native "js" code ‹
+      var bounds = this.data.createJsGraphics.getBounds();
+      this.data.createJsGraphics.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
+    ›
+  }
+}
+
+var protoStage := stage(500,500)
 //
 //var protoText := text
 //protoText.text(150@150 , "Hello cruel world", "12px Arial", "black")
@@ -386,4 +433,15 @@ factory method line {
 //protoLine.beginStroke("black")
 //protoLine.draw(40@40, 80@80)
 //protoStage.add(protoLine)
+//protoStage.update
+//
+//var custShape := customShape
+//
+//custShape.addPoint(40@40)
+//custShape.addPoint(80@40)
+//custShape.addPoint(80@80)
+//custShape.addPoint(40@80)
+//custShape.draw("black", "red")
+//protoStage.add(custShape)
+//custShape.move(200, 200)
 //protoStage.update
