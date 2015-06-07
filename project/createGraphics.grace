@@ -222,7 +222,7 @@ factory method createGraphics(canvasHeight, canvasWidth) {
         
         
         method shapeDraw {
-          jsShapeObject.draw(color, stroke)
+          jsShapeObject.draw(stroke, color)
         }
         
         method addPoint(p) {
