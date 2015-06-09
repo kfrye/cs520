@@ -331,7 +331,7 @@ factory method customShape {
   method draw(stroke', fill'){
     if(points.size < 2) then { print("Not enough points in custom shape"); return }
     
-    self.current := points.removeFirst
+    self.current := points.first
     self.stroke := stroke';
     self.color := fill';
     
