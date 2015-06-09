@@ -99,7 +99,7 @@ def graphics = cg.createGraphics(width, height)
 \end{lstlisting}
 
 \section{Shapes}
-The following shape objects are available in CreateGraphics:Circle, Rectangle, Rounded Rectangle, PolyStar, Ellipse, and Text.
+The following shape objects are available in CreateGraphics:Circle, Rectangle, Rounded Rectangle, PolyStar, Ellipse, Text, Line, and Custom Shape.
 To draw one of these objects to the screen, pass a message to the graphics object:
 
 \begin{itemize}
@@ -108,14 +108,17 @@ To draw one of these objects to the screen, pass a message to the graphics objec
 \item addPolyStar
 \item addRoundRect
 \item addEllipse
+\item addText
+\item addLine
+\item addCustomShape
 \end{itemize}
 
 For instance, to add a circle to the window, you might do the following:
 \begin{lstlisting}
 import createGraphics as cg
 def graphics = cg.createGraphics(300, 300)
-graphics.addCircle
-graphics.draw
+def circle = graphics.addCircle
+circle.draw
 \end{lstlisting}
 Each shape has different parameters that are used to create it. These parameters have default values, so you don't need to set each
 one every time you create an shape.
@@ -130,12 +133,34 @@ such as "\#CC3300" that corresponds to an HTML 5 hex colors. See \url{http://www
 \item \textbf{fill} (Boolean): Whether or not you want to fill in the shape when it is drawn on the window.
 \end{itemize}
 
+\textbf{Chaining} \\
+In order to make the resulting code more compact, CreateGraphics has a number of "chaining"
+methods that you can use instead of setting parameters individually. The common ones are:
+\begin{itemize}
+\item on(location)
+\item colored(color)
+\item filled(fill)
+\end{itemize}
+
+This allows you to construct the object like this:
+
+\begin{lstlisting}
+import createGraphics as cg
+def graphics = cg.createGraphics(300, 300)
+graphics.addCircle.colored("red").filled(true).draw
+\end{lstlisting}
+
 \subsection{Circle}
 \textbf{Create:} graphics.addCircle
 
 Parameters:
 \begin{itemize}
 \item \textbf{radius} (Number): The length of the circle radius
+\end{itemize}
+
+Chaining Methods:
+\begin{itemize}
+\item \textbf{setRadius(Number)}
 \end{itemize}
 
 \subsection{Rectangle}
@@ -147,6 +172,12 @@ Parameters:
 \item \textbf{height}(Number): Height of the rectangle
 \end{itemize}
 
+Chaining Methods:
+\begin{itemize}
+\item \textbf{setWidth(Number)} 
+\item \textbf{setHeight(Number)}
+\end{itemize}
+
 \subsection{Rounded Rectangle}
 \textbf{Create:} graphics.addRoundRect
 
@@ -155,6 +186,13 @@ Parameters:
 \item \textbf{width} (Number): Width of the rectangle
 \item \textbf{height}(Number): Height of the rectangle
 \item \textbf{radius} (Number): Radius of the rounded corners
+\end{itemize}
+
+Chaining Methods:
+\begin{itemize}
+\item \textbf{setWidth(Number)} 
+\item \textbf{setHeight(Number)}
+\item \textbf{setRadius(Number)}
 \end{itemize}
 
 \subsection{PolyStar}
@@ -168,6 +206,14 @@ Parameters:
 \item \textbf{angle} (Number): Angle between the points
 \end{itemize}
 
+Chaining Methods:
+\begin{itemize}
+\item \textbf{setSize(Number)} 
+\item \textbf{setSides(Number)} 
+\item \textbf{setPointSize(Number)} 
+\item \textbf{setAngle(Number)}
+\end{itemize}
+
 \subsection{Ellipse}
 \textbf{Create:} graphics.addEllipse
 
@@ -177,6 +223,12 @@ Parameters:
 \item \textbf{height}(Number): Height of the ellipse
 \end{itemize}
 
+Chaining Methods:
+\begin{itemize}
+\item \textbf{setWidth(Number)} 
+\item \textbf{setHeight(Number)}
+\end{itemize}
+
 \subsection{Text}
 \textbf{Create:} graphics.addText
 
@@ -184,6 +236,43 @@ Parameters:
 \begin{itemize}
 \item \textbf{content} (String): The content of the string
 \end{itemize}
+
+Chaining Methods:
+\begin{itemize}
+\item \textbf{setText(String)} 
+\end{itemize}
+
+\subsection{Line}
+\textbf{Create:} graphics.addLine
+
+Parameters:
+\begin{itemize}
+\item \textbf{start} (Point): Location of the starting point of the line
+\item \textbf{end} (Point): Location of the ending point of the line
+\end{itemize}
+
+Chaining Methods:
+Parameters:
+\begin{itemize}
+\item \textbf{setStart(Point)} 
+\item \textbf{setEnd(Point)}
+\end{itemize}
+
+\subsection{Custom Shape}
+This shape consists of a set of points that you add in order to make a custom shape.
+Instead of configuring preset parameters, you just add points to the shape. 
+\textbf{Create:} graphics.addCustomShape
+Methods:
+\begin{itemize}
+\item \textbf{addPoint} (Point): Add this point to shape the object
+\end{itemize}
+
+The addPoint method returns the object, that you can chain it together. For example:
+\begin{lstlisting}
+import createGraphics as cg
+def graphics = cg.createGraphics(300, 300)
+graphics.addCustomShape.colored("red").addPoint(40@40).addPoint(0@40).addPoint(40@0).draw
+\end{lstlisting}
 
 \section{Drawing a Shape}
 To draw a shape on the graphics window, first create it, then configure it, and then draw it. The following code
@@ -196,7 +285,7 @@ circle.color := "red"
 circle.radius := 20
 circle.position := 30@30
 circle.fill := true
-graphics.draw
+circle.draw
 \end{lstlisting}
 
 \begin{figure}[h]
@@ -218,14 +307,13 @@ circle.color := "red"
 circle.click := { 
   print("clicked circle") 
   circle.color := "blue"
-  graphics.draw
+  circle.update
 }
-graphics.draw
+circle.draw
 \end{lstlisting}
-Notice that "graphics.draw" is located twice in this code. The second instance of graphics.draw (located in the last line
-of the code block) initially draws the circle onto the window. The first instance of graphics.draw (located at the end of the circle.click block),
-updates the circle on the window after it has been clicked. This instance of graphics.draw will occur at some point in the future when
-the circle is clicked.
+The \color{blue} circle.update \color{black} line located in the click block is used to update the circle object after its color
+has been changed. The line \color{blue}circle.color := ``blue'' \color{black} updates the variable inside the circle object, but
+a message to circle.update needs to be sent in order for the graphics to actually be updated.
 
 \section{Adding sound}
 CreateGraphics supports basic sounds. All sounds are preloaded in the browser and cannot be customized at this time.
@@ -238,9 +326,9 @@ circle.color := "red"
 circle.click := { 
   print("clicked circle") 
   graphics.play("bicycle_bell")
-  graphics.draw
+  circle.update
 }
-graphics.draw
+circle.draw
 \end{lstlisting}
 
 

@@ -1,12 +1,27 @@
 import "createJsGraphicsWrapper" as gr
+
 factory method shape {
   var color is public := "black"
-  var stroke is public := "black"
   var fill is public := false
   var location is public := 20@20
   var myStage
-
   var jsShapeObject
+  
+  method colored(c) {
+    color := c
+    self
+  }
+  
+  method filled(f) {
+    fill := f
+    self
+  }
+  
+  method at(l) {
+    location := l
+    self
+  }
+  
   method click := (block) {
     myStage.addListener(jsShapeObject, block)
   }
@@ -40,7 +55,6 @@ factory method shape {
   }
 }
 
-
 factory method createGraphics(canvasHeight, canvasWidth) {
   var id := 0
   var myWindow
@@ -60,8 +74,13 @@ factory method createGraphics(canvasHeight, canvasWidth) {
     def circle = object {
       inherits shape
       var radius is public := 15
-      jsShapeObject :=gr.circle
+      jsShapeObject := gr.circle
       myStage:=stage
+      
+      method setRadius(r) {
+        radius := r
+        self
+      }
       method setBounds{
         jsShapeObject.setBounds(location, radius*2, radius*2)
       }
@@ -82,12 +101,23 @@ factory method createGraphics(canvasHeight, canvasWidth) {
       var width is public := 15
       myStage:=stage
       
-      
+      method setHeight(h) { 
+        height := h 
+        self
+      }
+      method setWidth(w) { 
+        width := w 
+        self
+      }
       method setBounds{
         jsShapeObject.setBounds(location, width, height)
       }
       method shapeDraw {
         jsShapeObject.draw(width, height, location)
+      }
+      method size(w,h) {
+        width := w
+        height := h
       }
     }
     
@@ -105,8 +135,22 @@ factory method createGraphics(canvasHeight, canvasWidth) {
         
         jsShapeObject := gr.polyStar
         myStage:=stage
-        
-        
+        method setSize(s) {
+          size := s 
+          self
+        }
+        method setSides(s) {
+          sides := s
+          self
+        }
+        method setPointSize(p) {
+          pointSize := p
+          self
+        }
+        method setAngle(a) {
+          angle := a
+          self
+        }
         method setBounds{
           var x := location.x - size
           var y := location.y - size
@@ -128,7 +172,18 @@ factory method createGraphics(canvasHeight, canvasWidth) {
         var radius is public := 15
         jsShapeObject := gr.roundRect
         myStage:=stage
-        
+        method setHeight(h) {
+          height := h
+          self
+        }
+        method setWidth(w) {
+          width := w
+          self
+        }
+        method setRadius(r) {
+          radius := r
+          self
+        }
         method setBounds{
           jsShapeObject.setBounds(location, width, height)
         }
@@ -149,7 +204,14 @@ factory method createGraphics(canvasHeight, canvasWidth) {
         
         jsShapeObject := gr.ellipse
         myStage:=stage
-        
+        method setWidth(w) {
+          width := w
+          self
+        }
+        method setHeight(h) {
+          height := h
+          self
+        }
         method setBounds{
           jsShapeObject.setBounds(location, width, height)
         }
@@ -170,6 +232,10 @@ factory method createGraphics(canvasHeight, canvasWidth) {
         var content is public := "Did you forget to set text.content?"
         var font is public := "12px Arial"
         
+        method setContent(c) {
+          content := c
+          self
+        }
         method click:=(block) {
           stage.addListener(jsText, block)
         }
@@ -193,7 +259,14 @@ factory method createGraphics(canvasHeight, canvasWidth) {
         
         jsShapeObject := gr.line
         myStage := stage
-        
+        method setStart(s) {
+          start := s
+          self
+        }
+        method setEnd(e) {
+          end := e
+          self
+        }
         method setBounds{
           jsShapeObject.setBounds(start, end.x-start.x, end.y-start.y)
         }
@@ -210,18 +283,22 @@ factory method createGraphics(canvasHeight, canvasWidth) {
         inherits shape
         jsShapeObject := gr.customShape
         myStage := stage
+        var width is public := 10 
+        var height is public := 10
         
         method setBounds{
           jsShapeObject.setBounds
         }
         
         method shapeDraw {
-          jsShapeObject.draw(stroke, color)
+          jsShapeObject.draw(color, color)
         }
         
         method addPoint(p) {
           jsShapeObject.addPoint(p)
+          self
         }
+        
       }
       shapes.add(customShape);
       customShape
