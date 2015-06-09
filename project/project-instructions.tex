@@ -306,13 +306,13 @@ circle.color := "red"
 circle.click := { 
   print("clicked circle") 
   circle.color := "blue"
-  circle.update
+  circle.draw
 }
 circle.draw
 \end{lstlisting}
-The \color{blue} circle.update \color{black} line located in the click block is used to update the circle object after its color
+The \color{blue} circle.draw \color{black} line located in the click block is used to update the circle object after its color
 has been changed. The line \color{blue}circle.color := ``blue'' \color{black} updates the variable inside the circle object, but
-a message to circle.update needs to be sent in order for the graphics to actually be updated.
+a message to circle.draw needs to be sent in order for the graphics to actually be updated.
 
 \section{Adding sound}
 CreateGraphics supports basic sounds. All sounds are preloaded in the browser and cannot be customized at this time.
@@ -325,7 +325,7 @@ circle.color := "red"
 circle.click := { 
   print("clicked circle") 
   graphics.play("bicycle_bell")
-  circle.update
+  circle.draw
 }
 circle.draw
 \end{lstlisting}
