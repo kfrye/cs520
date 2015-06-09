@@ -54,7 +54,6 @@ factory method createGraphics(canvasHeight, canvasWidth) {
   var stage := gr.stage(canvasHeight, canvasWidth)
   
   method drawall {
-    stage.removeAllEventListeners
     for (shapes) do {x -> x.draw}
   }
   method play(sound) {
