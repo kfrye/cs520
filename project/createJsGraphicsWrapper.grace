@@ -345,8 +345,8 @@ factory method customShape {
         this.data.createJsGraphics.graphics.beginStroke(stroke);
         this.data.createJsGraphics.graphics.moveTo(startX, startY);
       ›
-    while{!points.isEmpty} do {
-      current := points.removeFirst
+    for(points) do {x ->
+      current := x
       native "js" code ‹ 
         var endX = this.data.current.data.x._value;
         var endY = this.data.current.data.y._value;
