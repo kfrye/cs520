@@ -5,14 +5,14 @@ var circle := graphics.addCircle.at(200@200).setRadius(10).colored("red").filled
 circle.radius := 10
 circle.color := "black"
 circle.fill := true
-circle.update
+circle.draw
 circle.click := { 
   print("clicked circle") 
   print(circle.location)
   circle.color := "blue"
   circle.location := 80@80
   print(circle.location)
-  circle.update
+  circle.draw
 }
 
 var moved := false
@@ -24,11 +24,11 @@ rect.click := {
   if (moved) then {
     moved := false
     rect.location := 100@100
-    rect.update
+    rect.draw
   } else {
     moved := true
     rect.location := 30@30
-    rect.update
+    rect.draw
   }
 }
 

@@ -28,6 +28,7 @@ factory method shape {
   method setBounds {} // abstract method
   method shapeDraw {} // abstract method
   method draw {
+    clearDuplicate
     jsShapeObject.setLocation(location)
     setBounds
     if (fill) then {
@@ -40,12 +41,10 @@ factory method shape {
     myStage.update
     self
   }
-
-  method update {
+  
+  method clearDuplicate is confidential{
     myStage.removeChild(jsShapeObject)
-    myStage.update
     jsShapeObject.clear
-    draw
   }
 }
 
