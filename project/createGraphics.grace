@@ -38,6 +38,7 @@ factory method shape {
     shapeDraw
     myStage.add(jsShapeObject)
     myStage.update
+    self
   }
 
   method update {

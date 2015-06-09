@@ -98,7 +98,6 @@ factory method commonGraphics{
   
   method move(newX,newY) {
     native "js" code ‹
-      
       this.data.createJsGraphics.x = var_newX._value;
       this.data.createJsGraphics.y = var_newY._value;
     ›
