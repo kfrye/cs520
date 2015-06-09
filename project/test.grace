@@ -1,7 +1,7 @@
 import "createGraphics" as g
 
 var graphics := g.createGraphics(500,500)
-//var circle := graphics.addCircle
+//var circle := graphics.addCircle.at(130@130).setRadius(10).colored("red").filled(true).draw
 //circle.radius := 10
 //circle.color := "red"
 //circle.fill := true
@@ -13,37 +13,42 @@ var graphics := g.createGraphics(500,500)
 //  circle.update
 //}
 
-var rect := graphics.addRect
-rect.location := 100@100
-rect.draw
-rect.click := { 
-  print("clicked rectangle")
-  rect.location := 30@30
-  rect.update
-}
+//var rect := graphics.addRect
+//rect.location := 100@100
+//rect.draw
+//rect.click := { 
+//  print("clicked rectangle")
+//  rect.location := 30@30
+//  rect.update
+//}
 //
-var star := graphics.addPolyStar
-star.location := 200@200
-star.fill := true
-star.color := "orange"
-star.draw
-star.click := { 
-  print "star clicked"
-  rect.location := 100@100
-  rect.update
-}
+//var star := graphics.addPolyStar
+//star.location := 200@200
+//star.fill := true
+//star.color := "orange"
+//star.draw
+//star.click := { 
+//  print "star clicked"
+//  rect.location := 30@30
+//  rect.update
+//}
 
 var customShape := graphics.addCustomShape
-
-customShape.addPoint(20@20)
-customShape.addPoint(120@40)
+//
+customShape.addPoint(40@40)
+customShape.addPoint(80@40)
 customShape.addPoint(80@80)
 customShape.addPoint(40@80)
 customShape.color := "red"
-customShape.draw()
+//customShape.width := 40
+//customShape.height := 40
+//customShape.location := 40@40
+customShape.draw
 customShape.click := {
-  print "custom clicked"
+  print("clicked custom shape")
 }
+
+graphics.addCustomShape.colored("red").addPoint(40@40).addPoint(0@40).addPoint(40@0).draw
 //
 //var roundRect := graphics.addRoundRect
 //roundRect.location := 200@100
