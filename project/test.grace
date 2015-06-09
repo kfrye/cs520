@@ -35,8 +35,8 @@ star.click := {
 
 var customShape := graphics.addCustomShape
 
-customShape.addPoint(40@40)
-customShape.addPoint(80@40)
+customShape.addPoint(20@20)
+customShape.addPoint(120@40)
 customShape.addPoint(80@80)
 customShape.addPoint(40@80)
 customShape.color := "red"
