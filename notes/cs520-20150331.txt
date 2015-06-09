@@ -1,0 +1,18 @@
+The key to reusabiity is to minimize dependencies. Limiting the coupling.
+
+All the class names in Java are global and once you've imported a class,
+you can't change the name. 
+
+Problems should be broken down into methods that have somewhere
+between 2-10 steps. Everything in the method should be at the same
+level of abstraction.
+
+Need to put behavior in objects instead of clients of the objects.
+Behavior does interesting things with the data inside the object.
+
+The message is what the client sends to the object to get the method
+to run. You don't call a method inside an object because it makes it
+sounds like you are reaching into the object and telling it what
+to do. Instead, you pass a message to an object and tell it what 
+you would like it to do.
+

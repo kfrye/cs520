@@ -1,0 +1,125 @@
+Chapter 5 in book: Reducing Costs with Structural Typing
+
+"Duck typing" is a term that is widely used. The wikipedia
+definition was given. It includes that "Duck typing is concerned
+with establishing the suitability of an object for some purpose."
+
+Some confusion in the page: With class typing, suitability is
+assumed to be determined by an object's class.
+
+Java has two kinds of types: class types and interface types. 
+A Java class satisfies an interface when it has all the right
+methods and it says that it implements the interface.
+What is wrong with this?
+
+In Java, you can't use an existing class that has all the necessary,
+methods because you can't change the class to say that it implements
+the type (assuming you don't have access to change the class).
+
+Duck types aren't tied to a specific class. Grace (and Ruby and
+Smalltalk) can implement many interfaces.
+
+Don't be bound by class. Instead of using an if/then or case statement
+to establish behavior in different objects, create a function in
+each object that will implement the function in each object.
+
+Instead of hunting for the messages that these objects understand,
+decide what you want the object to do and then implemet it in the class.
+This is implementing a type/interface/protocol.
+
+T = transparent
+R = reasonable
+U = usable
+E = exemplery 
+
+An integer in 2's complement notation. Find the right-most bit.
+This problem can lead to efficient but unreasonable code.
+
+Writing code with lots of if/then/case statements is not
+exemplery. It's the type of code that will often be copied and reused,
+with the end result an inflexible interface that is hard to change.
+
+One of the possible projects would be to improve the "compilenode"
+method in genjs.grace and move the individual compile methods
+in their relevant classes.
+
+Fix this code and make it exemplary by focusing on the single
+responsibility of the prepare method and trust the object
+to perform its own actions.
+
+"..." is a legal grace expression that compiles. It can be used
+to write examples or put a placeholder for future implementation.
+
+We create a duck type "preparer". There is no preparer class, but
+we can easily adapt existing classes to use the type.
+
+Use the type declaration in Grace in order to clearly document the
+type of parameter you are using in a method, but it's not required
+to use it at this time.
+
+Metz says that a method is polymorphic if it can work with different
+types. For instance, a parameter could be a "collection", which can
+be one of many different types of collections.
+
+We want polymorphism because it means that we can change the
+input without making significant changes to the code. Modules are
+reuable and interchangeable. It only works if you take the time to design
+generic interfaces.
+
+When you create a duck type, you must both document and test the interface.
+
+"Typing wars": Metz talks at length about how static types don't help you.
+With Grace, the intent is to allow the programmer to use static types
+or dynamic typing when suitable. This is called "gradual typing."
+
+Anti-pattern:
+--Don't start method names with "get".
+--Sometimes choosing the right representation method in order to simplify
+your code.
+--Code gets simpler when you have a rich set of libraries
+
+In Grace, if you want to add a method to an existing type. 
+you can create a new object that adds the method:
+
+extendedPoint.grace
+import "point" as basicPoint
+
+type Point = basicPoint.Point && type {
+  * (n:Number) -> Point
+} 
+
+factory method x(x') y(y') {
+  inherits basicPoint.x(x') y(y')
+  method *(other) { revMultiplyByPoint(self) } 
+  method revMultiplyByNumber(n:Number) { (x*n)@(y*n) }
+  method revMultiplyByPoint(p:Point) { (x*p.x+y*p.y) }
+}
+
+This method doesn't actually work with types that are defined in the 
+standardPrelude.
+
+Note: This would only define "2@2 * 3", not: "3 * 2@2". To add the latter,
+you would need to modify the * on Number.
+
+Double dispatch. The action is reversed and performed on the calling 
+object with the callee object as a parameter.
+
+class number.new(n) {
+  method * (other) { other.revMultipleByNumber(self) }
+  method revMultiplyByNumber(other) { self.primitiveTimes(other) }
+  method revMultiplyByPoint(p:Point) { (n*p.x)@n(p.y) }
+} 
+
+Tests should only have 1-2 assert/deny
+
+Black has introduced new types that weren't there anymore in: 
+newCollections.grace
+
+BoundedCollection: you can ask it for its size. 
+LazySequence: You can't index it or get its values
+Sequence: You can index it and get its value 
+Iterators are much simplier. The functionality has been moved to LazySequence
+and other types.
+
+Homework is now due Wednesday instead of Monday
+Extra credit: performance analysis of new version and old version

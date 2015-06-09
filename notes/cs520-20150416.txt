@@ -1,0 +1,97 @@
+Next homework is based on test-driven development.
+
+Dictionary object in Grace uses hash tables. The homework is going
+to be "pick a way to implement a dictionary". Use the same tests on the
+built-in library as your dictionary implementation.
+
+Sequences, Lists, Sets and Dictionaries have already been implemented
+in Grace. 
+
+Possibly implement a B-tree for the dictionary?
+
+t150_collection_test.grace has good examples for tests in gunit. 
+collectiosnPrelude.grace is also useful.
+
+
+def typeTest = object {
+  class forMethod(m) {
+     inherits gU.testCaseNamed(m)
+     def oneToFive = set.with(1, 2, 3, 4, 5)
+     def evens = set.with(2, 4, 6, 8)
+     def empty = set.empty
+
+     method testSetSize {
+        assert(oneToFix.size) shouldBe 5
+        assoert(empty.size) shouldBe 0
+        assert(evens.size) shouldBe 4
+    }
+
+    method testSetEmptyDo {
+      empty.do {each -> failBecause "emptySet.do did wth {each}"}
+    }
+}
+
+fold  `+` [1, 2, 3, 4] 0
+"0" is the initial starting value
+((((0 + 1) + 2) + 3) +4)
+
+---
+sum.grace:
+
+def l = 1..10
+
+def sum = l.fold { a, b -> a + b } startingWith 0
+print(sum)
+---
+
+TDD = test drive development
+---
+
+Minitest is built into the web interface
+
+dialect "minitest"
+import "gUnit" as gU
+import "zip" as zip (the unit that you want to test)
+// The zip module creates new lists by matching up the nth element of
+// two different lists
+
+def list = zip.zipableList
+method l(*a) { list.withAll(a) }
+
+testSuite {
+  def l123 = list.with(1,2,3)
+  def lott = list.with("one", "two", "three")
+
+  test "zip of three" by {
+    assert (l123.zip(lott)) shouldBe(
+      l(l(1, "one"), l(3, "two"), l(3, "three")))
+  }
+
+  test "zip of two" by {
+    assert( l(4,2).zip(l(16,4))) shouldBe( l(l(4,16),l(2,4)))
+  }
+
+  test "zip of unequal size" by {
+    assert {l123.zip(list.empty)} shouldRaise(Exhausted)
+  }
+}
+
+*a = variable number of arguments
+
+def zipableList = object {
+  method empty { self.with() }
+  
+  method with(*a) { self.withAll(a) }
+
+  factory method withAll(elems) {
+    inherits list.withAll(elems)
+    method zip(others) {
+         
+      def result = list.empty
+      (1..self.size).do { i ->
+        result.add(list.with(self.at(i), others.at(i)) 
+      }
+    }
+  }
+} 
+   
