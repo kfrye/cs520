@@ -219,7 +219,9 @@ factory method createGraphics(canvasHeight, canvasWidth) {
         jsShapeObject := gr.customShape
         myStage := stage
         
-        
+        method setBounds{
+          jsShapeObject.setBounds
+        }
         
         method shapeDraw {
           jsShapeObject.draw(stroke, color)

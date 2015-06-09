@@ -327,11 +327,28 @@ factory method customShape {
   var points := list.empty
   var stroke;
   var current;
+  var leftMost;
+  var rightMost;
+  var topMost;
+  var bottomMost;
   
   method addPoint(p){
+    calcBounds(p)
     points.add(p)
   }
-  
+  method calcBounds(p) is confidential {
+    if(points.isEmpty) then {
+      topMost := p.y
+      bottomMost := p.y
+      leftMost := p.x
+      rightMost := p.x
+    } else {
+      if(p.x < leftMost) then { leftMost := p.x }
+      if(p.x > rightMost) then { rightMost := p.x }
+      if(p.y < topMost) then { topMost := p.y }
+      if(p.y > bottomMost) then {bottomMost := p.y}
+    }
+  }
   method draw(stroke', fill'){
     if(points.size < 2) then { print("Not enough points in custom shape"); return }
     
@@ -359,6 +376,11 @@ factory method customShape {
     native "js" code ‹
       this.data.createJsGraphics.graphics.closePath()
     ›
+  }
+  
+  method setBounds {
+    var bounds := leftMost@topMost
+    super.setBounds(bounds, rightMost - leftMost, bottomMost - topMost)
   }
 }
 

@@ -41,6 +41,9 @@ customShape.addPoint(80@80)
 customShape.addPoint(40@80)
 customShape.color := "red"
 customShape.draw()
+customShape.click := {
+  print "custom clicked"
+}
 //
 //var roundRect := graphics.addRoundRect
 //roundRect.location := 200@100
