@@ -34,7 +34,7 @@ factory method shape {
     } else {
       jsShapeObject.beginStroke(color)
     }
-    shapeDraw // TODO: Fix this
+    shapeDraw
     myStage.add(jsShapeObject)
     myStage.update
   }
@@ -45,14 +45,6 @@ factory method createGraphics(canvasHeight, canvasWidth) {
   var id := 0
   var myWindow
   var shapes := list.empty
-  var circles := list.empty
-  var rects := list.empty
-  var polyStars := list.empty
-  var roundRects := list.empty
-  var ellipses := list.empty
-  var texts := list.empty
-  var lines := list.empty
-  var customShapes := list.empty
   var stage := gr.stage(canvasHeight, canvasWidth)
   
   method drawall {
@@ -144,7 +136,7 @@ factory method createGraphics(canvasHeight, canvasWidth) {
           jsShapeObject.draw(location, width, height, radius)
         }
       }
-      roundRects.add(roundRect)
+      shapes.add(roundRect)
       roundRect
     }
     
