@@ -38,7 +38,7 @@ factory method shape {
     shapeDraw
     myStage.add(jsShapeObject)
     myStage.update
-  }
+  } 
 
   method update {
     myStage.removeChild(jsShapeObject)
@@ -73,10 +73,10 @@ factory method createGraphics(canvasHeight, canvasWidth) {
         radius := r
         self
       }
-      method setBounds{
+      method setBounds is confidential {
         jsShapeObject.setBounds(location, radius*2, radius*2)
       }
-      method shapeDraw {
+      method shapeDraw is confidential {
         jsShapeObject.draw(radius)
       }
     }
@@ -101,10 +101,10 @@ factory method createGraphics(canvasHeight, canvasWidth) {
         width := w 
         self
       }
-      method setBounds{
+      method setBounds is confidential {
         jsShapeObject.setBounds(location, width, height)
       }
-      method shapeDraw {
+      method shapeDraw is confidential {
         jsShapeObject.draw(width, height, location)
       }
     }
@@ -139,12 +139,12 @@ factory method createGraphics(canvasHeight, canvasWidth) {
           angle := a
           self
         }
-        method setBounds{
+        method setBounds is confidential {
           var x := location.x - size
           var y := location.y - size
           jsShapeObject.setBounds(x@y, 2*size, 2*size)
         }
-        method shapeDraw {
+        method shapeDraw is confidential {
           jsShapeObject.draw(size, sides, pointSize, angle)
         }
       }
@@ -172,10 +172,10 @@ factory method createGraphics(canvasHeight, canvasWidth) {
           radius := r
           self
         }
-        method setBounds{
+        method setBounds is confidential {
           jsShapeObject.setBounds(location, width, height)
         }
-        method shapeDraw {
+        method shapeDraw is confidential {
           jsShapeObject.draw(location, width, height, radius)
         }
       }
@@ -200,10 +200,10 @@ factory method createGraphics(canvasHeight, canvasWidth) {
           height := h
           self
         }
-        method setBounds{
+        method setBounds is confidential {
           jsShapeObject.setBounds(location, width, height)
         }
-        method shapeDraw {
+        method shapeDraw is confidential {
           jsShapeObject.draw(location, width, height)
         }
       }
@@ -255,10 +255,10 @@ factory method createGraphics(canvasHeight, canvasWidth) {
           end := e
           self
         }
-        method setBounds{
+        method setBounds is confidential {
           jsShapeObject.setBounds(start, end.x-start.x, end.y-start.y)
         }
-        method shapeDraw {
+        method shapeDraw is confidential {
           jsShapeObject.draw(start, end)
         }
       }
@@ -274,11 +274,11 @@ factory method createGraphics(canvasHeight, canvasWidth) {
         var width is public := 10 
         var height is public := 10
         
-        method setBounds{
+        method setBounds is confidential {
           jsShapeObject.setBounds
         }
         
-        method shapeDraw {
+        method shapeDraw is confidential {
           jsShapeObject.draw(color, color)
         }
         

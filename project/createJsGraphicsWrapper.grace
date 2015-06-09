@@ -11,13 +11,10 @@ factory method eventListener {
   
   method addListener(stage, obj, listener) {
     native "js" code ‹
-
       var_stage.on("stagemousedown", function(event) { 
         var x = event.stageX;
         var y = event.stageY;
-        
         var bounds = var_obj.getBounds();
-
         if(bounds.contains(x,y)) {
           callmethod(var_listener, "click", [0]);
         }
@@ -49,7 +46,6 @@ factory method stage(width', height') {
   }
   method add(shape) {
     self.createJsGraphics := shape.createJsGraphics
-//    print (self.createJsGraphics)
     native "js" code ‹
       this.data.mystage.addChild(this.data.createJsGraphics);
     ›
@@ -76,7 +72,6 @@ factory method stage(width', height') {
   }
 }
 
-
 factory method commonGraphics{
   var createJsGraphics is public
   var color
@@ -89,7 +84,6 @@ factory method commonGraphics{
   
   method setBounds(bounds, width, height) {
     native "js" code ‹
-      
       var x = var_bounds.data.x._value;
       var y = var_bounds.data.y._value
       this.data.createJsGraphics.setBounds(x, y, var_width._value, var_height._value);
@@ -98,11 +92,9 @@ factory method commonGraphics{
   
   method move(newX,newY) {
     native "js" code ‹
-      
       this.data.createJsGraphics.x = var_newX._value;
       this.data.createJsGraphics.y = var_newY._value;
     ›
-    
   }
 }
 
@@ -119,7 +111,6 @@ factory method shape {
 
   method clear {
     native "js" code ‹
-    console.log("here")
       this.data.createJsGraphics.graphics.clear();
     ›
   }
@@ -260,7 +251,6 @@ factory method ellipse {
 factory method text {
   inherits commonGraphics
 
-//  var createJsGraphics is public := new
   var content is public := "Did you forget to set text.content?"
   var font is public := "12px Arial"
   method new {
