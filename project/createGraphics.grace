@@ -75,7 +75,9 @@ factory method createGraphics(canvasHeight, canvasWidth) {
         self
       }
       method setBounds is confidential {
-        jsShapeObject.setBounds(location, radius*2, radius*2)
+        def x = location.x - radius
+        def y = location.y - radius
+        jsShapeObject.setBounds(x@y, radius*2, radius*2)
       }
       method shapeDraw is confidential {
         jsShapeObject.draw(radius)
