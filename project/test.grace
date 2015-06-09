@@ -13,13 +13,21 @@ var graphics := g.createGraphics(500,500)
 //  circle.update
 //}
 
+var moved := false
 var rect := graphics.addRect
 rect.location := 100@100
 rect.draw
 rect.click := { 
   print("clicked rectangle")
-  rect.location := 30@30
-  rect.update
+  if (moved) then {
+    moved := false
+    rect.location := 100@100
+    rect.draw
+  } else {
+    moved := true
+    rect.location := 30@30
+    rect.draw
+  }
 }
 //
 var star := graphics.addPolyStar

@@ -39,19 +39,12 @@ factory method shape {
     myStage.add(jsShapeObject)
     myStage.update
   }
+
   method update {
     myStage.removeChild(jsShapeObject)
     myStage.update
-    jsShapeObject.move(location.x, location.y) // TODO: Fix this with location variable
-    setBounds
-    if (fill) then {
-      jsShapeObject.beginFill(color)
-    } else {
-      jsShapeObject.beginStroke(color)
-    }
-    shapeDraw
-    myStage.add(jsShapeObject)
-    myStage.update
+    jsShapeObject.clear
+    draw
   }
 }
 

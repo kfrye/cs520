@@ -98,7 +98,7 @@ factory method commonGraphics{
   
   method move(newX,newY) {
     native "js" code ‹
-      console.log("here")
+      
       this.data.createJsGraphics.x = var_newX._value;
       this.data.createJsGraphics.y = var_newY._value;
     ›
@@ -117,6 +117,12 @@ factory method shape {
     ›
   }
 
+  method clear {
+    native "js" code ‹
+    console.log("here")
+      this.data.createJsGraphics.graphics.clear();
+    ›
+  }
   method beginFill(color') {
     self.color := color'
     native "js" code ‹
