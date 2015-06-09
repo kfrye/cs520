@@ -1,8 +1,20 @@
 import "createGraphics" as g
 
 var graphics := g.createGraphics(500,500)
-var circle := graphics.addCircle.at(130@130).setRadius(10).colored("red").filled(true).draw
- 
+var circle := graphics.addCircle.at(200@200).setRadius(10).colored("red").filled(true).draw
+circle.radius := 10
+circle.color := "black"
+circle.fill := true
+circle.update
+circle.click := { 
+  print("clicked circle") 
+  print(circle.location)
+  circle.color := "blue"
+  circle.location := 80@80
+  print(circle.location)
+  circle.update
+}
+
 var moved := false
 var rect := graphics.addRect
 rect.location := 100@100
