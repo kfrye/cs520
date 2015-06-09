@@ -1,16 +1,11 @@
 factory method eventListener {
   var clickBlock := { }
-  var clickIsSet := false
-  var listenerIsCalled := false
   
   method click {
     clickBlock.apply
-    listenerIsCalled := false
   }
   
   method click:=(block) {
-    print("clickblock is set ")
-    clickIsSet := true
     clickBlock := block
   }
   
@@ -24,10 +19,7 @@ factory method eventListener {
         var bounds = var_obj.getBounds();
 
         if(bounds.contains(x,y)) {
-          //console.log(x);
-          //alert("some object is clicked"); 
           callmethod(var_listener, "click", [0]);
-          
         }
       });
     ›
@@ -50,17 +42,9 @@ factory method stage(width', height') {
       canvas = stage.canvas;
       canvas.width = width;
       canvas.height = height;
-//      stage.on("stagemousedown", function(evt) {
-//          alert("stage click");
-//});
       myWindow.document.body.appendChild(canvas);
-      
-      
- 
-      
       this.stage = stage
       return stage; 
-      
     ›
   }
   method add(shape) {
@@ -70,8 +54,8 @@ factory method stage(width', height') {
       this.data.mystage.addChild(this.data.createJsGraphics);
     ›
   }
-  method removeChild(child) {
-    self.createJsGraphics := child.createJsGraphics
+  method removeChild(shape) {
+    self.createJsGraphics := shape.createJsGraphics
     native "js" code ‹
       this.data.mystage.removeChild(this.data.createJsGraphics);
     ›
@@ -335,7 +319,7 @@ factory method customShape {
   method addPoint(p){
     calcBounds(p)
     points.add(p)
-  }
+  } 
   method calcBounds(p) is confidential {
     if(points.isEmpty) then {
       topMost := p.y
@@ -383,80 +367,3 @@ factory method customShape {
     super.setBounds(bounds, rightMost - leftMost, bottomMost - topMost)
   }
 }
-
-//var protoStage := stage(500,500)
-//
-//var protoText := text
-//protoText.text(150@150 , "Hello cruel world", "12px Arial", "black")
-////protoCircle.setDefaultBounds
-////protoContainer.add(protoCircle)
-////protoCircle.move(100,100)
-//protoStage.add(protoText)
-////protoStage.add(protoContainer)
-////protoStage.addListener(protoText, {print ("test")})
-//protoStage.update
-//
-//var protoContainer := container
-
-//var protoCircle := circle
-//protoCircle.beginFill("purple")
-//protoCircle.draw(50)
-//protoCircle.setDefaultBounds
-////protoContainer.add(protoCircle)
-////protoCircle.move(100,100)
-//protoStage.add(protoCircle)
-////protoStage.add(protoContainer)
-//protoStage.addListener(protoCircle, {print ("test")})
-//protoStage.update
-//protoStage.removeChild(protoCircle)
-//protoStage.update
-//protoCircle.move(150,150)
-//protoCircle.beginFill("purple")
-//protoCircle.draw(50)
-//protoStage.add(protoCircle)
-//protoStage.update
-//var protoSquare := rect
-//protoSquare.beginFill("yellow")
-//protoSquare.draw(25, 25)
-////protoContainer.add(protoSquare)
-//protoSquare.move(150,150)
-//protoStage.add(protoSquare)
-//protoStage.update
-
-//var protoStar := polyStar
-//protoStar.beginFill("orange")
-//protoStar.draw(35, 35)
-//protoStage.add(protoStar)
-//protoStar.move(50,150)
-//protoStage.update
-//
-//var protoRoundSquare := roundRect
-//protoRoundSquare.beginFill("blue")
-//protoRoundSquare.draw(35, 35)
-//protoStage.add(protoRoundSquare)
-//protoRoundSquare.move(150,150)
-//protoStage.update
-//
-//var protoEllipse := ellipse
-//protoEllipse.beginFill("cyan")
-//protoEllipse.draw(35, 35)
-//protoStage.add(protoEllipse)
-//protoEllipse.move(250,150)
-//protoStage.update
-
-//var protoLine := line
-//protoLine.beginStroke("black")
-//protoLine.draw(40@40, 80@80)
-//protoStage.add(protoLine)
-//protoStage.update
-//
-//var custShape := customShape
-//
-//custShape.addPoint(40@40)
-//custShape.addPoint(80@40)
-//custShape.addPoint(80@80)
-//custShape.addPoint(40@80)
-//custShape.draw("black", "red")
-//protoStage.add(custShape)
-//custShape.move(200, 200)
-//protoStage.update

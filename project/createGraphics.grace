@@ -15,7 +15,7 @@ factory method shape {
   method filled(f) {
     fill := f
     self
-  }
+  } 
   
   method at(l) {
     location := l
@@ -56,7 +56,6 @@ factory method shape {
 }
 
 factory method createGraphics(canvasHeight, canvasWidth) {
-  var id := 0
   var myWindow
   var shapes := list.empty
   var stage := gr.stage(canvasHeight, canvasWidth)
@@ -114,10 +113,6 @@ factory method createGraphics(canvasHeight, canvasWidth) {
       }
       method shapeDraw {
         jsShapeObject.draw(width, height, location)
-      }
-      method size(w,h) {
-        width := w
-        height := h
       }
     }
     
