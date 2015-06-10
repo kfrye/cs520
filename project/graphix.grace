@@ -23,7 +23,8 @@ factory method shape {
   }
   
   method click := (block) {
-    myStage.addListener(jsShapeObject, block)
+    jsShapeObject.listener.click := block
+    myStage.addListener(jsShapeObject)
   }
   method setBounds {} // abstract method
   method shapeDraw {} // abstract method

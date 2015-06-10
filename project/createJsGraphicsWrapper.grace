@@ -73,14 +73,10 @@ factory method stage(width', height') {
       this.data.mystage.update();
     ›
   }
-  method addListener(containerTypeObject, block) {
-    containerTypeObject.listener.click := block
+  method addListener(containerTypeObject) {
     var listener := containerTypeObject.listener
     var anObject := containerTypeObject.createJsGraphics
     listener.addListener(mystage, anObject, listener)
-//    native "js" code ‹
-//      callmethod(var_listener, "addListener", [3], this.data.mystage, var_anObject, var_listener);
-//    ›
   }
   method removeAllChildren {
     native "js" code ‹
