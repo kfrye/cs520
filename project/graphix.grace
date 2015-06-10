@@ -57,10 +57,14 @@ factory method create(canvasHeight, canvasWidth) {
     for (shapes) do {x -> x.draw}
   }
   method play(sound) {
-      native "js" code ‹
-        createjs.Sound.play(var_sound._value); 
-      ›
-    }
+    native "js" code ‹
+      createjs.Sound.play(var_sound._value); 
+    ›
+  }
+  method addStageListener(block) {
+    stage.addStageListener(block)
+  }
+  
   method addCircle {
     def circle = object {
       inherits shape

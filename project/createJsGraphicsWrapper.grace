@@ -1,5 +1,6 @@
 factory method eventListener {
   var clickBlock := { }
+  def listen = self
   
   method click {
     clickBlock.apply
@@ -21,11 +22,21 @@ factory method eventListener {
       });
     ›
   }
+  
+  method addStageListener(stage, listener) {
+    native "js" code ‹
+      var_stage.on("stagemousedown", function(event) { 
+        callmethod(var_listener, "click", [0]);
+      });
+    ›
+  }
 }
 
 factory method stage(width', height') {
   var mystage := new (width', height')
   var createJsGraphics
+  var stageListener := eventListener
+  
   method new(width, height) {
     native "js" code ‹
       var width = var_width._value;
@@ -66,9 +77,19 @@ factory method stage(width', height') {
     containerTypeObject.listener.click := block
     var listener := containerTypeObject.listener
     var anObject := containerTypeObject.createJsGraphics
+    listener.addListener(mystage, anObject, listener)
+//    native "js" code ‹
+//      callmethod(var_listener, "addListener", [3], this.data.mystage, var_anObject, var_listener);
+//    ›
+  }
+  method removeAllChildren {
     native "js" code ‹
-      callmethod(var_listener, "addListener", [3], this.data.mystage, var_anObject, var_listener);
+      this.data.mystage.removeAllChildren();
     ›
+  }
+  method addStageListener(block) {
+    stageListener.click := block
+    stageListener.addStageListener(mystage, stageListener)
   }
 }
 
@@ -194,9 +215,9 @@ factory method polyStar {
   var angle is public := -90
   method draw(size', sides', pointSize', angle') {
     self.size := size'
-    self.angle := angle'
     self.pointSize := pointSize'
     self.angle := angle'
+    self.sides := sides'
     native "js" code ‹
       var x = this.data.location.data.x._value;
       var y = this.data.location.data.y._value;

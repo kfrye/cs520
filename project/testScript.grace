@@ -16,14 +16,13 @@ while { index < 9} do {
     if(clicked) then {
       graphics.play(note)
       circle.location := newLocation
-      circle.draw
       clicked := false
     }
     else {
       circle.location := oldLocation
-      circle.draw
       clicked := true
     }
+    circle.draw
   }
   circle.draw
   index := index + 1
@@ -38,3 +37,22 @@ ellipse.click := {
   graphics.play("snap")
 }
 def text = graphics.addText.colored("purple").setContent("Hello world").at(50@150).draw
+
+def star = graphics.addPolyStar.colored("green").setSides(7).at(200@100)
+
+var clicked := false
+star.click := {
+  if(clicked) then {
+    star.color := "green"
+    star.sides := 12
+    clicked := false
+  }
+  else {
+    star.sides := 7
+    star.color := "red"
+    clicked := true
+  }
+  graphics.play("snap")
+  star.draw
+}
+star.draw
