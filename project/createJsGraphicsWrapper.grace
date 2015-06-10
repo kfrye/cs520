@@ -3,7 +3,7 @@ factory method eventListener {
   
   method click {
     clickBlock.apply
-  }
+  } 
   
   method click:=(block) {
     clickBlock := block
@@ -234,7 +234,7 @@ factory method ellipse {
   inherits shape
   var height
   var width
-  method draw(height', width') {
+  method draw(width', height') {
     self.height := height'
     self.width := width'
     native "js" code ‹ 

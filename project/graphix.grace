@@ -10,7 +10,7 @@ factory method shape {
   method colored(c) {
     color := c
     self
-  }
+  } 
   
   method filled(f) {
     fill := f
@@ -48,7 +48,7 @@ factory method shape {
   }
 }
 
-factory method createGraphics(canvasHeight, canvasWidth) {
+factory method create(canvasHeight, canvasWidth) {
   var myWindow
   var shapes := list.empty
   var stage := gr.stage(canvasHeight, canvasWidth)
@@ -205,7 +205,7 @@ factory method createGraphics(canvasHeight, canvasWidth) {
           jsShapeObject.setBounds(location, width, height)
         }
         method shapeDraw is confidential {
-          jsShapeObject.draw(location, width, height)
+          jsShapeObject.draw(width, height)
         }
       }
       shapes.add(ellipse)
@@ -220,7 +220,14 @@ factory method createGraphics(canvasHeight, canvasWidth) {
         var jsText
         var content is public := "Did you forget to set text.content?"
         var font is public := "12px Arial"
-        
+        method at(l) {
+          location := l
+          self
+        }
+        method colored(c) {
+          color := c
+          self
+        }
         method setContent(c) {
           content := c
           self
@@ -231,7 +238,8 @@ factory method createGraphics(canvasHeight, canvasWidth) {
         
         method draw {
           jsText := gr.text
-          jsText.draw(location, content, font, color)
+          jsText.setLocation(location)
+          jsText.draw(content, font, color)
           stage.add(jsText)
           stage.update
         }
