@@ -1,6 +1,6 @@
 factory method eventListener {
   var clickBlock := { }
-  def listen = self
+  var mouseUpBlock := { }
   
   method click {
     clickBlock.apply
@@ -8,6 +8,14 @@ factory method eventListener {
   
   method click:=(block) {
     clickBlock := block
+  }
+    
+  method mouseup {
+    mouseUpBlock.apply
+  }
+  
+  method mouseup:=(block) {
+    mouseUpBlock := block
   }
   
   method addListener(stage, obj, listener) {
@@ -18,6 +26,20 @@ factory method eventListener {
         var bounds = var_obj.getBounds();
         if(bounds.contains(x,y)) {
           callmethod(var_listener, "click", [0]);
+        }
+      });
+    ›
+  }
+  
+  method addMouseUpListener(stage, obj, listener) {
+    native "js" code ‹
+      console.log("mouse up")
+      var_stage.on("stagemousemove", function(event) { 
+        var x = event.stageX;
+        var y = event.stageY;
+        var bounds = var_obj.getBounds();
+        if(bounds.contains(x,y)) {
+          callmethod(var_listener, "mouseup", [0]);
         }
       });
     ›
@@ -55,9 +77,11 @@ factory method stage(width', height') {
       return stage; 
     ›
   }
+  
   method add(shape) {
     self.createJsGraphics := shape.createJsGraphics
     native "js" code ‹
+      console.log("add");
       this.data.mystage.addChild(this.data.createJsGraphics);
     ›
   }
@@ -73,11 +97,20 @@ factory method stage(width', height') {
       this.data.mystage.update();
     ›
   }
-  method addListener(containerTypeObject) {
-    var listener := containerTypeObject.listener
-    var anObject := containerTypeObject.createJsGraphics
+  method addListener(graphicsTypeObject, block) {
+    var listener := graphicsTypeObject.listener
+    listener.click := block
+    var anObject := graphicsTypeObject.createJsGraphics
     listener.addListener(mystage, anObject, listener)
   }
+  
+  method addMouseUpListener(graphicsTypeObject, block) {
+    var listener := graphicsTypeObject.listener
+    listener.mouseup := block
+    var anObject := graphicsTypeObject.createJsGraphics
+    listener.addMouseUpListener(mystage, anObject, listener)
+  }
+  
   method removeAllChildren {
     native "js" code ‹
       this.data.mystage.removeAllChildren();
@@ -296,7 +329,7 @@ factory method text {
       return text;
     ›
   }
-}
+} 
 
 factory method line {
   inherits shape
@@ -378,4 +411,26 @@ factory method customShape {
     var bounds := leftMost@topMost
     super.setBounds(bounds, rightMost - leftMost, bottomMost - topMost)
   }
+}
+
+factory method inputBox(mystage) {
+  var input := native "js" code ‹
+    var stage = var_mystage;
+    console.log("creating input");
+    var mycanvas = stage.stage.canvas;
+    var input = new CanvasInput({
+        canvas: mycanvas,
+        placeHolder: 'Enter message here...'
+    });
+    var result = input;
+  ›
+  
+  method width := (w) {
+    native "js" code ‹
+        var input = this.data.input;
+        var width = var_w;
+        input.height(width);
+    ›
+  }
+    
 }

@@ -23,8 +23,13 @@ factory method shape {
   }
   
   method click := (block) {
-    jsShapeObject.listener.click := block
-    myStage.addListener(jsShapeObject)
+    myStage.addListener(jsShapeObject, block)
+  }
+  method setpress {
+    jsShapeObject.setpress
+  }
+  method mouseup := (block) {
+    myStage.addMouseUpListener(jsShapeObject, block)
   }
   method setBounds {} // abstract method
   method shapeDraw {} // abstract method
@@ -50,7 +55,6 @@ factory method shape {
 }
 
 factory method create(canvasHeight, canvasWidth) {
-  var myWindow
   var shapes := list.empty
   var stage := gr.stage(canvasHeight, canvasWidth)
   
@@ -64,6 +68,11 @@ factory method create(canvasHeight, canvasWidth) {
   }
   method addStageListener(block) {
     stage.addStageListener(block)
+  }
+  method clear {
+    stage.removeAllChildren
+    stage.removeAllEventListeners
+    stage.update
   }
   
   method addCircle {
@@ -304,5 +313,33 @@ factory method create(canvasHeight, canvasWidth) {
       }
       shapes.add(customShape);
       customShape
+    }
+    
+    method addInputBox {
+        def input = object {
+            var width is public := 50
+            var height is public := 20
+            var location is public := 0@0
+            
+            method setWidth(w) {
+                width := w
+                self
+            }
+            
+            method setHeight(h) {
+                height := h
+                self
+            }
+            
+            method setLocation(l) {
+                location := l
+                self
+            }
+            
+            method draw {
+                gr.inputBox(stage)
+            }
+        }
+        input
     }
 }
