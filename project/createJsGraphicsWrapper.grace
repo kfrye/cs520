@@ -56,6 +56,7 @@ factory method eventListener {
 
 factory method stage(width', height') {
   var mystage := new (width', height')
+  createClearButton
   var createJsGraphics
   var stageListener := eventListener
   
@@ -64,24 +65,44 @@ factory method stage(width', height') {
       var width = var_width._value;
       var height = var_height._value;
       var size = "height=" + height.toString() + ",width=" + width.toString()
-      myWindow = window.open("", "_blank", size);
-      myWindow.document.title = "Grace Graphics";
-      
-      var canvas = document.createElement("canvas");
+      var canvas = document.getElementById("graphics");
       var stage = new createjs.Stage(canvas);
+      canvas.setAttribute('tabindex','0');
+      canvas.focus();
       canvas = stage.canvas;
-      canvas.width = width;
-      canvas.height = height;
-      myWindow.document.body.appendChild(canvas);
       this.stage = stage
       return stage; 
     ›
   }
   
+  method createClearButton {
+      native "js" code ‹
+          var stage = this.data.mystage;
+          var container = new createjs.Container();
+          var text = new createjs.Text("clear", "12px Arial", "black");
+          text.x = 5;
+          text.y = 3;
+          container.addChild(text);
+          console.log("stage width");
+          container.x = stage.canvas.width - 35;
+          var rect = new createjs.Shape();
+          rect.graphics.beginStroke("black").drawRect(0, 0, 35, 20);
+          container.addChild(rect);
+          container.addEventListener("click", function(event) { 
+            stage.removeAllEventListeners();
+            stage.removeAllChildren();
+            stage.enableDOMEvents(false);
+            stage.update();
+            
+          });
+          stage.addChild(container);
+          stage.update();
+      ›
+  }
+  
   method add(shape) {
     self.createJsGraphics := shape.createJsGraphics
     native "js" code ‹
-      console.log("add");
       this.data.mystage.addChild(this.data.createJsGraphics);
     ›
   }
@@ -113,6 +134,7 @@ factory method stage(width', height') {
   
   method removeAllChildren {
     native "js" code ‹
+      console.log("remove all");
       this.data.mystage.removeAllChildren();
     ›
   }
@@ -414,23 +436,77 @@ factory method customShape {
 }
 
 factory method inputBox(mystage) {
-  var input := native "js" code ‹
-    var stage = var_mystage;
-    console.log("creating input");
-    var mycanvas = stage.stage.canvas;
-    var input = new CanvasInput({
+  var location is public
+  var width is public
+  var height is public
+  var fontSize is public
+  var fontFamily is public
+  var fontColor is public
+  var backgroundColor is public
+  var borderColor is public
+  var submitBlock := {}
+  var input
+  
+  method draw {
+    input := native "js" code ‹
+      var stage = var_mystage;
+      console.log("input location")
+      var mycanvas = stage.stage.canvas;
+      var input = new CanvasInput({
         canvas: mycanvas,
-        placeHolder: 'Enter message here...'
-    });
-    var result = input;
-  ›
+        x: this.data.location.data.x._value,
+        y: this.data.location.data.y._value,
+        width: this.data.width._value,
+        height: this.data.height._value,
+        fontSize: this.data.fontSize._value,
+        fontFamily: this.data.fontFamily._value,
+        fontColor: this.data.fontColor._value,
+        backgroundColor: this.data.backgroundColor._value,
+        borderColor: this.data.borderColor._value
+      });
+      input.focus();
+      var result = input;
+    ›
+    onSubmit(self, submitBlock)
+  }
+  
+  method focus {
+    native "js" code ‹
+      var input = this.data.input;
+      input.focus();
+    ›
+  }
+  
+  method destroy {
+    native "js" code ‹
+      var input = this.data.input;
+      input.destroy();
+    ›
+  }
   
   method width := (w) {
     native "js" code ‹
-        var input = this.data.input;
-        var width = var_w;
-        input.height(width);
+      var input = this.data.input;
+      var width = var_w;
+      input.height(width);
     ›
   }
-    
+  
+  method callSubmit {
+    print("in callSubmit")
+    submitBlock.apply
+  }
+  
+  method onSubmit(inputObj, block) {
+    submitBlock := block
+    native "js" code ‹
+      console.log("on submit")
+      if(this.data.input != null) {
+        var input = this.data.input;
+        input.onsubmit(function() {
+          callmethod(var_inputObj, "callSubmit", [0])
+        });
+      }
+    ›
+  }
 }

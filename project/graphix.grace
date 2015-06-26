@@ -1,5 +1,7 @@
 import "createJsGraphicsWrapper" as gr
 
+var ret := 1
+
 factory method shape {
   var color is public := "black"
   var fill is public := false
@@ -56,8 +58,9 @@ factory method shape {
 
 factory method create(canvasHeight, canvasWidth) {
   var shapes := list.empty
+  var inputs := list.empty
   var stage := gr.stage(canvasHeight, canvasWidth)
-  
+
   method drawall {
     for (shapes) do {x -> x.draw}
   }
@@ -69,6 +72,7 @@ factory method create(canvasHeight, canvasWidth) {
   method addStageListener(block) {
     stage.addStageListener(block)
   }
+  
   method clear {
     stage.removeAllChildren
     stage.removeAllEventListeners
@@ -320,6 +324,13 @@ factory method create(canvasHeight, canvasWidth) {
             var width is public := 50
             var height is public := 20
             var location is public := 0@0
+            var fontSize is public := 14
+            var fontFamily is public := "Arial"
+            var fontColor is public := "black"
+            var backgroundColor is public := "white"
+            var borderColor is public := "black"
+            var jsInputObject := 0
+            var submitBlock := {}
             
             method setWidth(w) {
                 width := w
@@ -336,10 +347,42 @@ factory method create(canvasHeight, canvasWidth) {
                 self
             }
             
+            method setBorderColor(c) {
+              borderColor := c
+              self
+            }
+            
             method draw {
-                gr.inputBox(stage)
+                jsInputObject := gr.inputBox(stage)
+                jsInputObject.location := location
+                jsInputObject.width := width
+                jsInputObject.height := height
+                jsInputObject.fontSize := fontSize
+                jsInputObject.fontFamily := fontFamily
+                jsInputObject.fontColor := fontColor
+                jsInputObject.backgroundColor := backgroundColor
+                jsInputObject.borderColor := borderColor
+                jsInputObject.onSubmit(jsInputObject,submitBlock)
+                jsInputObject.draw
+                self
+            }
+            
+            method focus {
+              jsInputObject.focus
+            }
+            
+            method onSubmit(block) {
+              if(jsInputObject != 0) then {
+                jsInputObject.onSubmit(jsInputObject, block)
+              }
+              submitBlock := block
+            }
+            
+            method destroy {
+                jsInputObject.destroy
             }
         }
+        inputs.add(input)
         input
     }
 }
