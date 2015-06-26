@@ -522,7 +522,6 @@ factory method inputBox(mystage) {
   }
   
   method onSubmit(inputObj, block) {
-    print("in inner onSubmit")
     submitBlock := block
     native "js" code ‹
       if(this.data.input != null) {

@@ -412,7 +412,6 @@ factory method create(canvasHeight, canvasWidth) {
             }
             
             method onSubmit(block) {
-              print("in onSubmit")
               if(jsInputObject != 0) then {
                 jsInputObject.onSubmit(jsInputObject, block)
               }
