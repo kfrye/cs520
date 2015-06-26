@@ -319,6 +319,31 @@ factory method ellipse {
   }
 }
 
+factory method arc {
+  inherits shape
+  var radius
+  var startAngle
+  var endAngle
+  
+  method draw(radius', startAngle', endAngle') {
+    radius := radius'
+    startAngle := startAngle'
+    endAngle := endAngle'
+    
+    native "js" code ‹
+      var x = this.data.location.data.x._value;
+      var y = this.data.location.data.y._value;
+      var radius = this.data.radius._value;
+      var startAngle = this.data.startAngle._value;
+      var endAngle = this.data.endAngle._value;
+      startAngle = startAngle * Math.PI / 180;
+      endAngle = endAngle * Math.PI / 180;
+
+      this.data.createJsGraphics.graphics.arc(x, y, radius, startAngle, endAngle);
+    ›
+  }
+}
+
 factory method text {
   inherits commonGraphics
 
@@ -338,6 +363,7 @@ factory method text {
     self.font := font'
     
     native "js" code ‹
+      console.log("text");
       var color = this.data.color._value;
       var x = this.data.location.data.x._value;
       var y = this.data.location.data.y._value;
@@ -447,6 +473,13 @@ factory method inputBox(mystage) {
   var submitBlock := {}
   var input
   
+  method value {
+    native "js" code ‹
+      var input = this.data.input;
+      return new GraceString(input.value());
+    ›
+  }
+  
   method draw {
     input := native "js" code ‹
       var stage = var_mystage;
@@ -484,26 +517,18 @@ factory method inputBox(mystage) {
     ›
   }
   
-  method width := (w) {
-    native "js" code ‹
-      var input = this.data.input;
-      var width = var_w;
-      input.height(width);
-    ›
-  }
-  
   method callSubmit {
-    print("in callSubmit")
     submitBlock.apply
   }
   
   method onSubmit(inputObj, block) {
+    print("in inner onSubmit")
     submitBlock := block
     native "js" code ‹
-      console.log("on submit")
       if(this.data.input != null) {
         var input = this.data.input;
-        input.onsubmit(function() {
+        input.onsubmit(function(event) {
+          console.log("triggering submit");
           callmethod(var_inputObj, "callSubmit", [0])
         });
       }

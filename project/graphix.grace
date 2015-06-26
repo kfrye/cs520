@@ -1,7 +1,5 @@
 import "createJsGraphicsWrapper" as gr
 
-var ret := 1
-
 factory method shape {
   var color is public := "black"
   var fill is public := false
@@ -124,7 +122,7 @@ factory method create(canvasHeight, canvasWidth) {
         jsShapeObject.setBounds(location, width, height)
       }
       method shapeDraw is confidential {
-        jsShapeObject.draw(width, height, location)
+        jsShapeObject.draw(height, width, location)
       }
     }
     
@@ -230,12 +228,43 @@ factory method create(canvasHeight, canvasWidth) {
       ellipse
     }
     
+    method addArc {
+      def arc = object {
+        inherits shape
+        var radius is public := 15
+        var startAngle is public := 0
+        var endAngle is public := 180
+        
+        jsShapeObject := gr.arc
+        myStage:=stage
+        
+        method setRadius(r) {
+          radius := r
+          self
+        }
+        method setStartAngle(a) {
+          startAngle := a
+          self
+        }
+        method setEndAngle(a) {
+          endAngle := a
+          self
+        }
+        
+        method shapeDraw is confidential {
+          jsShapeObject.draw(radius, startAngle, endAngle)
+        }
+      }
+      shapes.add(arc)
+      arc
+  }
+  
     method addText {
       
       def text = object {
         var location is public
         var color is public := "black"
-        var jsText
+        var jsText := 0
         var content is public := "Did you forget to set text.content?"
         var font is public := "12px Arial"
         method at(l) {
@@ -250,11 +279,18 @@ factory method create(canvasHeight, canvasWidth) {
           content := c
           self
         }
+        method setFont(f) {
+          font := f
+          self
+        }
         method click:=(block) {
           stage.addListener(jsText, block)
         }
         
         method draw {
+          if(jsText != 0) then {
+            stage.removeChild(jsText);
+          }
           jsText := gr.text
           jsText.setLocation(location)
           jsText.draw(content, font, color)
@@ -332,6 +368,10 @@ factory method create(canvasHeight, canvasWidth) {
             var jsInputObject := 0
             var submitBlock := {}
             
+            method value {
+              jsInputObject.value
+            }
+            
             method setWidth(w) {
                 width := w
                 self
@@ -342,7 +382,7 @@ factory method create(canvasHeight, canvasWidth) {
                 self
             }
             
-            method setLocation(l) {
+            method at(l) {
                 location := l
                 self
             }
@@ -372,10 +412,12 @@ factory method create(canvasHeight, canvasWidth) {
             }
             
             method onSubmit(block) {
+              print("in onSubmit")
               if(jsInputObject != 0) then {
                 jsInputObject.onSubmit(jsInputObject, block)
               }
               submitBlock := block
+              self
             }
             
             method destroy {
@@ -385,4 +427,19 @@ factory method create(canvasHeight, canvasWidth) {
         inputs.add(input)
         input
     }
+}
+
+method convertStrToNum(str) {
+  native "js" code ‹
+    var str = var_str._value;
+    return new GraceNum(str);
+  ›
+}
+
+method roundTo(num, digits) {
+  native "js" code ‹
+    var digits = var_digits._value;
+    var num = var_num._value.toFixed(digits);
+    return new GraceNum(num);
+  ›
 }
