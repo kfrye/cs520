@@ -1,54 +1,71 @@
 factory method eventListener {
   var clickBlock := { }
   var mouseUpBlock := { }
+  var mouseDownBlock := { }
   
-  method click {
+  method onClick {
     clickBlock.apply
   } 
   
-  method click:=(block) {
+  method onClick:=(block) {
     clickBlock := block
   }
     
-  method mouseup {
+  method onMouseUp {
     mouseUpBlock.apply
   }
   
-  method mouseup:=(block) {
+  method onMouseUp:=(block) {
     mouseUpBlock := block
   }
   
-  method addListener(stage, obj, listener) {
+  method onMouseDown {
+    mouseDownBlock.apply
+  }
+  
+  method onMouseDown:=(block) {
+    mouseDownBlock := block
+  }
+  
+  method addMouseUpListener(obj, listener) {
     native "js" code ‹
-      var_stage.on("stagemousedown", function(event) { 
-        var x = event.stageX;
-        var y = event.stageY;
-        var bounds = var_obj.getBounds();
-        if(bounds.contains(x,y)) {
-          callmethod(var_listener, "click", [0]);
-        }
+      var obj = var_obj;
+      obj.on("pressup", function(event) { 
+        callmethod(var_listener, "onMouseUp", [0]);
       });
     ›
   }
   
-  method addMouseUpListener(stage, obj, listener) {
+  method addMouseDownListener(obj, listener) {
     native "js" code ‹
-      console.log("mouse up")
-      var_stage.on("stagemousemove", function(event) { 
-        var x = event.stageX;
-        var y = event.stageY;
-        var bounds = var_obj.getBounds();
-        if(bounds.contains(x,y)) {
-          callmethod(var_listener, "mouseup", [0]);
-        }
+      var obj = var_obj;
+      obj.on("mousedown", function(event) { 
+        callmethod(var_listener, "onMouseDown", [0]);
       });
     ›
   }
   
-  method addStageListener(stage, listener) {
+  method addClickListener(obj, listener) {
+    native "js" code ‹
+      var shape = var_obj;
+      shape.on("click", function(event) { 
+        callmethod(var_listener, "onClick", [0]);
+      });
+    ›
+  }
+  
+  method addStageDownListener(stage, listener) {
     native "js" code ‹
       var_stage.on("stagemousedown", function(event) { 
-        callmethod(var_listener, "click", [0]);
+        callmethod(var_listener, "onMouseDown", [0]);
+      });
+    ›
+  }
+  
+  method addStageUpListener(stage, listener) {
+    native "js" code ‹
+      var_stage.on("stagemouseup", function(event) { 
+        callmethod(var_listener, "onMouseUp", [0]);
       });
     ›
   }
@@ -83,7 +100,6 @@ factory method stage(width', height') {
           text.x = 5;
           text.y = 3;
           container.addChild(text);
-          console.log("stage width");
           container.x = stage.canvas.width - 35;
           var rect = new createjs.Shape();
           rect.graphics.beginStroke("black").drawRect(0, 0, 35, 20);
@@ -118,29 +134,21 @@ factory method stage(width', height') {
       this.data.mystage.update();
     ›
   }
-  method addListener(graphicsTypeObject, block) {
-    var listener := graphicsTypeObject.listener
-    listener.click := block
-    var anObject := graphicsTypeObject.createJsGraphics
-    listener.addListener(mystage, anObject, listener)
-  }
-  
-  method addMouseUpListener(graphicsTypeObject, block) {
-    var listener := graphicsTypeObject.listener
-    listener.mouseup := block
-    var anObject := graphicsTypeObject.createJsGraphics
-    listener.addMouseUpListener(mystage, anObject, listener)
-  }
   
   method removeAllChildren {
     native "js" code ‹
-      console.log("remove all");
       this.data.mystage.removeAllChildren();
     ›
   }
-  method addStageListener(block) {
-    stageListener.click := block
-    stageListener.addStageListener(mystage, stageListener)
+  
+  method addStageDownListener(block) {
+    stageListener.onMouseDown := block
+    stageListener.addStageDownListener(mystage, stageListener)
+  }
+  
+  method addStageUpListener(block) {
+    stageListener.onMouseUp := block
+    stageListener.addStageUpListener(mystage, stageListener)
   }
 }
 
@@ -149,6 +157,21 @@ factory method commonGraphics{
   var color
   var location :=0@0
   var listener is public := eventListener
+  
+  method addMouseUpListener(graphicsTypeObject, block) {
+    listener.onMouseUp := block
+    listener.addMouseUpListener(createJsGraphics, listener)
+  }
+  
+  method addMouseDownListener(graphicsTypeObject, block) {
+    listener.onMouseDown := block
+    listener.addMouseDownListener(createJsGraphics, listener)
+  }
+  
+  method addClickListener(graphicsTypeObject, block) {
+    listener.onClick := block
+    listener.addClickListener(createJsGraphics, listener)
+  }
   
   method setLocation(newLoc) {
     self.location := newLoc
@@ -363,7 +386,6 @@ factory method text {
     self.font := font'
     
     native "js" code ‹
-      console.log("text");
       var color = this.data.color._value;
       var x = this.data.location.data.x._value;
       var y = this.data.location.data.y._value;
@@ -483,7 +505,6 @@ factory method inputBox(mystage) {
   method draw {
     input := native "js" code ‹
       var stage = var_mystage;
-      console.log("input location")
       var mycanvas = stage.stage.canvas;
       var input = new CanvasInput({
         canvas: mycanvas,
@@ -527,7 +548,6 @@ factory method inputBox(mystage) {
       if(this.data.input != null) {
         var input = this.data.input;
         input.onsubmit(function(event) {
-          console.log("triggering submit");
           callmethod(var_inputObj, "callSubmit", [0])
         });
       }

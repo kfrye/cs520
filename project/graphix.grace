@@ -22,15 +22,18 @@ factory method shape {
     self
   }
   
-  method click := (block) {
-    myStage.addListener(jsShapeObject, block)
+  method onClick := (block) {
+    jsShapeObject.addClickListener(jsShapeObject, block)
   }
-  method setpress {
-    jsShapeObject.setpress
+
+  method onMouseUp := (block) {
+    jsShapeObject.addMouseUpListener(jsShapeObject, block)
   }
-  method mouseup := (block) {
-    myStage.addMouseUpListener(jsShapeObject, block)
+  
+  method onMouseDown := (block) {
+    jsShapeObject.addMouseDownListener(jsShapeObject, block)
   }
+  
   method setBounds {} // abstract method
   method shapeDraw {} // abstract method
   method draw {
@@ -67,8 +70,12 @@ factory method create(canvasHeight, canvasWidth) {
       createjs.Sound.play(var_sound._value); 
     ›
   }
-  method addStageListener(block) {
-    stage.addStageListener(block)
+  method addStageDownListener := (block) {
+    stage.addStageDownListener(block)
+  }
+  
+  method addStageUpListener := (block) {
+    stage.addStageUpListener(block)
   }
   
   method clear {
