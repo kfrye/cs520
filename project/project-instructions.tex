@@ -82,11 +82,11 @@ Functionality is performed using the createjs javascript library available at:\\
 In order to work with the CreateGraphics package, you need to include the 
 following line at the top of your Grace file:
 
-\texttt{import createGraphics as cg}
+\texttt{import graphix as g}
 
 The graphics object needs to be created with the following command:
 
-\texttt{def graphics = createGraphics(width,height)} 
+\texttt{def graphics = g.create(width,height)} 
 
 where width and height correspond to the desired graphics window width
 and height. For example:
@@ -94,11 +94,11 @@ and height. For example:
 \begin{lstlisting}
 def width = 300
 def height = 300
-def graphics = cg.createGraphics(width, height)
+def graphics = g.create(width, height)
 \end{lstlisting}
 
 \section{Shapes}
-The following shape objects are available in CreateGraphics:Circle, Rectangle, Rounded Rectangle, PolyStar, Ellipse, Text, Line, and Custom Shape.
+The following shape objects are available in CreateGraphics:Circle, Rectangle, Rounded Rectangle, PolyStar, Ellipse, Arc, Text, Line, Custom Shape, and Input Box.
 To draw one of these objects to the screen, pass a message to the graphics object:
 
 \begin{itemize}
@@ -107,15 +107,17 @@ To draw one of these objects to the screen, pass a message to the graphics objec
 \item addPolyStar
 \item addRoundRect
 \item addEllipse
+\item addArc
 \item addText
 \item addLine
 \item addCustomShape
+\item addInputBox
 \end{itemize}
 
 For instance, to add a circle to the window, you might do the following:
 \begin{lstlisting}
-import createGraphics as cg
-def graphics = cg.createGraphics(300, 300)
+import graphix as g
+def graphics = g.createGraphics(300, 300)
 def circle = graphics.addCircle
 circle.draw
 \end{lstlisting}
@@ -144,8 +146,8 @@ methods that you can use instead of setting parameters individually. The common 
 This allows you to construct the object like this:
 
 \begin{lstlisting}
-import createGraphics as cg
-def graphics = cg.createGraphics(300, 300)
+import graphix as g
+def graphics = g.create(300, 300)
 graphics.addCircle.colored("red").filled(true).draw
 \end{lstlisting}
 
@@ -228,17 +230,36 @@ Chaining Methods:
 \item \textbf{setHeight(Number)}
 \end{itemize}
 
+\subsection{Arc}
+\textbf{Create:} graphics.addArc
+
+Parameters:
+\begin{itemize}
+\item \textbf{radius} (Number): Radius of the arc
+\item \textbf{startAngle} (Number): Starting angle of the arc
+\item \textbf{endAngle}(Number): Ending angle of the arc
+\end{itemize}
+
+Chaining Methods:
+\begin{itemize}
+\item \textbf{setRadius(Number)} 
+\item \textbf{setStartAngle(Number)}
+\item \textbf{setEndAngle(Number)}
+\end{itemize}
+
 \subsection{Text}
 \textbf{Create:} graphics.addText
 
 Parameters:
 \begin{itemize}
 \item \textbf{content} (String): The content of the string
+\item \textbf{font} (String): Size and font of the text (eg. "12px Arial")
 \end{itemize}
 
 Chaining Methods:
 \begin{itemize}
-\item \textbf{setText(String)} 
+\item \textbf{setContent(String)} 
+\item \textbf{setFont(String)}
 \end{itemize}
 
 \subsection{Line}
@@ -268,17 +289,55 @@ Methods:
 
 The addPoint method returns the object, that you can chain it together. For example:
 \begin{lstlisting}
-import createGraphics as cg
-def graphics = cg.createGraphics(300, 300)
+import graphix as g
+def graphics = g.createGraphics(300, 300)
 graphics.addCustomShape.colored("red").addPoint(40@40).addPoint(0@40).addPoint(40@0).draw
 \end{lstlisting}
+
+\subsection{Input Box}
+The input box allows you to create an input box that can be used to input strings. There are
+a number of parameters that can be adjusted with the input box, but, similar to the shapes
+objects, all parameters have default values and can be considered optional.
+
+Parameters:
+\begin{itemize}
+\item \textbf{width} (Number): Width of the input box
+\item \textbf{height} (Number): Height of the input box
+\item \textbf{fontSize} (Number): Size of the font
+\item \textbf{fontFamily} (String): Name of font family (e.g. "Arial")
+\item \textbf{fontColor} (String): Color of the font used in input text
+\item \textbf{backgroundColor} (String): Color used in background of input box
+\item \textbf{borderColor} (String): Color used in border of input box
+\item \textbf{onSubmit} (Block): Code block to execute when return key is pressed
+\end{itemize}
+
+Chaining Methods:
+\begin{itemize}
+\item \textbf{setWidth} (Number)
+\item \textbf{setHeight} (Number)
+\item \textbf{setFontSize} (Number)
+\item \textbf{setFontFamily} (String)
+\item \textbf{setFontColor} (String)
+\item \textbf{setBackgroundColor} (String)
+\item \textbf{setBorderColor} (String)
+\end{itemize}
+
+Other Methods:
+\begin{itemize}
+\item \textbf{focus}: This will set the curser (focus) on the input box. This is automatically done
+when an input box is created, but the focus can only be set on one input box at a time, so
+either create the input box that should have the focus last, or set the focus manually after all
+input boxes have been created
+\item \textbf{draw}: Just like the shape objects, the "draw" method needs to be called to properly
+draw the input box.
+\end{itemize}
 
 \section{Drawing a Shape}
 To draw a shape on the graphics window, first create it, then configure it, and then draw it. The following code
 creates the output down in Figure \ref{fig:red_circle}.
 \begin{lstlisting}
-import createGraphics as cg
-def graphics = cg.createGraphics(200, 200)
+import graphix as g
+def graphics = g.createGraphics(200, 200)
 def circle = graphics.addCircle
 circle.color := "red"
 circle.radius := 20
@@ -299,11 +358,11 @@ Adding a click handler to a shape defines a block of code that will be executed 
 let's say that we want the red circle to turn blue when it is clicked, and we want to add a message to the user. 
 Then you would add something like this:
 \begin{lstlisting}
-import createGraphics as cg
-def graphics = cg.createGraphics(200, 200)
+import graphix as g
+def graphics = g.createGraphics(200, 200)
 def circle = graphics.addCircle
 circle.color := "red"
-circle.click := { 
+circle.onClick := { 
   print("clicked circle") 
   circle.color := "blue"
   circle.draw
@@ -314,12 +373,27 @@ The \color{blue} circle.draw \color{black} line located in the click block is us
 has been changed. The line \color{blue}circle.color := ``blue'' \color{black} updates the variable inside the circle object, but
 a message to circle.draw needs to be sent in order for the graphics to actually be updated.
 
+The following shape handlers are available:
+\begin{itemize}
+\item \textbf{onClick} 
+\item \textbf{onMouseUp}
+\item \textbf{onMouseDown}
+\item \textbf{onPressMove}
+\end{itemize}
+
+There are also a few handlers for the graphics object for events on the window instead of a
+particular element in the window.
+\begin{itemize}
+\item \textbf{onStageMouseDown} 
+\item \textbf{onStageMouseUp}
+\end{itemize}
+
 \section{Adding sound}
 CreateGraphics supports basic sounds. All sounds are preloaded in the browser and cannot be customized at this time.
 To play a sound, just use the "play" method of the graphics object. For example:
 \begin{lstlisting}
-import createGraphics as cg
-def graphics = cg.createGraphics(200, 200)
+import graphix as g
+def graphics = g.createGraphics(200, 200)
 def circle = graphics.addCircle
 circle.color := "red"
 circle.click := { 
