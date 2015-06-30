@@ -24,6 +24,7 @@ factory method shape {
   
   method onClick := (block) {
     jsShapeObject.addClickListener(jsShapeObject, block)
+    myStage.update
   }
 
   method onMouseUp := (block) {
@@ -32,6 +33,10 @@ factory method shape {
   
   method onMouseDown := (block) {
     jsShapeObject.addMouseDownListener(jsShapeObject, block)
+  }
+  
+  method onPressMove := (block) {
+    jsShapeObject.addPressMoveListener(jsShapeObject, block)
   }
   
   method setBounds {} // abstract method
@@ -55,6 +60,19 @@ factory method shape {
     myStage.removeChild(jsShapeObject)
     jsShapeObject.clear
   }
+  
+  method tween {
+    object {
+      var jsTween := gr.tween(jsShapeObject, myStage)
+      method toX(x) {
+        jsTween.toX(x)
+      }
+      
+      method wait(time) {
+        jsTween.wait(time)
+      }
+    }
+  }
 }
 
 factory method create(canvasHeight, canvasWidth) {
@@ -70,11 +88,11 @@ factory method create(canvasHeight, canvasWidth) {
       createjs.Sound.play(var_sound._value); 
     ›
   }
-  method addStageDownListener := (block) {
+  method onStageMouseDown := (block) {
     stage.addStageDownListener(block)
   }
   
-  method addStageUpListener := (block) {
+  method onStageMouseUp := (block) {
     stage.addStageUpListener(block)
   }
   
@@ -394,6 +412,21 @@ factory method create(canvasHeight, canvasWidth) {
                 self
             }
             
+            method setFontSize(f) {
+              fontSize := f
+              self
+            }
+            
+            method setFontFamily(f) {
+              fontFamily := f
+              self
+            }
+            
+            method setBackgroundColor(c) {
+              backgroundColor := c
+              self
+            }
+            
             method setBorderColor(c) {
               borderColor := c
               self
@@ -418,7 +451,7 @@ factory method create(canvasHeight, canvasWidth) {
               jsInputObject.focus
             }
             
-            method onSubmit(block) {
+            method onSubmit :=(block) {
               if(jsInputObject != 0) then {
                 jsInputObject.onSubmit(jsInputObject, block)
               }

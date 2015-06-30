@@ -2,6 +2,8 @@ factory method eventListener {
   var clickBlock := { }
   var mouseUpBlock := { }
   var mouseDownBlock := { }
+  var pressMoveBlock := { }
+  var mouseLocation := 0@0
   
   method onClick {
     clickBlock.apply
@@ -27,6 +29,14 @@ factory method eventListener {
     mouseDownBlock := block
   }
   
+  method onPressMove {
+    pressMoveBlock.apply
+  }
+  
+  method onPressMove := (block) {
+    pressMoveBlock := block
+  }
+  
   method addMouseUpListener(obj, listener) {
     native "js" code ‹
       var obj = var_obj;
@@ -50,6 +60,15 @@ factory method eventListener {
       var shape = var_obj;
       shape.on("click", function(event) { 
         callmethod(var_listener, "onClick", [0]);
+      });
+    ›
+  }
+  
+  method addPressMoveListener(obj, listener) {
+    native "js" code ‹
+      var shape = var_obj;
+      shape.on("pressmove", function(event) { 
+        callmethod(var_listener, "onPressMove", [0]);
       });
     ›
   }
@@ -84,6 +103,7 @@ factory method stage(width', height') {
       var size = "height=" + height.toString() + ",width=" + width.toString()
       var canvas = document.getElementById("graphics");
       var stage = new createjs.Stage(canvas);
+      stage.enableDOMEvents(true);
       canvas.setAttribute('tabindex','0');
       canvas.focus();
       canvas = stage.canvas;
@@ -99,11 +119,11 @@ factory method stage(width', height') {
           var text = new createjs.Text("clear", "12px Arial", "black");
           text.x = 5;
           text.y = 3;
-          container.addChild(text);
           container.x = stage.canvas.width - 35;
           var rect = new createjs.Shape();
-          rect.graphics.beginStroke("black").drawRect(0, 0, 35, 20);
+          rect.graphics.beginFill("lightgrey").drawRect(0, 0, 35, 20);
           container.addChild(rect);
+          container.addChild(text);
           container.addEventListener("click", function(event) { 
             stage.removeAllEventListeners();
             stage.removeAllChildren();
@@ -171,6 +191,11 @@ factory method commonGraphics{
   method addClickListener(graphicsTypeObject, block) {
     listener.onClick := block
     listener.addClickListener(createJsGraphics, listener)
+  }
+  
+  method addPressMoveListener(graphicsTypeObject, block) {
+    listener.onPressMove := block
+    listener.addPressMoveListener(createJsGraphics, listener)
   }
   
   method setLocation(newLoc) {
@@ -480,6 +505,35 @@ factory method customShape {
   method setBounds {
     var bounds := leftMost@topMost
     super.setBounds(bounds, rightMost - leftMost, bottomMost - topMost)
+  }
+}
+
+factory method tween(jsGraphicsObj, myStage) {
+  var jsTween := native "js" code ‹
+    console.log("set tween shape obj");
+    var stage = var_myStage.data.mystage;
+    createjs.Ticker.setFPS(60);
+    createjs.Ticker.addEventListener("tick", stage);
+    var shape = var_jsGraphicsObj.data.createJsGraphics;
+    var tween = createjs.Tween.get(shape, {override:true}).to({x:100},250);
+    var result = tween; 
+  ›
+  
+  method toX(x) {
+    jsTween := native "js" code ‹
+      console.log("setting tween");
+      var tween = this.data.jsTween;
+      tween = tween.to({x:var_x._value}, 250);
+      var result = tween;
+    ›
+  }
+  
+  method wait(time) {
+    jsTween := native "js" code ‹
+      var tween = this.data.jsTween;
+      tween = tween.wait(var_time._value);
+      var result = tween;
+    ›
   }
 }
 
