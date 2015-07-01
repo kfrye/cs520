@@ -5,17 +5,28 @@ factory method eventListener {
   var pressMoveBlock := { }
   var mouseOverBlock := { }
   var mouseExitBlock := { }
-  var mouseLocation := 0@0
+  var mouseLocation' := 0@0
+  var myStage
   
-  method onClick {
+  method setStage(s) {
+    myStage := s
+  }
+  
+  method onClick(x, y) {
+    mouseLocation' := x@y
     clickBlock.apply
   } 
+  
+  method mouseLocation {
+    mouseLocation'
+  }
   
   method onClick:=(block) {
     clickBlock := block
   }
     
-  method onMouseUp {
+  method onMouseUp(x, y) {
+    mouseLocation' := x@y
     mouseUpBlock.apply
   }
   
@@ -23,7 +34,8 @@ factory method eventListener {
     mouseUpBlock := block
   }
   
-  method onMouseDown {
+  method onMouseDown(x, y) {
+    mouseLocation' := x@y
     mouseDownBlock.apply
   }
   
@@ -31,7 +43,8 @@ factory method eventListener {
     mouseDownBlock := block
   }
   
-  method onMouseOver {
+  method onMouseOver(x, y) {
+    mouseLocation' := x@y
     mouseOverBlock.apply
   }
   
@@ -39,7 +52,8 @@ factory method eventListener {
     mouseOverBlock := block
   }
   
-  method onPressMove {
+  method onPressMove(x, y) {
+    mouseLocation' := x@y
     pressMoveBlock.apply
   }
   
@@ -59,7 +73,8 @@ factory method eventListener {
     native "js" code ‹
       var obj = var_obj;
       obj.on("pressup", function(event) { 
-        callmethod(var_listener, "onMouseUp", [0]);
+        callmethod(var_listener, "onMouseUp", [2], new GraceNum(event.stageX), 
+          new GraceNum(event.stageY));
       });
     ›
   }
@@ -68,7 +83,8 @@ factory method eventListener {
     native "js" code ‹
       var obj = var_obj;
       obj.on("mousedown", function(event) { 
-        callmethod(var_listener, "onMouseDown", [0]);
+        callmethod(var_listener, "onMouseDown", [2], new GraceNum(event.stageX), 
+          new GraceNum(event.stageY));
       });
     ›
   }
@@ -77,7 +93,8 @@ factory method eventListener {
     native "js" code ‹
       var obj = var_obj;
       obj.on("mouseover", function(event) { 
-        callmethod(var_listener, "onMouseOver", [0]);
+        callmethod(var_listener, "onMouseOver", [2], new GraceNum(event.stageX), 
+          new GraceNum(event.stageY));
       });
     ›
   }
@@ -86,7 +103,8 @@ factory method eventListener {
     native "js" code ‹
       var shape = var_obj;
       shape.on("click", function(event) { 
-        callmethod(var_listener, "onClick", [0]);
+        callmethod(var_listener, "onClick", [2], new GraceNum(event.stageX), 
+          new GraceNum(event.stageY));
       });
     ›
   }
@@ -95,7 +113,8 @@ factory method eventListener {
     native "js" code ‹
       var shape = var_obj;
       shape.on("pressmove", function(event) { 
-        callmethod(var_listener, "onPressMove", [0]);
+        callmethod(var_listener, "onPressMove", [2], new GraceNum(event.stageX), 
+          new GraceNum(event.stageY));
       });
     ›
   }
@@ -103,7 +122,8 @@ factory method eventListener {
   method addStageDownListener(stage, listener) {
     native "js" code ‹
       var_stage.on("stagemousedown", function(event) { 
-        callmethod(var_listener, "onMouseDown", [0]);
+        callmethod(var_listener, "onMouseDown", [2], new GraceNum(event.stageX), 
+          new GraceNum(event.stageY));
       });
     ›
   }
@@ -111,7 +131,8 @@ factory method eventListener {
   method addStageUpListener(stage, listener) {
     native "js" code ‹
       var_stage.on("stagemouseup", function(event) { 
-        callmethod(var_listener, "onMouseUp", [0]);
+        callmethod(var_listener, "onMouseUp", [2], new GraceNum(event.stageX), 
+          new GraceNum(event.stageY));
       });
     ›
   }
@@ -171,6 +192,10 @@ factory method stage(width', height') {
       ›
   }
   
+  method mouseLocation {
+    stageListener.mouseLocation
+  }
+  
   method add(shape) {
     self.createJsGraphics := shape.createJsGraphics
     native "js" code ‹
@@ -224,6 +249,10 @@ factory method commonGraphics{
   var color
   var location :=0@0
   var listener is public := eventListener
+  
+  method mouseLocation {
+    listener.mouseLocation
+  }
   
   method addMouseUpListener(graphicsTypeObject, block) {
     listener.onMouseUp := block
@@ -339,10 +368,6 @@ factory method circle {
       var circle = this.data.createJsGraphics;
       return circle;
     ›
-  }
-  
-  method setDefaultBounds {
-    super.setBounds(self.location, self.radius*2, self.radius*2)
   }
 }
 

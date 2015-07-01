@@ -38,6 +38,10 @@ factory method shape {
     myStage.update
   }
   
+  method mouseLocation {
+    jsShapeObject.mouseLocation
+  }
+  
   method onClick := (block) {
     jsShapeObject.addClickListener(jsShapeObject, block)
     myStage.update 
@@ -117,6 +121,10 @@ factory method create(canvasHeight, canvasWidth) {
   
   method onMouseExit := (block) {
     stage.addMouseExitListener(block)
+  }
+  
+  method mouseLocation {
+    stage.mouseLocation
   }
   
   method clear {
