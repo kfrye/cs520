@@ -39,6 +39,11 @@ factory method shape {
     jsShapeObject.addPressMoveListener(jsShapeObject, block)
   }
   
+  method onMouseOver := (block) {
+    myStage.enableMouseOver(20)
+    jsShapeObject.addMouseOverListener(jsShapeObject, block)
+  }
+  
   method setBounds {} // abstract method
   method shapeDraw {} // abstract method
   method draw {

@@ -4,6 +4,7 @@ factory method eventListener {
   var mouseDownBlock := { }
   var pressMoveBlock := { }
   var mouseLocation := 0@0
+  var mouseOverBlock := { }
   
   method onClick {
     clickBlock.apply
@@ -29,6 +30,14 @@ factory method eventListener {
     mouseDownBlock := block
   }
   
+  method onMouseOver {
+    mouseOverBlock.apply
+  }
+  
+  method onMouseOver:=(block) {
+    mouseOverBlock := block
+  }
+  
   method onPressMove {
     pressMoveBlock.apply
   }
@@ -51,6 +60,15 @@ factory method eventListener {
       var obj = var_obj;
       obj.on("mousedown", function(event) { 
         callmethod(var_listener, "onMouseDown", [0]);
+      });
+    ›
+  }
+  
+  method addMouseOverListener(obj, listener) {
+    native "js" code ‹
+      var obj = var_obj;
+      obj.on("mouseover", function(event) { 
+        callmethod(var_listener, "onMouseOver", [0]);
       });
     ›
   }
@@ -170,6 +188,13 @@ factory method stage(width', height') {
     stageListener.onMouseUp := block
     stageListener.addStageUpListener(mystage, stageListener)
   }
+  
+  method enableMouseOver(frequency) {
+    native "js" code ‹
+      var freq = var_frequency._value
+      this.data.mystage.enableMouseOver(freq);
+    ›
+  }
 }
 
 factory method commonGraphics{
@@ -186,6 +211,11 @@ factory method commonGraphics{
   method addMouseDownListener(graphicsTypeObject, block) {
     listener.onMouseDown := block
     listener.addMouseDownListener(createJsGraphics, listener)
+  }
+  
+  method addMouseOverListener(graphicsTypeObject, block) {
+    listener.onMouseOver := block
+    listener.addMouseOverListener(createJsGraphics, listener)
   }
   
   method addClickListener(graphicsTypeObject, block) {
