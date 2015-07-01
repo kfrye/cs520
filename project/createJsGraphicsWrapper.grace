@@ -3,8 +3,9 @@ factory method eventListener {
   var mouseUpBlock := { }
   var mouseDownBlock := { }
   var pressMoveBlock := { }
-  var mouseLocation := 0@0
   var mouseOverBlock := { }
+  var mouseExitBlock := { }
+  var mouseLocation := 0@0
   
   method onClick {
     clickBlock.apply
@@ -44,6 +45,14 @@ factory method eventListener {
   
   method onPressMove := (block) {
     pressMoveBlock := block
+  }
+  
+  method onMouseExit {
+    mouseExitBlock.apply
+  }
+  
+  method onMouseExit := (block) {
+    mouseExitBlock := block
   }
   
   method addMouseUpListener(obj, listener) {
@@ -103,6 +112,14 @@ factory method eventListener {
     native "js" code ‹
       var_stage.on("stagemouseup", function(event) { 
         callmethod(var_listener, "onMouseUp", [0]);
+      });
+    ›
+  }
+  
+  method addMouseExitListener(stage, listener) {
+    native "js" code ‹
+      var_stage.on("mouseleave", function(event) { 
+        callmethod(var_listener, "onMouseExit", [0]);
       });
     ›
   }
@@ -189,6 +206,11 @@ factory method stage(width', height') {
     stageListener.addStageUpListener(mystage, stageListener)
   }
   
+  method addMouseExitListener(block) {
+    stageListener.onMouseExit := block
+    stageListener.addMouseExitListener(mystage, stageListener)
+  }
+  
   method enableMouseOver(frequency) {
     native "js" code ‹
       var freq = var_frequency._value
@@ -230,13 +252,11 @@ factory method commonGraphics{
   
   method setLocation(newLoc) {
     self.location := newLoc
-  }
-  
-  method setBounds(bounds, width, height) {
     native "js" code ‹
-      var x = var_bounds.data.x._value;
-      var y = var_bounds.data.y._value
-      this.data.createJsGraphics.setBounds(x, y, var_width._value, var_height._value);
+      var x = var_newLoc.data.x._value;
+      var y = var_newLoc.data.y._value
+      this.data.createJsGraphics.x = x;
+      this.data.createJsGraphics.y = y;
     ›
   }
   
@@ -323,7 +343,7 @@ factory method rect {
   inherits shape
   var height
   var width
-  method draw(height', width', location') {
+  method draw(height', width') {
     self.height := height'
     self.width := width'
     native "js" code ‹

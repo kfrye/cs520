@@ -22,9 +22,18 @@ factory method shape {
     self
   }
   
+  method moveBy(xDiff,yDiff) {
+    def currentX = location.x
+    def currentY = location.y
+    location := (currentX + xDiff)@(currentY + yDiff)
+    jsShapeObject.setLocation(location)
+    jsShapeObject.move(location.x, location.y)
+    myStage.update
+  }
+  
   method onClick := (block) {
     jsShapeObject.addClickListener(jsShapeObject, block)
-    myStage.update
+    myStage.update 
   }
 
   method onMouseUp := (block) {
@@ -44,12 +53,10 @@ factory method shape {
     jsShapeObject.addMouseOverListener(jsShapeObject, block)
   }
   
-  method setBounds {} // abstract method
   method shapeDraw {} // abstract method
   method draw {
     clearDuplicate
     jsShapeObject.setLocation(location)
-    setBounds
     if (fill) then {
       jsShapeObject.beginFill(color)
     } else {
@@ -101,6 +108,10 @@ factory method create(canvasHeight, canvasWidth) {
     stage.addStageUpListener(block)
   }
   
+  method onMouseExit := (block) {
+    stage.addMouseExitListener(block)
+  }
+  
   method clear {
     stage.removeAllChildren
     stage.removeAllEventListeners
@@ -117,11 +128,6 @@ factory method create(canvasHeight, canvasWidth) {
       method setRadius(r) {
         radius := r
         self
-      }
-      method setBounds is confidential {
-        def x = location.x - radius
-        def y = location.y - radius
-        jsShapeObject.setBounds(x@y, radius*2, radius*2)
       }
       method shapeDraw is confidential {
         jsShapeObject.draw(radius)
@@ -148,11 +154,8 @@ factory method create(canvasHeight, canvasWidth) {
         width := w 
         self
       }
-      method setBounds is confidential {
-        jsShapeObject.setBounds(location, width, height)
-      }
       method shapeDraw is confidential {
-        jsShapeObject.draw(height, width, location)
+        jsShapeObject.draw(height, width)
       }
     }
     
@@ -186,11 +189,6 @@ factory method create(canvasHeight, canvasWidth) {
           angle := a
           self
         }
-        method setBounds is confidential {
-          var x := location.x - size
-          var y := location.y - size
-          jsShapeObject.setBounds(x@y, 2*size, 2*size)
-        }
         method shapeDraw is confidential {
           jsShapeObject.draw(size, sides, pointSize, angle)
         }
@@ -219,11 +217,8 @@ factory method create(canvasHeight, canvasWidth) {
           radius := r
           self
         }
-        method setBounds is confidential {
-          jsShapeObject.setBounds(location, width, height)
-        }
         method shapeDraw is confidential {
-          jsShapeObject.draw(location, width, height, radius)
+          jsShapeObject.draw(width, height, radius)
         }
       }
       shapes.add(roundRect)
@@ -246,9 +241,6 @@ factory method create(canvasHeight, canvasWidth) {
         method setHeight(h) {
           height := h
           self
-        }
-        method setBounds is confidential {
-          jsShapeObject.setBounds(location, width, height)
         }
         method shapeDraw is confidential {
           jsShapeObject.draw(width, height)
@@ -348,9 +340,6 @@ factory method create(canvasHeight, canvasWidth) {
           end := e
           self
         }
-        method setBounds is confidential {
-          jsShapeObject.setBounds(start, end.x-start.x, end.y-start.y)
-        }
         method shapeDraw is confidential {
           jsShapeObject.draw(start, end)
         }
@@ -366,10 +355,6 @@ factory method create(canvasHeight, canvasWidth) {
         myStage := stage
         var width is public := 10 
         var height is public := 10
-        
-        method setBounds is confidential {
-          jsShapeObject.setBounds
-        }
         
         method shapeDraw is confidential {
           jsShapeObject.draw(color, color)
