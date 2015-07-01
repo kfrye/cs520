@@ -266,6 +266,13 @@ factory method commonGraphics{
       this.data.createJsGraphics.y = var_newY._value;
     ›
   }
+  
+  method setVisible(isVisible) {
+    native "js" code ‹
+      var isVisible = var_isVisible._value
+      this.data.createJsGraphics.visible = isVisible;
+    ›
+  }
 }
 
 factory method shape {

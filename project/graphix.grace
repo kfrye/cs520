@@ -6,6 +6,7 @@ factory method shape {
   var location is public := 20@20
   var myStage
   var jsShapeObject
+  var visible'
   
   method colored(c) {
     color := c
@@ -28,6 +29,12 @@ factory method shape {
     location := (currentX + xDiff)@(currentY + yDiff)
     jsShapeObject.setLocation(location)
     jsShapeObject.move(location.x, location.y)
+    myStage.update
+  }
+  
+  method visible := (v) {
+    visible' := v
+    jsShapeObject.setVisible(v)
     myStage.update
   }
   
