@@ -152,11 +152,14 @@ factory method eventListener {
 
 factory method stage(width', height') {
   var mystage := new (width', height')
-  createClearButton
+  createClearButton(self)
   var createJsGraphics
   var stageListener := eventListener
+  var timedEventBlock := { }
+  var jsTimeout
   
   method new(width, height) {
+    clearTimeout
     native "js" code ‹
       var width = var_width._value;
       var height = var_height._value;
@@ -172,7 +175,7 @@ factory method stage(width', height') {
     ›
   }
   
-  method createClearButton {
+  method createClearButton(myStage) {
       native "js" code ‹
           var stage = this.data.mystage;
           var container = new createjs.Container();
@@ -189,7 +192,7 @@ factory method stage(width', height') {
             stage.removeAllChildren();
             stage.enableDOMEvents(false);
             stage.update();
-            
+            callmethod(var_myStage, "clearTimeout", [0]);
           });
           stage.addChild(container);
           stage.update();
@@ -251,6 +254,27 @@ factory method stage(width', height') {
       this.data.mystage.enableMouseOver(freq);
     ›
   }
+  
+  method timedEvent {
+    timedEventBlock.apply
+  }
+  
+  method setTimeout(block, time, myStage) {
+    timedEventBlock := block
+    jsTimeout := native "js" code ‹
+      var t = setTimeout(function() {
+        callmethod(var_myStage, "timedEvent", [0]);
+      }, var_time._value);
+      var result = t
+    ›
+  }
+  
+  method clearTimeout {
+    native "js" code ‹
+      var timeout = this.data.jsTimeout
+      clearTimeout(timeout);
+    ›
+  }
 }
 
 factory method commonGraphics{
@@ -309,6 +333,17 @@ factory method commonGraphics{
     native "js" code ‹
       var isVisible = var_isVisible._value
       this.data.createJsGraphics.visible = isVisible;
+    ›
+  }
+  
+  method hitTest(x, y) {
+    native "js" code ‹
+      var x = var_x._value;
+      var y = var_y._value;
+      var shape = this.data.createJsGraphics;
+      var pt = shape.globalToLocal(x, y);
+      var hit = shape.hitTest(pt.x, pt.y);
+      return new GraceBoolean(hit);
     ›
   }
 }
@@ -605,7 +640,7 @@ factory method tween(jsGraphicsObj, myStage) {
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", stage);
     var shape = var_jsGraphicsObj.data.createJsGraphics;
-    var tween = createjs.Tween.get(shape, {override:true}).to({x:100},250);
+    var tween = createjs.Tween.get(shape, {override:true})
     var result = tween; 
   ›
   

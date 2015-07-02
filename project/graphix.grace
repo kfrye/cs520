@@ -38,6 +38,10 @@ factory method shape {
     myStage.update
   }
   
+  method contains(point) {
+    jsShapeObject.hitTest(point.x, point.y)
+  }
+  
   method mouseLocation {
     jsShapeObject.mouseLocation
   }
@@ -67,6 +71,7 @@ factory method shape {
   method shapeDraw {} // abstract method
   method draw {
     clearDuplicate
+    visible := true
     jsShapeObject.setLocation(location)
     if (fill) then {
       jsShapeObject.beginFill(color)
@@ -102,7 +107,8 @@ factory method create(canvasHeight, canvasWidth) {
   var shapes := list.empty
   var inputs := list.empty
   var stage := gr.stage(canvasHeight, canvasWidth)
-
+  var timeoutIsSet := false
+  
   method drawall {
     for (shapes) do {x -> x.draw}
   }
@@ -135,6 +141,15 @@ factory method create(canvasHeight, canvasWidth) {
     stage.removeAllChildren
     stage.removeAllEventListeners
     stage.update
+  }
+  
+  method timedEvent(block, time) {
+    timeoutIsSet := true
+    stage.setTimeout(block, time, stage)
+  }
+  
+  method clearTimedEvent {
+    stage.clearTimeout
   }
   
   method addCircle {
