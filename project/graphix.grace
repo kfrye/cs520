@@ -123,6 +123,10 @@ factory method create(canvasHeight, canvasWidth) {
     stage.addMouseExitListener(block)
   }
   
+  method onStageMouseMove := (block) {
+    stage.addStageMouseMoveListener(block)
+  }
+  
   method mouseLocation {
     stage.mouseLocation
   }

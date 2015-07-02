@@ -6,11 +6,6 @@ factory method eventListener {
   var mouseOverBlock := { }
   var mouseExitBlock := { }
   var mouseLocation' := 0@0
-  var myStage
-  
-  method setStage(s) {
-    myStage := s
-  }
   
   method onClick(x, y) {
     mouseLocation' := x@y
@@ -144,6 +139,15 @@ factory method eventListener {
       });
     ›
   }
+  
+  method addStageMouseMoveListener(stage, listener) {
+    native "js" code ‹
+      var_stage.on("stagemousemove", function(event) { 
+        callmethod(var_listener, "onMouseOver", [2], new GraceNum(event.stageX), 
+          new GraceNum(event.stageY));
+      });
+    ›
+  }
 }
 
 factory method stage(width', height') {
@@ -234,6 +238,11 @@ factory method stage(width', height') {
   method addMouseExitListener(block) {
     stageListener.onMouseExit := block
     stageListener.addMouseExitListener(mystage, stageListener)
+  }
+  
+  method addStageMouseMoveListener(block) {
+    stageListener.onMouseOver := block
+    stageListener.addStageMouseMoveListener(mystage, stageListener)
   }
   
   method enableMouseOver(frequency) {
@@ -592,7 +601,6 @@ factory method customShape {
 
 factory method tween(jsGraphicsObj, myStage) {
   var jsTween := native "js" code ‹
-    console.log("set tween shape obj");
     var stage = var_myStage.data.mystage;
     createjs.Ticker.setFPS(60);
     createjs.Ticker.addEventListener("tick", stage);
@@ -603,7 +611,6 @@ factory method tween(jsGraphicsObj, myStage) {
   
   method toX(x) {
     jsTween := native "js" code ‹
-      console.log("setting tween");
       var tween = this.data.jsTween;
       tween = tween.to({x:var_x._value}, 250);
       var result = tween;
