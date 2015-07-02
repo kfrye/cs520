@@ -132,6 +132,8 @@ There are a few parameters that are common to each type of shape.
 \item \textbf{color} (String): The color of the shape. Most basic colors can be set as "red", "blue", etc. However, you can also use 6-digit hex numbers 
 such as "\#CC3300" that corresponds to an HTML 5 hex colors. See \url{http://www.w3schools.com/tags/ref_colorpicker.asp} for more details.
 \item \textbf{fill} (Boolean): Whether or not you want to fill in the shape when it is drawn on the window.
+\item \textbf{visible} (Boolean): Whether or not you want the shape to be visible. This is true by 
+default. Updating this value does not require for the shape to be re-drawn with the 'draw' method.
 \end{itemize}
 
 \textbf{Chaining} \\
@@ -150,6 +152,15 @@ import graphix as g
 def graphics = g.create(300, 300)
 graphics.addCircle.colored("red").filled(true).draw
 \end{lstlisting}
+
+\textbf{Other Methods}\\
+The following method is also available on all shape objects:
+\begin{itemize}
+\item \textbf{moveBy(x, y)}: This moves the shape relative to its current location. Both positive
+and negative numbers can be used.
+\item \textbf{contains(point)}: This determines whether or not a given point intersects with a shape
+object. Returns true or false.
+\end{itemize}
 
 \subsection{Circle}
 \textbf{Create:} graphics.addCircle
@@ -379,14 +390,38 @@ The following shape handlers are available:
 \item \textbf{onMouseUp}
 \item \textbf{onMouseDown}
 \item \textbf{onPressMove}
+\item \textbf{onMouseOver}
 \end{itemize}
 
 There are also a few handlers for the graphics object for events on the window instead of a
 particular element in the window.
 \begin{itemize}
-\item \textbf{onStageMouseDown} 
-\item \textbf{onStageMouseUp}
+\item \textbf{onStageMouseDown}: Triggers when the mouse is pressed on the stage
+\item \textbf{onStageMouseUp}: Triggers when the mouse is released on the stage
+\item \textbf{onStageMouseMove}: Triggers when the mouse is moved on the stage
+\item \textbf{onMouseExit}: Triggers when the mouse is moved from the stage
 \end{itemize}
+
+\section{Timed Event}
+In some cases, you may want to add a delay before executing a block of code. The
+method \textbf{timedEvent(block, time)} can be called on the graphics object.
+
+\begin{lstlisting}
+import graphix as g
+def graphics = g.createGraphics(200, 200)
+def circle = graphics.addCircle.filled(true)
+var delayedBlock := {
+  print("delayed click")
+}
+circle.onClick := { 
+  graphics.timedEvent(delayedBlock, 1000)
+}
+circle.draw
+\end{lstlisting}
+This will execute delayedBlock after 1000 milliseconds.
+
+If you are calling the timed event repeatedly and want to clear it, use the \textbf{clearTimedEvent}
+method on the graphics object.
 
 \section{Adding sound}
 CreateGraphics supports basic sounds. All sounds are preloaded in the browser and cannot be customized at this time.
