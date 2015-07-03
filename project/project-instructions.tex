@@ -402,7 +402,15 @@ particular element in the window.
 \item \textbf{onMouseExit}: Triggers when the mouse is moved from the stage
 \end{itemize}
 
-\section{Timed Event}
+\section{Timed Events and Ticks}
+
+\begin{itemize}
+\item \textbf{timedEvent(block, timeDelay)}: Delay a block of code by the specified time in milliseconds
+\item \textbf{clearTimedEvent}: Clears any delayed events
+\item \textbf{tickEvent(block, fps)}: Execute a block of code each time frame where fps specifies the frames per second.
+\item \textbf{clearTicker}: Clears all ticker events
+\end{itemize}
+
 In some cases, you may want to add a delay before executing a block of code. The
 method \textbf{timedEvent(block, time)} can be called on the graphics object.
 
@@ -422,6 +430,8 @@ This will execute delayedBlock after 1000 milliseconds.
 
 If you are calling the timed event repeatedly and want to clear it, use the \textbf{clearTimedEvent}
 method on the graphics object.
+
+You can use the \textbf{timedEvent} in order to execute a block of code each time frame where the frames per second (fps) is specified, and \textbf{clearTicker} to clear all the ticker events.
 
 \section{Adding sound}
 CreateGraphics supports basic sounds. All sounds are preloaded in the browser and cannot be customized at this time.
