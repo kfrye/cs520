@@ -144,12 +144,19 @@ factory method create(canvasHeight, canvasWidth) {
   }
   
   method timedEvent(block, time) {
-    timeoutIsSet := true
     stage.setTimeout(block, time, stage)
   }
   
   method clearTimedEvent {
     stage.clearTimeout
+  }
+  
+  method tickEvent(block, freq) {
+    stage.setTicker(block, freq, stage)
+  }
+  
+  method clearTicker {
+    stage.clearTicker
   }
   
   method addCircle {
@@ -290,6 +297,7 @@ factory method create(canvasHeight, canvasWidth) {
         var radius is public := 15
         var startAngle is public := 0
         var endAngle is public := 180
+        var anticlockwise is public := false
         
         jsShapeObject := gr.arc
         myStage:=stage
@@ -307,8 +315,13 @@ factory method create(canvasHeight, canvasWidth) {
           self
         }
         
+        method setAnticlockwise(a) {
+          anticlockwise := a
+          self
+        }
+        
         method shapeDraw is confidential {
-          jsShapeObject.draw(radius, startAngle, endAngle)
+          jsShapeObject.draw(radius, startAngle, endAngle, anticlockwise)
         }
       }
       shapes.add(arc)

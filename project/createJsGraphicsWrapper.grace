@@ -157,6 +157,7 @@ factory method stage(width', height') {
   var stageListener := eventListener
   var timedEventBlock := { }
   var jsTimeout
+  var tickerBlock := { }
   
   method new(width, height) {
     clearTimeout
@@ -193,6 +194,7 @@ factory method stage(width', height') {
             stage.enableDOMEvents(false);
             stage.update();
             callmethod(var_myStage, "clearTimeout", [0]);
+            createjs.Ticker.removeAllEventListeners();
           });
           stage.addChild(container);
           stage.update();
@@ -259,6 +261,10 @@ factory method stage(width', height') {
     timedEventBlock.apply
   }
   
+  method tickEvent {
+    tickerBlock.apply
+  }
+  
   method setTimeout(block, time, myStage) {
     timedEventBlock := block
     jsTimeout := native "js" code ‹
@@ -273,6 +279,22 @@ factory method stage(width', height') {
     native "js" code ‹
       var timeout = this.data.jsTimeout
       clearTimeout(timeout);
+    ›
+  }
+  
+  method setTicker(block, fps, myStage) {
+    tickerBlock := block
+    native "js" code ‹
+      createjs.Ticker.on("tick", function(event) {
+        callmethod(var_myStage, "tickEvent", [0]);
+      });
+			createjs.Ticker.setFPS(var_fps._value);
+    ›
+  }
+  
+  method clearTicker {
+    native "js" code ‹
+      createjs.Ticker.removeAllEventListeners();
     ›
   }
 }
@@ -314,12 +336,6 @@ factory method commonGraphics{
   
   method setLocation(newLoc) {
     self.location := newLoc
-    native "js" code ‹
-      var x = var_newLoc.data.x._value;
-      var y = var_newLoc.data.y._value
-      this.data.createJsGraphics.x = x;
-      this.data.createJsGraphics.y = y;
-    ›
   }
   
   method move(newX,newY) {
@@ -498,12 +514,13 @@ factory method arc {
   var radius
   var startAngle
   var endAngle
+  var anticlockwise
   
-  method draw(radius', startAngle', endAngle') {
+  method draw(radius', startAngle', endAngle', anticlockwise') {
     radius := radius'
     startAngle := startAngle'
     endAngle := endAngle'
-    
+    anticlockwise := anticlockwise'
     native "js" code ‹
       var x = this.data.location.data.x._value;
       var y = this.data.location.data.y._value;
@@ -512,8 +529,9 @@ factory method arc {
       var endAngle = this.data.endAngle._value;
       startAngle = startAngle * Math.PI / 180;
       endAngle = endAngle * Math.PI / 180;
-
-      this.data.createJsGraphics.graphics.arc(x, y, radius, startAngle, endAngle);
+      anticlockwise = this.data.anticlockwise._value
+      
+      this.data.createJsGraphics.graphics.arc(x, y, radius, startAngle, endAngle, anticlockwise);
     ›
   }
 }
@@ -562,12 +580,12 @@ factory method line {
     self.start := start'
     self.end := end'
     native "js" code ‹ 
+      console.log("start");
       var startX = this.data.start.data.x._value;
       var startY = this.data.start.data.y._value;
       var endX = this.data.end.data.x._value;
       var endY = this.data.end.data.y._value;
-      this.data.createJsGraphics.graphics.moveTo(startX, startY);
-      this.data.createJsGraphics.graphics.lineTo(endX, endY);
+      this.data.createJsGraphics.graphics.moveTo(startX, startY).lineTo(endX,endY);
     ›
   }
 }
